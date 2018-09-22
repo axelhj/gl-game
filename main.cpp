@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <stdio.h>
 //#include <OpenGL/gl3.h>
-//#include <windows.h> // For sleep
+#include <windows.h> // For sleep
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 //#include <time.h> // For nanosleep
@@ -28,7 +28,7 @@ void millisleep(unsigned milliseconds) {
 //    timespec.tv_sec = milliseconds / 1000;
 //    timespec.tv_nsec = (milliseconds % 1000) * 1000000;
 //    nanosleep(&timespec, NULL);
-//    Sleep(milliseconds);
+    Sleep(milliseconds);
 }
 
 static int keys[6] = {0, 0, 0, 0, 0, 0};
@@ -95,6 +95,12 @@ int main(int argc, char** argv) {
     GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Demo GL", NULL, NULL);
     glfwSetKeyCallback(window, key_callback);
     glfwMakeContextCurrent(window);
+    GLenum error = glewInit();
+    if (error != GL_NO_ERROR) {
+        printf("Glew init failed");
+        printGlError(error);
+        initSuccessful = false;
+    }
     int majorVersion = 0;
     int minorVersion = 0;
     glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
@@ -102,25 +108,25 @@ int main(int argc, char** argv) {
     printf("Init GL Ver: %s, (Major: %d, Min: %d)\n\n", glGetString(GL_VERSION), majorVersion, minorVersion);
     running = initSuccessful = window != NULL && initSuccessful;
     running = running && initGl();
-//    if (!running) {
-//        printf("Loading failed");
-//        glfwTerminate();
-//        return -1;
-//    }
-//    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
-//    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-//    while (running) {
-//        updateGl(keys);
-//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//        drawGl();
-//        glfwSwapBuffers(window);
-//        glfwPollEvents();
-//        running = running && glfwWindowShouldClose(window) == false;
-//        printf("running");
-//        if (running) {
-//            millisleep(33); // not required as glfwSwapBuffers is blocking
-//        }
-//    }
-//    glfwTerminate();
+    if (!running) {
+        printf("Loading failed");
+        glfwTerminate();
+        return -1;
+    }
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    while (running) {
+        updateGl(keys);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        drawGl();
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+        running = running && glfwWindowShouldClose(window) == false;
+        printf("running\n");
+        if (running) {
+            millisleep(33); // not required as glfwSwapBuffers is blocking
+        }
+    }
+    glfwTerminate();
     return 0;
 }

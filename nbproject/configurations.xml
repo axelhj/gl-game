@@ -14,6 +14,10 @@
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
+      <itemPath>hill kopia.png</itemPath>
+      <itemPath>hill.png</itemPath>
+      <itemPath>hill2.png</itemPath>
+      <itemPath>hill3.png</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -72,6 +76,14 @@
       </item>
       <item path="draw.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="hill kopia.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="hill.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="hill2.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="hill3.png" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="main.h" ex="false" tool="3" flavor2="0">
@@ -115,6 +127,14 @@
       <item path="draw.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="draw.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="hill kopia.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="hill.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="hill2.png" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="hill3.png" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>

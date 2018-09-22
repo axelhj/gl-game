@@ -51,7 +51,7 @@ void main(void) {\n\
     fragColor = angle * vec4(0.0, 1.0, 0.0, 0.6);\n\
 }\n";
 
-static void printGlError(GLenum error) {
+void printGlError(GLenum error) {
     const char* errorString = NULL;
     if (error == GL_NO_ERROR) {
         //errorString = "GL_NO_ERROR";

@@ -24,6 +24,8 @@
 
 extern bool initGl();
 
+extern void printGlError(GLenum error);
+
 extern void updateGl(int* keys);
 
 extern void drawGl();
