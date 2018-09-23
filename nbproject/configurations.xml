@@ -15,6 +15,7 @@
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
                    projectFiles="true">
+      <itemPath>game-hero.png</itemPath>
       <itemPath>ground.png</itemPath>
       <itemPath>hill kopia.png</itemPath>
       <itemPath>hill.png</itemPath>
@@ -79,6 +80,8 @@
       </item>
       <item path="draw.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="game-hero.png" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="ground.png" ex="false" tool="3" flavor2="0">
       </item>
       <item path="hill kopia.png" ex="false" tool="3" flavor2="0">
@@ -136,6 +139,8 @@
       <item path="draw.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="draw.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="game-hero.png" ex="false" tool="3" flavor2="0">
       </item>
       <item path="ground.png" ex="false" tool="3" flavor2="0">
       </item>

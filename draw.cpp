@@ -22,7 +22,7 @@ out vec3 normal;\n\
 void main(void) {\n\
     normal = normalAttr;\n\
     gl_Position = vec4(vertexAttr, 1) * model * view * projection;\n\
-    normal = (model * view * vec4(normalAttr, 1)).xyz;\n\
+    normal = vec4(normalAttr, 0).xyz;\n\
     texCoord = texCoordAttr;\n\
 }\n";
 
@@ -38,14 +38,14 @@ uniform sampler2D texture0;\n\
 out vec4 fragColor;\
 \n\
 void main(void) {\n\
+    vec4 texColor = texture(texture0, texCoord);\n\
+    if (texColor.a < 0.005) {\n\
+        discard;\n\
+    }\n\
     vec4 lightDirection = vec4(0.0, 0.5, -0.5, 0.0);\n\
     float angle = dot(vec4(0.0) - lightDirection, vec4(normal, 0.0));\n\
     if (angle < 0.0) {\n\
         angle = -angle;\n\
-    }\n\
-    vec4 texColor = texture(texture0, texCoord);\n\
-    if (texColor.a < 0.05) {\n\
-        discard;\n\
     }\n\
     fragColor = vec4(angle * texColor.rgb, texColor.a);\n\
 }\n";
@@ -168,49 +168,13 @@ bool loadGlTexture(GAME_ENTITY* gameEntity, const char* fileName) {
         GL_UNSIGNED_BYTE,
         imageData
     );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glGenerateMipmap(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, gameEntity->textureId);
     GLenum error = glGetError();
     printGlError(error);
     return error == GL_NO_ERROR;
-}
-
-static float pos[3] = {
-    -0.495, 0.495, 0.198
-};
-
-void updateGl(GAME_ENTITY* gameEntity, int* keys) {
-    int l = keys[0];
-    int r = keys[1];
-    int u = keys[2];
-    int d = keys[3];
-    int a = keys[4];
-    int b = keys[5];
-    float rate = 3.0 * 0.0165;
-    if (u) {
-        pos[0] += rate;
-    } else if (d) {
-        pos[0] -= rate;
-    }
-    if (l) {
-        pos[1] += rate;
-    } else if (r) {
-        pos[1] -= rate;
-    }
-    if (a) {
-        pos[2] += rate;
-    } else if (b) {
-        pos[2] -= rate;
-    }
-    mat_translation(gameEntity->modelMat, pos[0], pos[1], pos[2]);
-    GLfloat* intermediate = (float*)malloc(sizeof(float)*16);
-    mat_rot_x(intermediate, 3.1415f / 2.0f);
-    GLfloat* modelMatCopy = mat_copy(gameEntity->modelMat);
-    mat_multiplicate(modelMatCopy, intermediate, gameEntity->modelMat);
-    mat_destroy(modelMatCopy);
-    mat_destroy(intermediate);
 }
 
 void drawGl(GAME_ENTITY* gameEntity) {

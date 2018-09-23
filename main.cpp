@@ -74,6 +74,52 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
+static float pos[3] = {
+    -0.495, 0.495, 0.198
+};
+
+void updateGl(GAME_ENTITY* gameEntity, int* keys) {
+    int l = keys[0];
+    int r = keys[1];
+    int u = keys[2];
+    int d = keys[3];
+    int a = keys[4];
+    int b = keys[5];
+    float rate = 3.0 * 0.0165;
+    if (u) {
+        pos[0] += rate;
+    } else if (d) {
+        pos[0] -= rate;
+    }
+    if (l) {
+        pos[1] += rate;
+    } else if (r) {
+        pos[1] -= rate;
+    }
+    if (a) {
+        pos[2] += rate;
+    } else if (b) {
+        pos[2] -= rate;
+    }
+    mat_scale(gameEntity->modelMat, 0.3, 0.3, 0.3);
+    GLfloat* intermediate = (float*)malloc(sizeof(float)*16);
+    // Pass 0
+    mat_rot_x(intermediate, 3.1415);
+    GLfloat* modelMatCopy = mat_copy(gameEntity->modelMat);
+    mat_multiplicate(modelMatCopy, intermediate, gameEntity->modelMat);
+    // Pass 1
+    mat_rot_y(intermediate, 3.1415f / 4.0f);
+    modelMatCopy = mat_copy(gameEntity->modelMat);
+    mat_multiplicate(modelMatCopy, intermediate, gameEntity->modelMat);
+    // Pass 2
+    mat_translation(intermediate, pos[0], pos[1], pos[2]);
+    mat_set_to(modelMatCopy, gameEntity->modelMat);
+    mat_multiplicate(modelMatCopy, intermediate, gameEntity->modelMat);
+
+    mat_destroy(modelMatCopy);
+    mat_destroy(intermediate);
+}
+
 #define WINDOW_WIDTH 1200
 
 #define WINDOW_HEIGHT 900
@@ -112,7 +158,7 @@ int main(int argc, char** argv) {
     GAME_ENTITY gameEntity2;
     initSquare(&gameEntity2);
     running = running &&
-        initGl(&gameEntity) && loadGlTexture(&gameEntity, "ground.png") &&
+        initGl(&gameEntity) && loadGlTexture(&gameEntity, "game-hero.png") &&
         initGl(&gameEntity2) && loadGlTexture(&gameEntity2, "ground.png");
     mat_translation(gameEntity2.modelMat, -0.495, 0.495, 0.198);
     GLfloat* intermediate = (float*)malloc(sizeof(float)*16);
@@ -126,7 +172,7 @@ int main(int argc, char** argv) {
         glfwTerminate();
         return -1;
     }
-    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glClearColor(0.4f, 0.65f, 0.85f, 1.0f);
     glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     while (running) {
         updateGl(&gameEntity, keys);
@@ -136,9 +182,8 @@ int main(int argc, char** argv) {
         glfwSwapBuffers(window);
         glfwPollEvents();
         running = running && glfwWindowShouldClose(window) == false;
-        printf("running\n");
         if (running) {
-            millisleep(33); // not required as glfwSwapBuffers is blocking
+            millisleep(16); // not required as glfwSwapBuffers is blocking
         }
     }
     glfwTerminate();

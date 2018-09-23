@@ -54,8 +54,6 @@ extern bool loadGlTexture(GAME_ENTITY* gameEntity, const char* fileName);
 
 extern void printGlError(GLenum error);
 
-extern void updateGl(GAME_ENTITY* gameEntity, int* keys);
-
 extern void drawGl(GAME_ENTITY* gameEntity);
 
 #endif /* DRAW_H */
