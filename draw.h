@@ -22,6 +22,7 @@
 #include "shaders.h"
 #include "vertex_gen.h"
 #include "draw.h"
+#include "mat4.h"
 
 extern bool initGl();
 

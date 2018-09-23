@@ -3,7 +3,11 @@
 static const char* vProgram =
 "#version 150\n\
 \n\
-uniform vec3 rotate;\n\
+uniform mat4 model;\n\
+\n\
+uniform mat4 view;\n\
+\n\
+uniform mat4 projection;\n\
 \n\
 in vec3 vertexAttr;\n\
 \n\
@@ -17,26 +21,8 @@ out vec3 normal;\n\
 \n\
 void main(void) {\n\
     normal = normalAttr;\n\
-    gl_Position = vec4(vertexAttr, 1);\n\
-    float anglez = 3.1415 * 0.0;\n\
-    float anglex = 3.1415 * 0.5;\n\
-    gl_Position += vec4(-0.5, -0.5, -0.5, 0.0);\n\
-    //gl_Position *= vec4(2.0, 2.0, 2.0, 1.0);\n\
-    float x = gl_Position.x;\n\
-    float y = gl_Position.y;\n\
-    float z = gl_Position.z;\n\
-    gl_Position.x = x * cos(rotate.z) - y * sin(rotate.z);\n\
-    gl_Position.y = y * cos(rotate.z) + x * sin(rotate.z);\n\
-    x = gl_Position.x;\n\
-    y = gl_Position.y;\n\
-    z = gl_Position.z;\n\
-    gl_Position.y = y * cos(rotate.x) - z * sin(rotate.x);\n\
-    gl_Position.z = y * sin(rotate.x) + z * cos(rotate.x);\n\
-    x = gl_Position.x;\n\
-    y = gl_Position.y;\n\
-    z = gl_Position.z;\n\
-    gl_Position.z = z * cos(rotate.y) - x * sin(rotate.y);\n\
-    gl_Position.x = z * sin(rotate.y) + x * cos(rotate.y);\n\
+    gl_Position = vec4(vertexAttr, 1) * model * view * projection;\n\
+    normal = (model * view * vec4(normalAttr, 1)).xyz;\n\
     texCoord = texCoordAttr;\n\
 }\n";
 
@@ -87,26 +73,17 @@ void printGlError(GLenum error) {
 
 static int program;
 
-static GLfloat vertices[] = {
-    -1.0f, -1.0f, 0.0f,
-    0.0f, 0.0f, 0.0f,
-    -1.0f, 1.0f, 0.0f
-};
-
-#define MESH_WIDTH 150
-#define MESH_HEIGHT 150
-
 const static int vertexBufferCoordinateCount = 3;
 
 const static int texCoordBufferCoordinateCount = 2;
 
 const static int normalBufferCoordinateCount = 3;
 
-const static int vertexBufferElementsCount = MESH_WIDTH * MESH_HEIGHT * 6 * 3;
+const static int vertexBufferElementsCount = 6 * 3;
 
-const static int texCoordBufferElementsCount = MESH_WIDTH * MESH_HEIGHT * 6 * 2;
+const static int texCoordBufferElementsCount = 6 * 2;
 
-const static int normalBufferElementsCount = MESH_WIDTH * MESH_HEIGHT * 6 * 3;
+const static int normalBufferElementsCount = 6 * 3;
 
 const static int vertexBufferSize = sizeof(GLfloat) * vertexBufferElementsCount;
 
@@ -118,13 +95,49 @@ static GLuint vao = 0;
 
 static GLuint vbo[] = { 0, 0, 0 };
 
+static GLfloat vertices[] = {
+    0.0f, 0.0f, 0.0f,
+    1.0f, 1.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+    1.0f, 1.0f, 0.0f,
+};
+
+static GLfloat texCoords[] = {
+    0.0f, 0.0f,
+    1.0f, 1.0f,
+    0.0f, 1.0f,
+    0.0f, 0.0f,
+    1.0f, 0.0f,
+    1.0f, 1.0f
+};
+
+static GLfloat normals[] = {
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 0.0f, 1.0f
+};
+
+static GLfloat modelMat[16];
+
+static GLfloat viewMat[16];
+
+static GLfloat projectionMat[16];
+
+static void initMatrices() {
+    mat_identity(modelMat);
+    mat_identity(viewMat);
+    mat_perspective(projectionMat, 90.0f, 0.1f, 100.0f);
+}
+
 bool initGl() {
     bool successful = compileShaderProgram(vProgram, strlen(vProgram), fProgram, strlen(fProgram), &program) == 0;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
-    GLfloat* vertices;
-    GLfloat* texCoords;
-    GLfloat* normals;
     int imageWidth, imageHeight;
     const char* texImageName = "hill.png";
     unsigned char* image = get_image_data(texImageName, &imageWidth, &imageHeight);
@@ -132,7 +145,7 @@ bool initGl() {
         printf("Image (%s) was null\n", texImageName);
         return false;
     }
-    generate_vertexes(&vertices, &texCoords, &normals, image, imageWidth, imageHeight, MESH_WIDTH, MESH_HEIGHT);
+    //generate_vertexes(&vertices, &texCoords, &normals, image, imageWidth, imageHeight, MESH_WIDTH, MESH_HEIGHT);
     glGenBuffers(3, vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, vertices, GL_STATIC_DRAW);
@@ -146,7 +159,8 @@ bool initGl() {
     printGlError(glGetError());
     glDisable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
-    return successful;
+    initMatrices();
+    return successful && loadGlTexture("ground.png");
 }
 
 static GLuint textureId;
@@ -179,7 +193,9 @@ bool loadGlTexture(const char* fileName) {
     return error == GL_NO_ERROR;
 }
 
-static GLfloat rotation[] = { 1, 2.5, 3.5 };
+static float pos[3] = {
+    -0.495, 0.495, 0.198
+};
 
 void updateGl(int* keys) {
     int l = keys[0];
@@ -190,29 +206,44 @@ void updateGl(int* keys) {
     int b = keys[5];
     float rate = 3.0 * 0.0165;
     if (u) {
-        rotation[0] += rate;
+        pos[0] += rate;
     } else if (d) {
-        rotation[0] -= rate;
+        pos[0] -= rate;
     }
     if (l) {
-        rotation[1] += rate;
+        pos[1] += rate;
     } else if (r) {
-        rotation[1] -= rate;
+        pos[1] -= rate;
     }
     if (a) {
-        rotation[2] += rate;
+        pos[2] += rate;
     } else if (b) {
-        rotation[2] -= rate;
+        pos[2] -= rate;
     }
+    mat_translation(modelMat, pos[0], pos[1], pos[2]);
+    GLfloat* intermediate = (float*)malloc(sizeof(float)*16);
+    mat_rot_x(intermediate, 3.1415f / 2.0f);
+    GLfloat* modelMatCopy = mat_copy(modelMat);
+    mat_multiplicate(modelMatCopy, intermediate, modelMat);
+    mat_destroy(modelMatCopy);
+    mat_destroy(intermediate);
 }
 
 void drawGl() {
     glUseProgram(program);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glBindVertexArray(vao);
-    GLint uniformLoc = glGetUniformLocation(program, "rotate");
+    GLint uniformLoc = glGetUniformLocation(program, "model");
     if (uniformLoc != -1) {
-        glUniform3f(uniformLoc, rotation[0], rotation[1], rotation[2]);
+        glUniformMatrix4fv(uniformLoc, 1, false, modelMat);
+    }
+    uniformLoc = glGetUniformLocation(program, "view");
+    if (uniformLoc != -1) {
+        glUniformMatrix4fv(uniformLoc, 1, false, viewMat);
+    }
+    uniformLoc = glGetUniformLocation(program, "projection");
+    if (uniformLoc != -1) {
+        glUniformMatrix4fv(uniformLoc, 1, false, projectionMat);
     }
     GLint vertexAttribPos = glGetAttribLocation(program, "vertexAttr");
     GLint texCoordAttribPos = glGetAttribLocation(program, "texCoordAttr");
