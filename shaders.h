@@ -20,7 +20,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-extern int compileShaderProgram(const char* vShader, size_t vShaderLength, const char* fShader, size_t fShaderLength, int* program);
+extern int compileShaderProgram(const char* vShader, size_t vShaderLength, const char* fShader, size_t fShaderLength, GLuint* program);
 
 #endif /* SHADERS_H */
 

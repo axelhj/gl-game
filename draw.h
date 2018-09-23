@@ -24,15 +24,39 @@
 #include "draw.h"
 #include "mat4.h"
 
-extern bool initGl();
+typedef struct game_entity {
+    GLuint program;
+    int vertexBufferCoordinateCount;
+    int texCoordBufferCoordinateCount;
+    int normalBufferCoordinateCount;
+    int vertexBufferElementsCount;
+    int texCoordBufferElementsCount;
+    int normalBufferElementsCount;
+    int vertexBufferSize;
+    int texCoordBufferSize;
+    int normalBufferSize;
+    GLuint textureId;
+    GLfloat* vertices;
+    GLfloat* texCoords;
+    GLfloat* normals;
+    GLuint vao;
+    GLuint vbo[3];
+    GLfloat modelMat[16];
+    GLfloat viewMat[16];
+    GLfloat projectionMat[16];
+} GAME_ENTITY;
 
-extern bool loadGlTexture(const char* fileName);
+extern void initSquare(GAME_ENTITY* gameEntity);
+
+extern bool initGl(GAME_ENTITY* gameEntity);
+
+extern bool loadGlTexture(GAME_ENTITY* gameEntity, const char* fileName);
 
 extern void printGlError(GLenum error);
 
-extern void updateGl(int* keys);
+extern void updateGl(GAME_ENTITY* gameEntity, int* keys);
 
-extern void drawGl();
+extern void drawGl(GAME_ENTITY* gameEntity);
 
 #endif /* DRAW_H */
 

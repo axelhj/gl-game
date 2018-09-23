@@ -107,7 +107,20 @@ int main(int argc, char** argv) {
     glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
     printf("Init GL Ver: %s, (Major: %d, Min: %d)\n\n", glGetString(GL_VERSION), majorVersion, minorVersion);
     running = initSuccessful = window != NULL && initSuccessful;
-    running = running && initGl();
+    GAME_ENTITY gameEntity;
+    initSquare(&gameEntity);
+    GAME_ENTITY gameEntity2;
+    initSquare(&gameEntity2);
+    running = running &&
+        initGl(&gameEntity) && loadGlTexture(&gameEntity, "ground.png") &&
+        initGl(&gameEntity2) && loadGlTexture(&gameEntity2, "ground.png");
+    mat_translation(gameEntity2.modelMat, -0.495, 0.495, 0.198);
+    GLfloat* intermediate = (float*)malloc(sizeof(float)*16);
+    mat_rot_x(intermediate, 3.1415f / 2.0f);
+    GLfloat* modelMatCopy = mat_copy(gameEntity2.modelMat);
+    mat_multiplicate(modelMatCopy, intermediate, gameEntity2.modelMat);
+    mat_destroy(modelMatCopy);
+    mat_destroy(intermediate);
     if (!running) {
         printf("Loading failed");
         glfwTerminate();
@@ -116,9 +129,10 @@ int main(int argc, char** argv) {
     glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
     glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
     while (running) {
-        updateGl(keys);
+        updateGl(&gameEntity, keys);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        drawGl();
+        drawGl(&gameEntity);
+        drawGl(&gameEntity2);
         glfwSwapBuffers(window);
         glfwPollEvents();
         running = running && glfwWindowShouldClose(window) == false;

@@ -41,7 +41,7 @@ static bool getLinkSuccessful(bool print, int program) {
  * Compile the shader programs
  */
 
-int compileShaderProgram(const char* vShader, size_t vShaderLength, const char* fShader, size_t fShaderLength, int* program) {
+int compileShaderProgram(const char* vShader, size_t vShaderLength, const char* fShader, size_t fShaderLength, GLuint* program) {
 //    printf(">>%s<< %d\n", vShader, (int)vShaderLength);
 //    printf(">>%s<< %d\n", fShader, (int)fShaderLength);
     int vShaderId = glCreateShader(GL_VERTEX_SHADER);

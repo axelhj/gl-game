@@ -14,6 +14,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include "mat4.h"
+
 extern bool running;
 
 extern void millisleep(unsigned int milliseconds);

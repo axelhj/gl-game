@@ -44,6 +44,9 @@ void main(void) {\n\
         angle = -angle;\n\
     }\n\
     vec4 texColor = texture(texture0, texCoord);\n\
+    if (texColor.a < 0.05) {\n\
+        discard;\n\
+    }\n\
     fragColor = vec4(angle * texColor.rgb, texColor.a);\n\
 }\n";
 
@@ -71,31 +74,7 @@ void printGlError(GLenum error) {
     }
 }
 
-static int program;
-
-const static int vertexBufferCoordinateCount = 3;
-
-const static int texCoordBufferCoordinateCount = 2;
-
-const static int normalBufferCoordinateCount = 3;
-
-const static int vertexBufferElementsCount = 6 * 3;
-
-const static int texCoordBufferElementsCount = 6 * 2;
-
-const static int normalBufferElementsCount = 6 * 3;
-
-const static int vertexBufferSize = sizeof(GLfloat) * vertexBufferElementsCount;
-
-const static int texCoordBufferSize = sizeof(GLfloat) * texCoordBufferElementsCount;
-
-const static int normalBufferSize = sizeof(GLfloat) * normalBufferElementsCount;
-
-static GLuint vao = 0;
-
-static GLuint vbo[] = { 0, 0, 0 };
-
-static GLfloat vertices[] = {
+static GLfloat squareVertices[] = {
     0.0f, 0.0f, 0.0f,
     1.0f, 1.0f, 0.0f,
     0.0f, 1.0f, 0.0f,
@@ -104,7 +83,7 @@ static GLfloat vertices[] = {
     1.0f, 1.0f, 0.0f,
 };
 
-static GLfloat texCoords[] = {
+static GLfloat squareTexCoords[] = {
     0.0f, 0.0f,
     1.0f, 1.0f,
     0.0f, 1.0f,
@@ -113,7 +92,7 @@ static GLfloat texCoords[] = {
     1.0f, 1.0f
 };
 
-static GLfloat normals[] = {
+static GLfloat squareNormals[] = {
     0.0f, 0.0f, 1.0f,
     0.0f, 0.0f, 1.0f,
     0.0f, 0.0f, 1.0f,
@@ -122,56 +101,61 @@ static GLfloat normals[] = {
     0.0f, 0.0f, 1.0f
 };
 
-static GLfloat modelMat[16];
-
-static GLfloat viewMat[16];
-
-static GLfloat projectionMat[16];
-
-static void initMatrices() {
-    mat_identity(modelMat);
-    mat_identity(viewMat);
-    mat_perspective(projectionMat, 90.0f, 0.1f, 100.0f);
+void initSquare(GAME_ENTITY* gameEntity) {
+    gameEntity->vertexBufferCoordinateCount = 3;
+    gameEntity->texCoordBufferCoordinateCount = 2;
+    gameEntity->normalBufferCoordinateCount = 3;
+    gameEntity->vertexBufferElementsCount = 3 * 6;
+    gameEntity->texCoordBufferElementsCount = 2 * 6;
+    gameEntity->normalBufferElementsCount = 3 * 6;
+    gameEntity->vertexBufferSize = sizeof(GLfloat) * gameEntity->vertexBufferElementsCount;
+    gameEntity->texCoordBufferSize = sizeof(GLfloat) * gameEntity->texCoordBufferElementsCount;
+    gameEntity->normalBufferSize = sizeof(GLfloat) * gameEntity->normalBufferElementsCount;
+    gameEntity->vertices = squareVertices;
+    gameEntity->texCoords = squareTexCoords;
+    gameEntity->normals = squareNormals;
 }
 
-bool initGl() {
-    bool successful = compileShaderProgram(vProgram, strlen(vProgram), fProgram, strlen(fProgram), &program) == 0;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-    int imageWidth, imageHeight;
-    const char* texImageName = "hill.png";
-    unsigned char* image = get_image_data(texImageName, &imageWidth, &imageHeight);
-    if (image == NULL) {
-        printf("Image (%s) was null\n", texImageName);
-        return false;
-    }
+bool initGl(GAME_ENTITY* gameEntity) {
+    bool successful = compileShaderProgram(vProgram, strlen(vProgram), fProgram, strlen(fProgram), &gameEntity->program) == 0;
+    glGenVertexArrays(1, &gameEntity->vao);
+    glBindVertexArray(gameEntity->vao);
+//    int imageWidth, imageHeight;
+//    const char* texImageName = "hill.png";
+//    unsigned char* image = get_image_data(texImageName, &imageWidth, &imageHeight);
+//    if (image == NULL) {
+//        printf("Image (%s) was null\n", texImageName);
+//        return false;
+//    }
     //generate_vertexes(&vertices, &texCoords, &normals, image, imageWidth, imageHeight, MESH_WIDTH, MESH_HEIGHT);
-    glGenBuffers(3, vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, vertices, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-    glBufferData(GL_ARRAY_BUFFER, texCoordBufferSize, texCoords, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-    glBufferData(GL_ARRAY_BUFFER, normalBufferSize, normals, GL_STATIC_DRAW);
+    glGenBuffers(3, gameEntity->vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, gameEntity->vbo[0]);
+    glBufferData(GL_ARRAY_BUFFER, gameEntity->vertexBufferSize, gameEntity->vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, gameEntity->vbo[1]);
+    glBufferData(GL_ARRAY_BUFFER, gameEntity->texCoordBufferSize, gameEntity->texCoords, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, gameEntity->vbo[2]);
+    glBufferData(GL_ARRAY_BUFFER, gameEntity->normalBufferSize, gameEntity->normals, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     
     printGlError(glGetError());
     glDisable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
-    initMatrices();
-    return successful && loadGlTexture("ground.png");
+
+    mat_identity(gameEntity->modelMat);
+    mat_identity(gameEntity->viewMat);
+    mat_perspective(gameEntity->projectionMat, 90.0f, 0.1f, 100.0f);
+
+    return successful;
 }
 
-static GLuint textureId;
-
-bool loadGlTexture(const char* fileName) {
+bool loadGlTexture(GAME_ENTITY* gameEntity, const char* fileName) {
     int imageWidth, imageHeight;
     const unsigned char* imageData = get_image_data(fileName, &imageWidth, &imageHeight);
     // glActiveTexture(GL_TEXTURE_0); Is neccesary?
-    glGenTextures(1, &textureId);
+    glGenTextures(1, &gameEntity->textureId);
     printGlError(glGetError());
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    glBindTexture(GL_TEXTURE_2D, gameEntity->textureId);
     printGlError(glGetError());
     glTexImage2D(
         GL_TEXTURE_2D,
@@ -187,7 +171,7 @@ bool loadGlTexture(const char* fileName) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glGenerateMipmap(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, textureId);
+    glBindTexture(GL_TEXTURE_2D, gameEntity->textureId);
     GLenum error = glGetError();
     printGlError(error);
     return error == GL_NO_ERROR;
@@ -197,7 +181,7 @@ static float pos[3] = {
     -0.495, 0.495, 0.198
 };
 
-void updateGl(int* keys) {
+void updateGl(GAME_ENTITY* gameEntity, int* keys) {
     int l = keys[0];
     int r = keys[1];
     int u = keys[2];
@@ -220,63 +204,62 @@ void updateGl(int* keys) {
     } else if (b) {
         pos[2] -= rate;
     }
-    mat_translation(modelMat, pos[0], pos[1], pos[2]);
+    mat_translation(gameEntity->modelMat, pos[0], pos[1], pos[2]);
     GLfloat* intermediate = (float*)malloc(sizeof(float)*16);
     mat_rot_x(intermediate, 3.1415f / 2.0f);
-    GLfloat* modelMatCopy = mat_copy(modelMat);
-    mat_multiplicate(modelMatCopy, intermediate, modelMat);
+    GLfloat* modelMatCopy = mat_copy(gameEntity->modelMat);
+    mat_multiplicate(modelMatCopy, intermediate, gameEntity->modelMat);
     mat_destroy(modelMatCopy);
     mat_destroy(intermediate);
 }
 
-void drawGl() {
-    glUseProgram(program);
+void drawGl(GAME_ENTITY* gameEntity) {
+    glUseProgram(gameEntity->program);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glBindVertexArray(vao);
-    GLint uniformLoc = glGetUniformLocation(program, "model");
+    glBindVertexArray(gameEntity->vao);
+    GLint uniformLoc = glGetUniformLocation(gameEntity->program, "model");
     if (uniformLoc != -1) {
-        glUniformMatrix4fv(uniformLoc, 1, false, modelMat);
+        glUniformMatrix4fv(uniformLoc, 1, false, gameEntity->modelMat);
     }
-    uniformLoc = glGetUniformLocation(program, "view");
+    uniformLoc = glGetUniformLocation(gameEntity->program, "view");
     if (uniformLoc != -1) {
-        glUniformMatrix4fv(uniformLoc, 1, false, viewMat);
+        glUniformMatrix4fv(uniformLoc, 1, false, gameEntity->viewMat);
     }
-    uniformLoc = glGetUniformLocation(program, "projection");
+    uniformLoc = glGetUniformLocation(gameEntity->program, "projection");
     if (uniformLoc != -1) {
-        glUniformMatrix4fv(uniformLoc, 1, false, projectionMat);
+        glUniformMatrix4fv(uniformLoc, 1, false, gameEntity->projectionMat);
     }
-    GLint vertexAttribPos = glGetAttribLocation(program, "vertexAttr");
-    GLint texCoordAttribPos = glGetAttribLocation(program, "texCoordAttr");
-    GLint normalAttribPos = glGetAttribLocation(program, "normalAttr");
+    GLint vertexAttribPos = glGetAttribLocation(gameEntity->program, "vertexAttr");
+    GLint texCoordAttribPos = glGetAttribLocation(gameEntity->program, "texCoordAttr");
+    GLint normalAttribPos = glGetAttribLocation(gameEntity->program, "normalAttr");
     glEnableVertexAttribArray(vertexAttribPos);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, gameEntity->vbo[0]);
     glVertexAttribPointer(vertexAttribPos, // attrib array index
-                          vertexBufferCoordinateCount, // vertex attrib coordinates count
-                          GL_FLOAT, // type
-                          GL_FALSE, // normalized
-                          0, // stride
-                          (void*)0); // vbo offset
+        gameEntity->vertexBufferCoordinateCount, // vertex attrib coordinates count
+        GL_FLOAT, // type
+        GL_FALSE, // normalized
+        0, // stride
+        (void*)0); // vbo offset
     glEnableVertexAttribArray(texCoordAttribPos);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, gameEntity->vbo[1]);
     glVertexAttribPointer(texCoordAttribPos, // attrib array index
-                          texCoordBufferCoordinateCount, // vertex attrib coordinates count
-                          GL_FLOAT, // type
-                          GL_FALSE, // normalized
-                          0, // stride
-                          (void*)0); // vbo offset
+        gameEntity->texCoordBufferCoordinateCount, // vertex attrib coordinates count
+        GL_FLOAT, // type
+        GL_FALSE, // normalized
+        0, // stride
+        (void*)0); // vbo offset
     glEnableVertexAttribArray(normalAttribPos);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, gameEntity->vbo[2]);
     glVertexAttribPointer(normalAttribPos, // attrib array index
-                          normalBufferCoordinateCount, // vertex attrib coordinates count
+                          gameEntity->normalBufferCoordinateCount, // vertex attrib coordinates count
                           GL_FLOAT, // type
                           GL_FALSE, // normalized
                           0, // stride
                           (void*)0); // vbo offset
-    glBindTexture(GL_TEXTURE_2D, textureId);
-    GLint uniformLocation = glGetUniformLocation(program, "texture0");
+    glBindTexture(GL_TEXTURE_2D, gameEntity->textureId);
+    GLint uniformLocation = glGetUniformLocation(gameEntity->program, "texture0");
     glUniform1i(uniformLocation, 0);
-
-    glDrawArrays(GL_TRIANGLES, 0, vertexBufferElementsCount / vertexBufferCoordinateCount);
+    glDrawArrays(GL_TRIANGLES, 0, gameEntity->vertexBufferElementsCount / gameEntity->vertexBufferCoordinateCount);
     glDisableVertexAttribArray(vertexAttribPos);
     glDisableVertexAttribArray(normalAttribPos);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
