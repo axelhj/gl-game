@@ -7,7 +7,11 @@ uniform vec3 rotate;\n\
 \n\
 in vec3 vertexAttr;\n\
 \n\
+in vec2 texCoordAttr;\n\
+\n\
 in vec3 normalAttr;\n\
+\n\
+out vec2 texCoord;\n\
 \n\
 out vec3 normal;\n\
 \n\
@@ -33,12 +37,17 @@ void main(void) {\n\
     z = gl_Position.z;\n\
     gl_Position.z = z * cos(rotate.y) - x * sin(rotate.y);\n\
     gl_Position.x = z * sin(rotate.y) + x * cos(rotate.y);\n\
+    texCoord = texCoordAttr;\n\
 }\n";
 
 static const char* fProgram = 
 "#version 150\n\
 \n\
+in vec2 texCoord;\n\
+\n\
 in vec3 normal;\n\
+\n\
+uniform sampler2D texture0;\n\
 \n\
 out vec4 fragColor;\
 \n\
@@ -48,7 +57,8 @@ void main(void) {\n\
     if (angle < 0.0) {\n\
         angle = -angle;\n\
     }\n\
-    fragColor = angle * vec4(0.0, 1.0, 0.0, 0.6);\n\
+    vec4 texColor = texture(texture0, texCoord);\n\
+    fragColor = vec4(angle * texColor.rgb, texColor.a);\n\
 }\n";
 
 void printGlError(GLenum error) {
@@ -88,43 +98,85 @@ static GLfloat vertices[] = {
 
 const static int vertexBufferCoordinateCount = 3;
 
+const static int texCoordBufferCoordinateCount = 2;
+
 const static int normalBufferCoordinateCount = 3;
 
 const static int vertexBufferElementsCount = MESH_WIDTH * MESH_HEIGHT * 6 * 3;
+
+const static int texCoordBufferElementsCount = MESH_WIDTH * MESH_HEIGHT * 6 * 2;
 
 const static int normalBufferElementsCount = MESH_WIDTH * MESH_HEIGHT * 6 * 3;
 
 const static int vertexBufferSize = sizeof(GLfloat) * vertexBufferElementsCount;
 
+const static int texCoordBufferSize = sizeof(GLfloat) * texCoordBufferElementsCount;
+
 const static int normalBufferSize = sizeof(GLfloat) * normalBufferElementsCount;
 
 static GLuint vao = 0;
 
-static GLuint vbo[] = { 0, 0 };
+static GLuint vbo[] = { 0, 0, 0 };
 
 bool initGl() {
     bool successful = compileShaderProgram(vProgram, strlen(vProgram), fProgram, strlen(fProgram), &program) == 0;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     GLfloat* vertices;
+    GLfloat* texCoords;
     GLfloat* normals;
     int imageWidth, imageHeight;
-    unsigned char* image = get_image_data("hill.png", &imageWidth, &imageHeight);
+    const char* texImageName = "hill.png";
+    unsigned char* image = get_image_data(texImageName, &imageWidth, &imageHeight);
     if (image == NULL) {
+        printf("Image (%s) was null\n", texImageName);
         return false;
     }
-    generate_vertexes(&vertices, &normals, image, imageWidth, imageHeight, MESH_WIDTH, MESH_HEIGHT);
-    glGenBuffers(2, vbo);
+    generate_vertexes(&vertices, &texCoords, &normals, image, imageWidth, imageHeight, MESH_WIDTH, MESH_HEIGHT);
+    glGenBuffers(3, vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, vertexBufferSize, vertices, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+    glBufferData(GL_ARRAY_BUFFER, texCoordBufferSize, texCoords, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
     glBufferData(GL_ARRAY_BUFFER, normalBufferSize, normals, GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+    
     printGlError(glGetError());
     glDisable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     return successful;
+}
+
+static GLuint textureId;
+
+bool loadGlTexture(const char* fileName) {
+    int imageWidth, imageHeight;
+    const unsigned char* imageData = get_image_data(fileName, &imageWidth, &imageHeight);
+    // glActiveTexture(GL_TEXTURE_0); Is neccesary?
+    glGenTextures(1, &textureId);
+    printGlError(glGetError());
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    printGlError(glGetError());
+    glTexImage2D(
+        GL_TEXTURE_2D,
+        0,
+        GL_RGBA8,
+        imageWidth,
+        imageHeight,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        imageData
+    );
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    GLenum error = glGetError();
+    printGlError(error);
+    return error == GL_NO_ERROR;
 }
 
 static GLfloat rotation[] = { 1, 2.5, 3.5 };
@@ -163,6 +215,7 @@ void drawGl() {
         glUniform3f(uniformLoc, rotation[0], rotation[1], rotation[2]);
     }
     GLint vertexAttribPos = glGetAttribLocation(program, "vertexAttr");
+    GLint texCoordAttribPos = glGetAttribLocation(program, "texCoordAttr");
     GLint normalAttribPos = glGetAttribLocation(program, "normalAttr");
     glEnableVertexAttribArray(vertexAttribPos);
     glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
@@ -172,14 +225,26 @@ void drawGl() {
                           GL_FALSE, // normalized
                           0, // stride
                           (void*)0); // vbo offset
-    glEnableVertexAttribArray(normalAttribPos);
+    glEnableVertexAttribArray(texCoordAttribPos);
     glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+    glVertexAttribPointer(texCoordAttribPos, // attrib array index
+                          texCoordBufferCoordinateCount, // vertex attrib coordinates count
+                          GL_FLOAT, // type
+                          GL_FALSE, // normalized
+                          0, // stride
+                          (void*)0); // vbo offset
+    glEnableVertexAttribArray(normalAttribPos);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
     glVertexAttribPointer(normalAttribPos, // attrib array index
                           normalBufferCoordinateCount, // vertex attrib coordinates count
                           GL_FLOAT, // type
                           GL_FALSE, // normalized
                           0, // stride
                           (void*)0); // vbo offset
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    GLint uniformLocation = glGetUniformLocation(program, "texture0");
+    glUniform1i(uniformLocation, 0);
+
     glDrawArrays(GL_TRIANGLES, 0, vertexBufferElementsCount / vertexBufferCoordinateCount);
     glDisableVertexAttribArray(vertexAttribPos);
     glDisableVertexAttribArray(normalAttribPos);

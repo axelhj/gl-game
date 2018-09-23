@@ -108,6 +108,7 @@ int main(int argc, char** argv) {
     printf("Init GL Ver: %s, (Major: %d, Min: %d)\n\n", glGetString(GL_VERSION), majorVersion, minorVersion);
     running = initSuccessful = window != NULL && initSuccessful;
     running = running && initGl();
+    running = running && loadGlTexture("hill3.png");
     if (!running) {
         printf("Loading failed");
         glfwTerminate();

@@ -54,7 +54,9 @@ static float getHeightVal(unsigned char r, unsigned char g, unsigned char b, uns
     return ((float)r / 255.0f) * ((float)g / 255.0f) * (255.0f / (float)b);
 }
 
-void generate_vertexes(GLfloat** vertexData, GLfloat** normalData, unsigned char* imageData, int imageWidth, int imageHeight, int vertexesX, int vertexesY) {
+void generate_vertexes(GLfloat** vertexData, GLfloat** texCoordData, GLfloat** normalData,
+        unsigned char* imageData, int imageWidth, int imageHeight, int vertexesX, int vertexesY
+) {
     *vertexData = (GLfloat*)malloc(sizeof(GLfloat) * vertexesX * vertexesY * 3);
     float triangleWidth = ((float)imageWidth) / ((float)vertexesX);
     float triangleHeight = ((float)imageHeight) / ((float)vertexesY);
@@ -125,6 +127,44 @@ void generate_vertexes(GLfloat** vertexData, GLfloat** normalData, unsigned char
         triangleVertexData[i + 15 + 1] = lr[1];
         triangleVertexData[i + 15 + 2] = lr[2];
     }
+    GLfloat* triangleTexCoordData;
+    triangleTexCoordData = (GLfloat*)malloc(sizeof(GLfloat) * vertexesX * vertexesY * 2 * 6);
+    for (int i = 0; i < vertexesX * vertexesY * 2 * 6; i += 2 * 6) {
+        int x = (i / 12) % vertexesX;
+        int y = (i / 12) / vertexesX;
+        int vDataIndex = (int)(((double)i) * 1.5) / 6;
+        if (x >= vertexesX - 1 || y >= vertexesY - 1) {
+            GLfloat* ll = (*vertexData + vDataIndex);
+            for (int j = 0; j < 6; ++j) {
+                // This is probably broken
+                triangleTexCoordData[i + j * 2 + 0] = ll[0];
+                triangleTexCoordData[i + j * 2 + 1] = ll[2];
+            }
+            continue;
+        }
+        GLfloat* ll = (*vertexData + vDataIndex); // this indexing breaks
+        GLfloat* tl = (*vertexData + vDataIndex + vertexesX * 2);
+        GLfloat* lr = (*vertexData + vDataIndex + 2);
+        GLfloat* tr = (*vertexData + vDataIndex + vertexesX * 2 + 2);
+        // triangle 1 vertex 1
+        triangleTexCoordData[i + 0 + 0] = ll[0];
+        triangleTexCoordData[i + 0 + 1] = ll[1];
+        // triangle 1 vertex 2
+        triangleTexCoordData[i + 2 + 0] = tl[0];
+        triangleTexCoordData[i + 2 + 1] = tl[1];
+        // triangle 1 vertex 3
+        triangleTexCoordData[i + 4 + 0] = tr[0];
+        triangleTexCoordData[i + 4 + 1] = tr[1];
+        // triangle 2 vertex 4
+        triangleTexCoordData[i + 6 + 0] = ll[0];
+        triangleTexCoordData[i + 6 + 1] = ll[1];
+        // triangle 2 vertex 5
+        triangleTexCoordData[i + 8 + 0] = tr[0];
+        triangleTexCoordData[i + 8 + 1] = tr[1];
+        // triangle 2 vertex 6
+        triangleTexCoordData[i + 10 + 0] = lr[0];
+        triangleTexCoordData[i + 10 + 1] = lr[1];
+    }
     free(*vertexData);
     GLfloat* triangleNormalData;
     triangleNormalData = (GLfloat*)malloc(sizeof(GLfloat) * vertexesX * vertexesY * 3 * 6);
@@ -151,6 +191,7 @@ void generate_vertexes(GLfloat** vertexData, GLfloat** normalData, unsigned char
         triangleNormalData[i + 17] = normal[2];
     }
     *vertexData = triangleVertexData;
+    *texCoordData = triangleTexCoordData;
     *normalData = triangleNormalData;
 }
 

@@ -22,7 +22,8 @@ extern unsigned char* get_image_data(const char* imageName, int* imageWidth, int
 
 extern void delete_image_data(char* imageData);
 
-extern void generate_vertexes(GLfloat** vertexData, GLfloat** normalData, unsigned char* imageData, int imageWidth, int imageHeight, int vertexesX, int vertexesY);
+extern void generate_vertexes(GLfloat** vertexData, GLfloat** texCoordData, GLfloat** normalData,
+        unsigned char* imageData, int imageWidth, int imageHeight, int vertexesX, int vertexesY);
 
 extern void free_vertexes(GLfloat* vertexData, GLfloat* normalData);
 

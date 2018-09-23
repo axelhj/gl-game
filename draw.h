@@ -21,8 +21,11 @@
 #include <GLFW/glfw3.h>
 #include "shaders.h"
 #include "vertex_gen.h"
+#include "draw.h"
 
 extern bool initGl();
+
+extern bool loadGlTexture(const char* fileName);
 
 extern void printGlError(GLenum error);
 
