@@ -46,13 +46,23 @@ typedef struct game_entity {
     GLfloat projectionMat[16];
 } GAME_ENTITY;
 
-extern void initSquare(GAME_ENTITY* gameEntity);
+extern int keys[7];
 
-extern bool initGl(GAME_ENTITY* gameEntity);
+extern bool initGl(const char* windowTitle, const int windowWidth, const int windowHeight);
+
+extern void terminateGl();
+
+extern void setSquareVertexData(GAME_ENTITY* gameEntity);
+
+extern bool loadGl(GAME_ENTITY* gameEntity);
 
 extern bool loadGlTexture(GAME_ENTITY* gameEntity, const char* fileName);
 
 extern void printGlError(GLenum error);
+
+extern void preDraw();
+
+extern bool postDraw();
 
 extern void drawGl(GAME_ENTITY* gameEntity);
 

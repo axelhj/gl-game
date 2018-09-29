@@ -74,6 +74,83 @@ void printGlError(GLenum error) {
     }
 }
 
+static GLFWwindow* window;
+int keys[7] = {0, 0, 0, 0, 0, 0, 0};
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        printf("Esc pressed\n");
+        keys[6] = 1;
+    } else if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+        printf("Esc released\n");
+        keys[6] = 0;
+    } else if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+        printf("Q pressed\n");
+        keys[6] = 1;
+    } else if (key == GLFW_KEY_Q && action == GLFW_RELEASE) {
+        printf("Q released\n");
+        keys[6] = 0;
+    } else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+        keys[0] = 1;
+    } else if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
+        keys[0] = 0;
+    } else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+        keys[1] = 1;
+    } else if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
+        keys[1] = 0;
+    } else if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+        keys[2] = 1;
+    } else if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
+        keys[2] = 0;
+    } else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+        keys[3] = 1;
+    } else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
+        keys[3] = 0;
+    } else if (key == GLFW_KEY_X && action == GLFW_PRESS) {
+        keys[4] = 1;
+    } else if (key == GLFW_KEY_X && action == GLFW_RELEASE) {
+        keys[4] = 0;
+    } else if (key == GLFW_KEY_Z && action == GLFW_PRESS) {
+        keys[5] = 1;
+    } else if (key == GLFW_KEY_Z && action == GLFW_RELEASE) {
+        keys[5] = 0;
+    } else if (action != GLFW_REPEAT) {
+        printf("Unknown key %d, action %d\n", key, action);
+    }
+}
+
+bool initGl(const char* windowTitle, const int windowWidth, const int windowHeight) {
+    if (!glfwInit()) {
+        printf("Init failed\n");
+        return false;
+    }
+    bool initSuccessful = true;
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, NULL, NULL);
+    glfwSetKeyCallback(window, key_callback);
+    glfwMakeContextCurrent(window);
+    GLenum error = glewInit();
+    if (error != GL_NO_ERROR) {
+        printf("Glew init failed\n");
+        printGlError(error);
+        initSuccessful = false;
+    }
+    int majorVersion = 0;
+    int minorVersion = 0;
+    glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+    glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+    printf("Init GL Ver: %s, (Major: %d, Min: %d)\n\n", glGetString(GL_VERSION), majorVersion, minorVersion);
+    glViewport(0, 0, windowWidth, windowHeight);
+    glClearColor(0.4f, 0.65f, 0.85f, 1.0f);
+    return window != NULL && initSuccessful;
+}
+
+void terminateGl() {
+    glfwTerminate();
+}
+
 static GLfloat squareVertices[] = {
     0.0f, 0.0f, 0.0f,
     1.0f, 1.0f, 0.0f,
@@ -101,7 +178,7 @@ static GLfloat squareNormals[] = {
     0.0f, 0.0f, 1.0f
 };
 
-void initSquare(GAME_ENTITY* gameEntity) {
+void setSquareVertexData(GAME_ENTITY* gameEntity) {
     gameEntity->vertexBufferCoordinateCount = 3;
     gameEntity->texCoordBufferCoordinateCount = 2;
     gameEntity->normalBufferCoordinateCount = 3;
@@ -116,7 +193,7 @@ void initSquare(GAME_ENTITY* gameEntity) {
     gameEntity->normals = squareNormals;
 }
 
-bool initGl(GAME_ENTITY* gameEntity) {
+bool loadGl(GAME_ENTITY* gameEntity) {
     bool successful = compileShaderProgram(vProgram, strlen(vProgram), fProgram, strlen(fProgram), &gameEntity->program) == 0;
     glGenVertexArrays(1, &gameEntity->vao);
     glBindVertexArray(gameEntity->vao);
@@ -175,6 +252,16 @@ bool loadGlTexture(GAME_ENTITY* gameEntity, const char* fileName) {
     GLenum error = glGetError();
     printGlError(error);
     return error == GL_NO_ERROR;
+}
+
+void preDraw() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+bool postDraw() {
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+    return glfwWindowShouldClose(window) == 0;
 }
 
 void drawGl(GAME_ENTITY* gameEntity) {

@@ -16,12 +16,7 @@
 
 #include "mat4.h"
 
-extern bool running;
-
 extern void millisleep(unsigned int milliseconds);
-
-extern void key_callback(void);
-
 
 #endif /* MAIN_H */
 
