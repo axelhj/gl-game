@@ -1,5 +1,9 @@
 /build
 /dist
+/obj
+/bin
+/gl-game.depend
+/gl-game.layout
 /nbproject/private/*
 /nbproject/*.mk
 /nbproject/*.bash
