@@ -4,6 +4,8 @@
 /bin
 /gl-game.depend
 /gl-game.layout
+*cpp.bak
+*h.bak
 /nbproject/private/*
 /nbproject/*.mk
 /nbproject/*.bash
