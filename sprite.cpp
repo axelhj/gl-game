@@ -4,7 +4,7 @@ bool create_sprite(SPRITE** sprite, const char* textureName)
 {
     *sprite = (SPRITE*)malloc(sizeof(SPRITE));
     bool success = *sprite != NULL;
-    (*sprite)->draw_entity = (DRAW_ENTITY*)malloc (sizeof(DRAW_ENTITY));
+    (*sprite)->draw_entity = (DRAW_ENTITY*)malloc(sizeof(DRAW_ENTITY));
     success = success && (*sprite)->draw_entity != NULL;
     setSquareVertexData((*sprite)->draw_entity);
     success = success && loadGl((*sprite)->draw_entity);
