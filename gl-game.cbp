@@ -50,12 +50,16 @@
 		<Unit filename="hill.png" />
 		<Unit filename="hill2.png" />
 		<Unit filename="hill3.png" />
+		<Unit filename="level.cpp" />
+		<Unit filename="level.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="main.h" />
 		<Unit filename="mat4.cpp" />
 		<Unit filename="mat4.h" />
 		<Unit filename="shaders.cpp" />
 		<Unit filename="shaders.h" />
+		<Unit filename="sprite.cpp" />
+		<Unit filename="sprite.h" />
 		<Unit filename="stb_image.h" />
 		<Unit filename="util.cpp" />
 		<Unit filename="util.h" />

@@ -24,7 +24,7 @@
 #include "draw.h"
 #include "mat4.h"
 
-typedef struct game_entity {
+typedef struct draw_entity {
     GLuint program;
     int vertexBufferCoordinateCount;
     int texCoordBufferCoordinateCount;
@@ -44,7 +44,7 @@ typedef struct game_entity {
     GLfloat modelMat[16];
     GLfloat viewMat[16];
     GLfloat projectionMat[16];
-} GAME_ENTITY;
+} DRAW_ENTITY;
 
 extern int keys[7];
 
@@ -52,11 +52,11 @@ extern bool initGl(const char* windowTitle, const int windowWidth, const int win
 
 extern void terminateGl();
 
-extern void setSquareVertexData(GAME_ENTITY* gameEntity);
+extern void setSquareVertexData(DRAW_ENTITY* drawEntity);
 
-extern bool loadGl(GAME_ENTITY* gameEntity);
+extern bool loadGl(DRAW_ENTITY* drawEntity);
 
-extern bool loadGlTexture(GAME_ENTITY* gameEntity, const char* fileName);
+extern bool loadGlTexture(DRAW_ENTITY* drawEntity, const char* fileName);
 
 extern void printGlError(GLenum error);
 
@@ -64,7 +64,7 @@ extern void preDraw();
 
 extern bool postDraw();
 
-extern void drawGl(GAME_ENTITY* gameEntity);
+extern void drawGl(DRAW_ENTITY* drawEntity);
 
 #endif /* DRAW_H */
 
