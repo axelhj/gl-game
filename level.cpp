@@ -1,26 +1,35 @@
 #include "level.h"
 
-static SPRITE* entities[5] = { 0, 0, 0, 0, 0 };
-
 static DRAW_ENTITY* drawEntity;
 
 static float pos[3] = {
     -0.495, 0.495, 0.198
 };
 
+#define TILES_X 12
+#define TILES_Y 9
+
+#define TILE_WIDTH 1.0f
+#define TILE_HEIGHT 1.0f
+
+static SPRITE* tiles[TILES_X * TILES_Y];
+
 bool init_level()
 {
-    bool ok = create_sprite(entities + 0, "game-hero.png");
-    drawEntity = (*entities)->draw_entity;
-    ok = ok && create_sprite(entities + 1, "ground.png");
-    mat_translation((*(entities + 0))->draw_entity->viewMat, 0.35f, -0.37f, 1.0f);
-    mat_translation((*(entities + 1))->draw_entity->modelMat, -0.495, 0.495, 0.198);
-    GLfloat* intermediate = (float*)malloc(sizeof(float)*16);
-    mat_rot_x(intermediate, 3.1415f / 2.0f);
-    GLfloat* modelMatCopy = mat_copy((*(entities + 1))->draw_entity->modelMat);
-    mat_multiplicate(modelMatCopy, intermediate, (*(entities + 1))->draw_entity->modelMat);
-    mat_destroy(modelMatCopy);
-    mat_destroy(intermediate);
+    drawEntity = (DRAW_ENTITY*)malloc(sizeof(DRAW_ENTITY));
+    setSquareVertexData(drawEntity);
+    bool ok = loadGl(drawEntity);
+    ok = ok && loadGlTexture(drawEntity, "game-hero.png");
+    for (int i = 0; i < TILES_X; ++i) {
+        for (int j = 0; j < TILES_Y && ok; ++j) {
+            ok = create_sprite(tiles + (i + TILES_X * j), "ground.png");
+            SPRITE* tile = tiles[i + TILES_X * j];
+            set_sprite_pos(tile, i * TILE_WIDTH - 6.0f, j * TILE_HEIGHT - 4.5f, 12.0f);
+            tile->size[0] = TILE_WIDTH;
+            tile->size[1] = TILE_HEIGHT;
+            update_model_mat(tile);
+        }
+    }
     return ok;
 }
 
@@ -70,13 +79,18 @@ bool update_level(int keys[], float dt, float t)
 
 bool draw_level()
 {
-    drawGl((*(entities + 0))->draw_entity);
-    drawGl((*(entities + 1))->draw_entity);
+    drawGl(drawEntity);
+    for (int i = 0; i < TILES_X * TILES_Y; ++i) {
+        drawGl(tiles[i]->draw_entity);
+    }
     return true;
 }
 
 bool destroy_level()
 {
-    // TODO
+    free(drawEntity);
+    for (int i = 0; i < TILES_X * TILES_Y; ++i) {
+        destroy_sprite(tiles[i]);
+    }
     return true;
 }

@@ -20,10 +20,11 @@ bool destroy_sprite(SPRITE* sprite)
     return true;
 }
 
-void set_sprite_pos(SPRITE* sprite, float x, float y)
+void set_sprite_pos(SPRITE* sprite, float x, float y, float z)
 {
     sprite->pos[0] = x;
     sprite->pos[1] = y;
+    sprite->pos[2] = z;
 }
 
 void set_sprite_size(SPRITE* sprite, float w, float h)
@@ -40,6 +41,6 @@ void update_model_mat(SPRITE* sprite)
     GLfloat intermediate[16];
     GLfloat modelMatCopy[16];
     mat_scale(modelMatCopy, size[0], size[1], 1);
-    mat_translation(intermediate, pos[0], pos[1], 0);
+    mat_translation(intermediate, pos[0], pos[1], pos[2]);
     mat_multiplicate(modelMatCopy, intermediate, modelMat);
 }
