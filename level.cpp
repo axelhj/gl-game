@@ -14,6 +14,18 @@ static float pos[3] = {
 
 static SPRITE* tiles[TILES_X * TILES_Y];
 
+static int grid[TILES_X * TILES_Y] = {
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1,
+    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+    1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1,
+    1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+};
+
 bool init_level()
 {
     drawEntity = (DRAW_ENTITY*)malloc(sizeof(DRAW_ENTITY));
@@ -22,7 +34,12 @@ bool init_level()
     ok = ok && loadGlTexture(drawEntity, "game-hero.png");
     for (int i = 0; i < TILES_X; ++i) {
         for (int j = 0; j < TILES_Y && ok; ++j) {
-            ok = create_sprite(tiles + (i + TILES_X * j), "ground.png");
+            int offset= i + TILES_X * j;
+            if (grid[offset]) {
+                ok = create_sprite(tiles + offset, "wall.png");
+            } else {
+                ok = create_sprite(tiles + offset, "ground.png");
+            }
             SPRITE* tile = tiles[i + TILES_X * j];
             set_sprite_pos(tile, i * TILE_WIDTH - 6.0f, j * TILE_HEIGHT - 4.5f, 12.0f);
             tile->size[0] = TILE_WIDTH;
