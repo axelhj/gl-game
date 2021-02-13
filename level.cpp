@@ -1,6 +1,6 @@
 #include "level.h"
 
-static DRAW_ENTITY* drawEntity;
+static SPRITE* draw_sprite;
 
 static float pos[3] = {
     -0.495, 0.495, 0.198
@@ -28,10 +28,8 @@ static int grid[TILES_X * TILES_Y] = {
 
 bool init_level()
 {
-    drawEntity = (DRAW_ENTITY*)malloc(sizeof(DRAW_ENTITY));
-    setSquareVertexData(drawEntity);
-    bool ok = loadGl(drawEntity);
-    ok = ok && loadGlTexture(drawEntity, "game-hero.png");
+    bool ok = create_sprite(&draw_sprite, "game-hero.png");
+    set_sprite_size(draw_sprite, 0.3, 0.3);
     for (int i = 0; i < TILES_X; ++i) {
         for (int j = 0; j < TILES_Y && ok; ++j) {
             int offset= i + TILES_X * j;
@@ -74,29 +72,14 @@ bool update_level(int keys[], float dt, float t)
     } else if (b) {
         pos[2] += rate;
     }
-    mat_scale(drawEntity->modelMat, 0.3, 0.3, 0.3);
-    GLfloat* intermediate = (float*)malloc(sizeof(float)*16);
-    // Pass 0
-    mat_rot_x(intermediate, 3.1415);
-    GLfloat* modelMatCopy = mat_copy(drawEntity->modelMat);
-    mat_multiplicate(modelMatCopy, intermediate, drawEntity->modelMat);
-    // Pass 1
-    mat_rot_y(intermediate, 3.1415f / 4.0f);
-    modelMatCopy = mat_copy(drawEntity->modelMat);
-    mat_multiplicate(modelMatCopy, intermediate, drawEntity->modelMat);
-    // Pass 2
-    mat_translation(intermediate, pos[0], pos[1], pos[2]);
-    mat_set_to(modelMatCopy, drawEntity->modelMat);
-    mat_multiplicate(modelMatCopy, intermediate, drawEntity->modelMat);
-
-    mat_destroy(modelMatCopy);
-    mat_destroy(intermediate);
+    set_sprite_pos(draw_sprite, pos[0], pos[1], pos[2]);
     return true;
 }
 
 bool draw_level()
 {
-    drawGl(drawEntity);
+    update_model_mat(draw_sprite);
+    drawGl(draw_sprite->draw_entity);
     for (int i = 0; i < TILES_X * TILES_Y; ++i) {
         drawGl(tiles[i]->draw_entity);
     }
@@ -105,7 +88,7 @@ bool draw_level()
 
 bool destroy_level()
 {
-    free(drawEntity);
+    destroy_sprite(draw_sprite);
     for (int i = 0; i < TILES_X * TILES_Y; ++i) {
         destroy_sprite(tiles[i]);
     }
