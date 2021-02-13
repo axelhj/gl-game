@@ -22,5 +22,7 @@
 
 extern int compileShaderProgram(const char* vShader, size_t vShaderLength, const char* fShader, size_t fShaderLength, GLuint* program);
 
+extern int deleteShaderProgram(GLuint program);
+
 #endif /* SHADERS_H */
 

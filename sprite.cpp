@@ -14,7 +14,8 @@ bool create_sprite(SPRITE** sprite, const char* textureName)
 
 bool destroy_sprite(SPRITE* sprite)
 {
-    // TODO: Implement OGL resource cleanup.
+    bool success = success && unloadGl(sprite->draw_entity);
+    success = success && unloadGlTexture(sprite->draw_entity);
     free(sprite->draw_entity);
     free(sprite);
     return true;

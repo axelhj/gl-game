@@ -58,6 +58,10 @@ extern bool loadGl(DRAW_ENTITY* drawEntity);
 
 extern bool loadGlTexture(DRAW_ENTITY* drawEntity, const char* fileName);
 
+extern bool unloadGl(DRAW_ENTITY* drawEntity);
+
+extern bool unloadGlTexture(DRAW_ENTITY* drawEntity);
+
 extern void printGlError(GLenum error);
 
 extern void preDraw();

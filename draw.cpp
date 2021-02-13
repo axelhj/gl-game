@@ -197,25 +197,20 @@ bool loadGl(DRAW_ENTITY* drawEntity) {
     bool successful = compileShaderProgram(vProgram, strlen(vProgram), fProgram, strlen(fProgram), &drawEntity->program) == 0;
     glGenVertexArrays(1, &drawEntity->vao);
     glBindVertexArray(drawEntity->vao);
-//    int imageWidth, imageHeight;
-//    const char* texImageName = "hill.png";
-//    unsigned char* image = get_image_data(texImageName, &imageWidth, &imageHeight);
-//    if (image == NULL) {
-//        printf("Image (%s) was null\n", texImageName);
-//        return false;
-//    }
-    //generate_vertexes(&vertices, &texCoords, &normals, image, imageWidth, imageHeight, MESH_WIDTH, MESH_HEIGHT);
     glGenBuffers(3, drawEntity->vbo);
+    // Note: glBufferData can cause GL_OUT_OF_MEMORY error.
     glBindBuffer(GL_ARRAY_BUFFER, drawEntity->vbo[0]);
     glBufferData(GL_ARRAY_BUFFER, drawEntity->vertexBufferSize, drawEntity->vertices, GL_STATIC_DRAW);
+    printGlError(glGetError());
     glBindBuffer(GL_ARRAY_BUFFER, drawEntity->vbo[1]);
     glBufferData(GL_ARRAY_BUFFER, drawEntity->texCoordBufferSize, drawEntity->texCoords, GL_STATIC_DRAW);
+    printGlError(glGetError());
     glBindBuffer(GL_ARRAY_BUFFER, drawEntity->vbo[2]);
     glBufferData(GL_ARRAY_BUFFER, drawEntity->normalBufferSize, drawEntity->normals, GL_STATIC_DRAW);
+    printGlError(glGetError());
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    printGlError(glGetError());
     glDisable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
 
@@ -228,8 +223,7 @@ bool loadGl(DRAW_ENTITY* drawEntity) {
 
 bool loadGlTexture(DRAW_ENTITY* drawEntity, const char* fileName) {
     int imageWidth, imageHeight;
-    const unsigned char* imageData = get_image_data(fileName, &imageWidth, &imageHeight);
-    // glActiveTexture(GL_TEXTURE_0); Is neccesary?
+    unsigned char* imageData = get_image_data(fileName, &imageWidth, &imageHeight);
     glGenTextures(1, &drawEntity->textureId);
     printGlError(glGetError());
     glBindTexture(GL_TEXTURE_2D, drawEntity->textureId);
@@ -245,13 +239,30 @@ bool loadGlTexture(DRAW_ENTITY* drawEntity, const char* fileName) {
         GL_UNSIGNED_BYTE,
         imageData
     );
+    delete_image_data(imageData);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    Not used since filter parameter is GL_NEAREST.
 //    glGenerateMipmap(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, drawEntity->textureId);
     GLenum error = glGetError();
     printGlError(error);
     return error == GL_NO_ERROR;
+}
+
+extern bool unloadGl(DRAW_ENTITY* drawEntity)
+{
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDeleteBuffers(3, drawEntity->vbo);
+    glBindVertexArray(0);
+    deleteShaderProgram(drawEntity->program);
+    glDeleteVertexArrays(1, &drawEntity->vao);
+}
+
+extern bool unloadGlTexture(DRAW_ENTITY* drawEntity)
+{
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDeleteTextures(1, &drawEntity->textureId);
 }
 
 void preDraw() {
@@ -312,6 +323,7 @@ void drawGl(DRAW_ENTITY* drawEntity) {
     glUniform1i(uniformLocation, 0);
     glDrawArrays(GL_TRIANGLES, 0, drawEntity->vertexBufferElementsCount / drawEntity->vertexBufferCoordinateCount);
     glDisableVertexAttribArray(vertexAttribPos);
+    glDisableVertexAttribArray(texCoordAttribPos);
     glDisableVertexAttribArray(normalAttribPos);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);

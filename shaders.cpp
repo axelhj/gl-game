@@ -40,11 +40,14 @@ static bool getLinkSuccessful(bool print, int program) {
 /*
  * Compile the shader programs
  */
-
-int compileShaderProgram(const char* vShader, size_t vShaderLength, const char* fShader, size_t fShaderLength, GLuint* program) {
-//    printf(">>%s<< %d\n", vShader, (int)vShaderLength);
-//    printf(">>%s<< %d\n", fShader, (int)fShaderLength);
-    int vShaderId = glCreateShader(GL_VERTEX_SHADER);
+int compileShaderProgram(
+    const char* vShader,
+    size_t vShaderLength,
+    const char* fShader,
+    size_t fShaderLength,
+    GLuint* program
+ ) {
+    GLuint vShaderId = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vShaderId, 1, &vShader, (const GLint *)&vShaderLength);
     glCompileShader(vShaderId);
     const char* shaderType = "vertex shader";
@@ -52,7 +55,7 @@ int compileShaderProgram(const char* vShader, size_t vShaderLength, const char* 
         glDeleteShader(vShaderId);
         return -1;
     }
-    int fShaderId = glCreateShader(GL_FRAGMENT_SHADER);
+    GLuint fShaderId = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fShaderId, 1, &fShader, (const GLint *)&fShaderLength);
     glCompileShader(fShaderId);
     shaderType = "fragment shader";
@@ -65,7 +68,7 @@ int compileShaderProgram(const char* vShader, size_t vShaderLength, const char* 
     glAttachShader(*program, vShaderId);
     glAttachShader(*program, fShaderId);
     glLinkProgram(*program);
-    int linkSuccessful = getLinkSuccessful(true, *program);
+    GLuint linkSuccessful = getLinkSuccessful(true, *program);
     if (linkSuccessful == GL_FALSE) {
         glDeleteProgram(*program);
         glDeleteShader(vShaderId);
@@ -74,5 +77,12 @@ int compileShaderProgram(const char* vShader, size_t vShaderLength, const char* 
     }
     glDetachShader(*program, vShaderId);
     glDetachShader(*program, fShaderId);
+    glDeleteShader(vShaderId);
+    glDeleteShader(fShaderId);
+    return 0;
+}
+
+int deleteShaderProgram(GLuint program) {
+    glDeleteProgram(program);
     return 0;
 }
