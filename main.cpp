@@ -38,11 +38,11 @@ static bool running = false;
  * GLFW main
  */
 int main(int argc, char** argv) {
-    running = initGl("Demo GL", WINDOW_WIDTH, WINDOW_HEIGHT);
+    running = init_gl("Demo GL", WINDOW_WIDTH, WINDOW_HEIGHT);
     running = running && init_level();
     if (!running) {
         printf("Loading failed");
-        terminateGl();
+        terminate_gl();
         return -1;
     }
     float time = 0;
@@ -50,14 +50,14 @@ int main(int argc, char** argv) {
         update_level(keys, 0.0165f, time);
         time += 0.0165f;
         running = !keys[6];
-        preDraw();
+        pre_draw();
         draw_level();
-        running = running && postDraw();
+        running = running && post_draw();
         if (running) {
             millisleep(4); // not required as glfwSwapBuffers is blocking
         }
     }
     destroy_level();
-    terminateGl();
+    terminate_gl();
     return 0;
 }

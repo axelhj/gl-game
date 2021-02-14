@@ -20,9 +20,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-extern int compileShaderProgram(const char* vShader, size_t vShaderLength, const char* fShader, size_t fShaderLength, GLuint* program);
+extern int compile_shader_program(const char* v_shader, size_t v_shader_lenght, const char* f_shader, size_t f_shader_length, GLuint* program);
 
-extern int deleteShaderProgram(GLuint program);
+extern int delete_shader_program(GLuint program);
 
 #endif /* SHADERS_H */
 

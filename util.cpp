@@ -46,9 +46,9 @@ static float fade(float t) {
     return 6 * t2 * t3 + 15 * t2 * t2 - 10 * t3;
 }
 
-static bool pInited = false;
+static bool p_inited = false;
 
-static float gradInd(int hash, float x, float y, float z) {
+static float grad_ind(int hash, float x, float y, float z) {
     hash = hash & 15;
     float u = (hash < 8) ? x : y;
     float v = (hash < 4) ? y :
@@ -58,32 +58,32 @@ static float gradInd(int hash, float x, float y, float z) {
 }
 
 float perlin(float x, float y, float z) {
-    if (!pInited) {
+    if (!p_inited) {
         for (int i = 0; i < 512; ++i) {
             p[i] = (i < 256) ? permutations[i] : permutations[i - 256];
         }
-        pInited = true;
+        p_inited = true;
     }
-    int unitCube[3] = {(int)x & 255, (int)y & 255, (int)z & 255}; //i
+    int unit_cube[3] = {(int)x & 255, (int)y & 255, (int)z & 255}; //i
     float location[3] = {x - (int)x, y - (int)y, z - (int)z}; //f
-    float easedLocation[3] = {fade(location[0]), fade(location[1]), fade(location[2])};
-    int a1 = p[p[p[unitCube[0]]     + unitCube[1]]     + unitCube[2]],
-    a2 = p[p[p[    unitCube[0]]     + unitCube[1] + 1] + unitCube[2]],
-    a3 = p[p[p[    unitCube[0]]     + unitCube[1]]     + unitCube[2] + 1],
-    a4 = p[p[p[    unitCube[0]]     + unitCube[1] + 1] + unitCube[2] + 1],
-    a5 = p[p[p[    unitCube[0] + 1] + unitCube[1]]     + unitCube[2]],
-    a6 = p[p[p[    unitCube[0] + 1] + unitCube[1] + 1] + unitCube[2]],
-    a7 = p[p[p[    unitCube[0] + 1] + unitCube[1]]     + unitCube[2] + 1],
-    a8 = p[p[p[    unitCube[0] + 1] + unitCube[1] + 1] + unitCube[2] + 1];
-    float x1 = lerp(gradInd(a1, location[0]       , location[1]       , location[2]),
-                    gradInd(a5, location[0] - 1.0f, location[1]       , location[2]), easedLocation[0]);
-    float x2 = lerp(gradInd(a2, location[0]       , location[1] - 1.0f, location[2]),
-                    gradInd(a6, location[0] - 1.0f, location[1] - 1.0f, location[2]), easedLocation[0]);
-    float y1 = lerp(x1, x2, easedLocation[1]);
-    x1 = lerp(gradInd(a3, location[0]       , location[1]       , location[2] - 1.0f),
-              gradInd(a7, location[0] - 1.0f, location[1]       , location[2] - 1.0f), easedLocation[0]);
-    x2 = lerp(gradInd(a4, location[0]       , location[1] - 1.0f, location[2] - 1.0f),
-              gradInd(a8, location[0] - 1.0f, location[1] - 1.0f, location[2] - 1.0f), easedLocation[0]);
-    float y2 = lerp(x1, x2, easedLocation[1]);
-    return (lerp(y1, y2, easedLocation[2]) + 1.0f) / 2.0f;
+    float eased_location[3] = {fade(location[0]), fade(location[1]), fade(location[2])};
+    int a1 = p[p[p[unit_cube[0]]     + unit_cube[1]]     + unit_cube[2]],
+    a2 = p[p[p[    unit_cube[0]]     + unit_cube[1] + 1] + unit_cube[2]],
+    a3 = p[p[p[    unit_cube[0]]     + unit_cube[1]]     + unit_cube[2] + 1],
+    a4 = p[p[p[    unit_cube[0]]     + unit_cube[1] + 1] + unit_cube[2] + 1],
+    a5 = p[p[p[    unit_cube[0] + 1] + unit_cube[1]]     + unit_cube[2]],
+    a6 = p[p[p[    unit_cube[0] + 1] + unit_cube[1] + 1] + unit_cube[2]],
+    a7 = p[p[p[    unit_cube[0] + 1] + unit_cube[1]]     + unit_cube[2] + 1],
+    a8 = p[p[p[    unit_cube[0] + 1] + unit_cube[1] + 1] + unit_cube[2] + 1];
+    float x1 = lerp(grad_ind(a1, location[0]       , location[1]       , location[2]),
+                    grad_ind(a5, location[0] - 1.0f, location[1]       , location[2]), eased_location[0]);
+    float x2 = lerp(grad_ind(a2, location[0]       , location[1] - 1.0f, location[2]),
+                    grad_ind(a6, location[0] - 1.0f, location[1] - 1.0f, location[2]), eased_location[0]);
+    float y1 = lerp(x1, x2, eased_location[1]);
+    x1 = lerp(grad_ind(a3, location[0]       , location[1]       , location[2] - 1.0f),
+              grad_ind(a7, location[0] - 1.0f, location[1]       , location[2] - 1.0f), eased_location[0]);
+    x2 = lerp(grad_ind(a4, location[0]       , location[1] - 1.0f, location[2] - 1.0f),
+              grad_ind(a8, location[0] - 1.0f, location[1] - 1.0f, location[2] - 1.0f), eased_location[0]);
+    float y2 = lerp(x1, x2, eased_location[1]);
+    return (lerp(y1, y2, eased_location[2]) + 1.0f) / 2.0f;
 }

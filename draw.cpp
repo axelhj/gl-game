@@ -1,6 +1,6 @@
 #include "draw.h"
 
-static const char* vProgram =
+static const char* v_program =
 "#version 150\n\
 \n\
 uniform mat4 model;\n\
@@ -26,7 +26,7 @@ void main(void) {\n\
     texCoord = texCoordAttr;\n\
 }\n";
 
-static const char* fProgram = 
+static const char* f_program =
 "#version 150\n\
 \n\
 in vec2 texCoord;\n\
@@ -50,27 +50,27 @@ void main(void) {\n\
     fragColor = vec4(angle * texColor.rgb, texColor.a);\n\
 }\n";
 
-void printGlError(GLenum error) {
-    const char* errorString = NULL;
+void print_gl_error(GLenum error) {
+    const char* error_string = NULL;
     if (error == GL_NO_ERROR) {
-        //errorString = "GL_NO_ERROR";
+        //error_string = "GL_NO_ERROR";
     } else if (error == GL_INVALID_ENUM) {
-        errorString = "GL_INVALID_ENUM";
+        error_string = "GL_INVALID_ENUM";
     } else if (error == GL_INVALID_VALUE) {
-        errorString = "GL_INVALID_VALUE";
+        error_string = "GL_INVALID_VALUE";
     } else if (error == GL_INVALID_OPERATION) {
-        errorString = "GL_INVALID_OPERATION";
+        error_string = "GL_INVALID_OPERATION";
     } else if (error == GL_INVALID_FRAMEBUFFER_OPERATION) {
-        errorString = "GL_INVALID_FRAMEBUFFER_OPERATION";
+        error_string = "GL_INVALID_FRAMEBUFFER_OPERATION";
     } else if (error == GL_OUT_OF_MEMORY) {
-        errorString = "GL_OUT_OF_MEMORY";
+        error_string = "GL_OUT_OF_MEMORY";
     } else if (error == GL_STACK_UNDERFLOW) {
-        errorString = "GL_STACK_UNDERFLOW";
+        error_string = "GL_STACK_UNDERFLOW";
     } else if (error == GL_STACK_OVERFLOW) {
-        errorString = "GL_STACK_OVERFLOW";
+        error_string = "GL_STACK_OVERFLOW";
     }
-    if (errorString != NULL) {
-        printf("%s\n", errorString);
+    if (error_string != NULL) {
+        printf("%s\n", error_string);
     }
 }
 
@@ -118,7 +118,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
-bool initGl(const char* windowTitle, const int windowWidth, const int windowHeight) {
+bool init_gl(const char* window_title, const int window_width, const int window_height) {
     if (!glfwInit()) {
         printf("Init failed\n");
         return false;
@@ -128,13 +128,13 @@ bool initGl(const char* windowTitle, const int windowWidth, const int windowHeig
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    window = glfwCreateWindow(windowWidth, windowHeight, windowTitle, NULL, NULL);
+    window = glfwCreateWindow(window_width, window_height, window_title, NULL, NULL);
     glfwSetKeyCallback(window, key_callback);
     glfwMakeContextCurrent(window);
     GLenum error = glewInit();
     if (error != GL_NO_ERROR) {
         printf("Glew init failed\n");
-        printGlError(error);
+        print_gl_error(error);
         initSuccessful = false;
     }
     int majorVersion = 0;
@@ -142,16 +142,16 @@ bool initGl(const char* windowTitle, const int windowWidth, const int windowHeig
     glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
     glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
     printf("Init GL Ver: %s, (Major: %d, Min: %d)\n\n", glGetString(GL_VERSION), majorVersion, minorVersion);
-    glViewport(0, 0, windowWidth, windowHeight);
+    glViewport(0, 0, window_width, window_height);
     glClearColor(0.4f, 0.65f, 0.85f, 1.0f);
     return window != NULL && initSuccessful;
 }
 
-void terminateGl() {
+void terminate_gl() {
     glfwTerminate();
 }
 
-static GLfloat squareVertices[] = {
+static GLfloat square_vertices[] = {
     0.0f, 0.0f, 0.0f,
     1.0f, 1.0f, 0.0f,
     0.0f, 1.0f, 0.0f,
@@ -160,7 +160,7 @@ static GLfloat squareVertices[] = {
     1.0f, 1.0f, 0.0f,
 };
 
-static GLfloat squareTexCoords[] = {
+static GLfloat square_text_coords[] = {
     0.0f, 1.0f,
     1.0f, 0.0f,
     0.0f, 0.0f,
@@ -169,7 +169,7 @@ static GLfloat squareTexCoords[] = {
     1.0f, 0.0f
 };
 
-static GLfloat squareNormals[] = {
+static GLfloat square_normals[] = {
     0.0f, 0.0f, 1.0f,
     0.0f, 0.0f, 1.0f,
     0.0f, 0.0f, 1.0f,
@@ -178,62 +178,62 @@ static GLfloat squareNormals[] = {
     0.0f, 0.0f, 1.0f
 };
 
-void setSquareVertexData(DRAW_ENTITY* drawEntity) {
-    drawEntity->vertexBufferCoordinateCount = 3;
-    drawEntity->texCoordBufferCoordinateCount = 2;
-    drawEntity->normalBufferCoordinateCount = 3;
-    drawEntity->vertexBufferElementsCount = 3 * 6;
-    drawEntity->texCoordBufferElementsCount = 2 * 6;
-    drawEntity->normalBufferElementsCount = 3 * 6;
-    drawEntity->vertexBufferSize = sizeof(GLfloat) * drawEntity->vertexBufferElementsCount;
-    drawEntity->texCoordBufferSize = sizeof(GLfloat) * drawEntity->texCoordBufferElementsCount;
-    drawEntity->normalBufferSize = sizeof(GLfloat) * drawEntity->normalBufferElementsCount;
-    drawEntity->vertices = squareVertices;
-    drawEntity->texCoords = squareTexCoords;
-    drawEntity->normals = squareNormals;
+void set_square_vertex_data(DRAW_ENTITY* draw_entity) {
+    draw_entity->vertex_buffer_coordinate_count = 3;
+    draw_entity->tex_coord_buffer_coordinate_count = 2;
+    draw_entity->normal_buffer_coordinate_count = 3;
+    draw_entity->vertex_buffer_elements_count = 3 * 6;
+    draw_entity->tex_coord_buffer_elements_count = 2 * 6;
+    draw_entity->normal_buffer_elements_count = 3 * 6;
+    draw_entity->vertex_buffer_size = sizeof(GLfloat) * draw_entity->vertex_buffer_elements_count;
+    draw_entity->tex_coord_buffer_size = sizeof(GLfloat) * draw_entity->tex_coord_buffer_elements_count;
+    draw_entity->normal_buffer_size = sizeof(GLfloat) * draw_entity->normal_buffer_elements_count;
+    draw_entity->vertices = square_vertices;
+    draw_entity->tex_coords = square_text_coords;
+    draw_entity->normals = square_normals;
 }
 
-bool loadGl(DRAW_ENTITY* drawEntity) {
-    bool successful = compileShaderProgram(vProgram, strlen(vProgram), fProgram, strlen(fProgram), &drawEntity->program) == 0;
-    glGenVertexArrays(1, &drawEntity->vao);
-    glBindVertexArray(drawEntity->vao);
-    glGenBuffers(3, drawEntity->vbo);
+bool load_gl(DRAW_ENTITY* draw_entity) {
+    bool successful = compile_shader_program(v_program, strlen(v_program), f_program, strlen(f_program), &draw_entity->program) == 0;
+    glGenVertexArrays(1, &draw_entity->vao);
+    glBindVertexArray(draw_entity->vao);
+    glGenBuffers(3, draw_entity->vbo);
     // Note: glBufferData can cause GL_OUT_OF_MEMORY error.
-    glBindBuffer(GL_ARRAY_BUFFER, drawEntity->vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, drawEntity->vertexBufferSize, drawEntity->vertices, GL_STATIC_DRAW);
-    printGlError(glGetError());
-    glBindBuffer(GL_ARRAY_BUFFER, drawEntity->vbo[1]);
-    glBufferData(GL_ARRAY_BUFFER, drawEntity->texCoordBufferSize, drawEntity->texCoords, GL_STATIC_DRAW);
-    printGlError(glGetError());
-    glBindBuffer(GL_ARRAY_BUFFER, drawEntity->vbo[2]);
-    glBufferData(GL_ARRAY_BUFFER, drawEntity->normalBufferSize, drawEntity->normals, GL_STATIC_DRAW);
-    printGlError(glGetError());
+    glBindBuffer(GL_ARRAY_BUFFER, draw_entity->vbo[0]);
+    glBufferData(GL_ARRAY_BUFFER, draw_entity->vertex_buffer_size, draw_entity->vertices, GL_STATIC_DRAW);
+    print_gl_error(glGetError());
+    glBindBuffer(GL_ARRAY_BUFFER, draw_entity->vbo[1]);
+    glBufferData(GL_ARRAY_BUFFER, draw_entity->tex_coord_buffer_size, draw_entity->tex_coords, GL_STATIC_DRAW);
+    print_gl_error(glGetError());
+    glBindBuffer(GL_ARRAY_BUFFER, draw_entity->vbo[2]);
+    glBufferData(GL_ARRAY_BUFFER, draw_entity->normal_buffer_size, draw_entity->normals, GL_STATIC_DRAW);
+    print_gl_error(glGetError());
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     glDisable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
 
-    mat_identity(drawEntity->modelMat);
-    mat_identity(drawEntity->viewMat);
-    mat_perspective(drawEntity->projectionMat, 90.0f, 0.1f, 100.0f);
+    mat_identity(draw_entity->model_mat);
+    mat_identity(draw_entity->view_mat);
+    mat_perspective(draw_entity->projection_mat, 90.0f, 0.1f, 100.0f);
 
     return successful;
 }
 
-bool loadGlTexture(DRAW_ENTITY* drawEntity, const char* fileName) {
-    int imageWidth, imageHeight;
-    unsigned char* imageData = get_image_data(fileName, &imageWidth, &imageHeight);
-    glGenTextures(1, &drawEntity->textureId);
-    printGlError(glGetError());
-    glBindTexture(GL_TEXTURE_2D, drawEntity->textureId);
-    printGlError(glGetError());
+bool load_gl_texture(DRAW_ENTITY* draw_entity, const char* file_name) {
+    int image_width, image_height;
+    unsigned char* imageData = get_image_data(file_name, &image_width, &image_height);
+    glGenTextures(1, &draw_entity->texture_id);
+    print_gl_error(glGetError());
+    glBindTexture(GL_TEXTURE_2D, draw_entity->texture_id);
+    print_gl_error(glGetError());
     glTexImage2D(
         GL_TEXTURE_2D,
         0,
         GL_RGBA8,
-        imageWidth,
-        imageHeight,
+        image_width,
+        image_height,
         0,
         GL_RGBA,
         GL_UNSIGNED_BYTE,
@@ -244,88 +244,88 @@ bool loadGlTexture(DRAW_ENTITY* drawEntity, const char* fileName) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 //    Not used since filter parameter is GL_NEAREST.
 //    glGenerateMipmap(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, drawEntity->textureId);
+    glBindTexture(GL_TEXTURE_2D, draw_entity->texture_id);
     GLenum error = glGetError();
-    printGlError(error);
+    print_gl_error(error);
     return error == GL_NO_ERROR;
 }
 
-extern bool unloadGl(DRAW_ENTITY* drawEntity)
+extern bool unload_gl(DRAW_ENTITY* draw_entity)
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glDeleteBuffers(3, drawEntity->vbo);
+    glDeleteBuffers(3, draw_entity->vbo);
     glBindVertexArray(0);
-    deleteShaderProgram(drawEntity->program);
-    glDeleteVertexArrays(1, &drawEntity->vao);
+    delete_shader_program(draw_entity->program);
+    glDeleteVertexArrays(1, &draw_entity->vao);
 }
 
-extern bool unloadGlTexture(DRAW_ENTITY* drawEntity)
+extern bool unload_gl_texture(DRAW_ENTITY* draw_entity)
 {
     glBindTexture(GL_TEXTURE_2D, 0);
-    glDeleteTextures(1, &drawEntity->textureId);
+    glDeleteTextures(1, &draw_entity->texture_id);
 }
 
-void preDraw() {
+void pre_draw() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-bool postDraw() {
+bool post_draw() {
     glfwSwapBuffers(window);
     glfwPollEvents();
     return glfwWindowShouldClose(window) == 0;
 }
 
-void drawGl(DRAW_ENTITY* drawEntity) {
-    glUseProgram(drawEntity->program);
+void draw_gl(DRAW_ENTITY* draw_entity) {
+    glUseProgram(draw_entity->program);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glBindVertexArray(drawEntity->vao);
-    GLint uniformLoc = glGetUniformLocation(drawEntity->program, "model");
-    if (uniformLoc != -1) {
-        glUniformMatrix4fv(uniformLoc, 1, false, drawEntity->modelMat);
+    glBindVertexArray(draw_entity->vao);
+    GLint uniform_loc = glGetUniformLocation(draw_entity->program, "model");
+    if (uniform_loc != -1) {
+        glUniformMatrix4fv(uniform_loc, 1, false, draw_entity->model_mat);
     }
-    uniformLoc = glGetUniformLocation(drawEntity->program, "view");
-    if (uniformLoc != -1) {
-        glUniformMatrix4fv(uniformLoc, 1, false, drawEntity->viewMat);
+    uniform_loc = glGetUniformLocation(draw_entity->program, "view");
+    if (uniform_loc != -1) {
+        glUniformMatrix4fv(uniform_loc, 1, false, draw_entity->view_mat);
     }
-    uniformLoc = glGetUniformLocation(drawEntity->program, "projection");
-    if (uniformLoc != -1) {
-        glUniformMatrix4fv(uniformLoc, 1, false, drawEntity->projectionMat);
+    uniform_loc = glGetUniformLocation(draw_entity->program, "projection");
+    if (uniform_loc != -1) {
+        glUniformMatrix4fv(uniform_loc, 1, false, draw_entity->projection_mat);
     }
-    GLint vertexAttribPos = glGetAttribLocation(drawEntity->program, "vertexAttr");
-    GLint texCoordAttribPos = glGetAttribLocation(drawEntity->program, "texCoordAttr");
-    GLint normalAttribPos = glGetAttribLocation(drawEntity->program, "normalAttr");
-    glEnableVertexAttribArray(vertexAttribPos);
-    glBindBuffer(GL_ARRAY_BUFFER, drawEntity->vbo[0]);
-    glVertexAttribPointer(vertexAttribPos, // attrib array index
-        drawEntity->vertexBufferCoordinateCount, // vertex attrib coordinates count
+    GLint vertex_attrib_pos = glGetAttribLocation(draw_entity->program, "vertexAttr");
+    GLint tex_coord_attrib_pos = glGetAttribLocation(draw_entity->program, "texCoordAttr");
+    GLint normal_attrib_pos = glGetAttribLocation(draw_entity->program, "normalAttr");
+    glEnableVertexAttribArray(vertex_attrib_pos);
+    glBindBuffer(GL_ARRAY_BUFFER, draw_entity->vbo[0]);
+    glVertexAttribPointer(vertex_attrib_pos, // attrib array index
+        draw_entity->vertex_buffer_coordinate_count, // vertex attrib coordinates count
         GL_FLOAT, // type
         GL_FALSE, // normalized
         0, // stride
         (void*)0); // vbo offset
-    glEnableVertexAttribArray(texCoordAttribPos);
-    glBindBuffer(GL_ARRAY_BUFFER, drawEntity->vbo[1]);
-    glVertexAttribPointer(texCoordAttribPos, // attrib array index
-        drawEntity->texCoordBufferCoordinateCount, // vertex attrib coordinates count
+    glEnableVertexAttribArray(tex_coord_attrib_pos);
+    glBindBuffer(GL_ARRAY_BUFFER, draw_entity->vbo[1]);
+    glVertexAttribPointer(tex_coord_attrib_pos, // attrib array index
+        draw_entity->tex_coord_buffer_coordinate_count, // vertex attrib coordinates count
         GL_FLOAT, // type
         GL_FALSE, // normalized
         0, // stride
         (void*)0); // vbo offset
-    glEnableVertexAttribArray(normalAttribPos);
-    glBindBuffer(GL_ARRAY_BUFFER, drawEntity->vbo[2]);
-    glVertexAttribPointer(normalAttribPos, // attrib array index
-                          drawEntity->normalBufferCoordinateCount, // vertex attrib coordinates count
+    glEnableVertexAttribArray(normal_attrib_pos);
+    glBindBuffer(GL_ARRAY_BUFFER, draw_entity->vbo[2]);
+    glVertexAttribPointer(normal_attrib_pos, // attrib array index
+                          draw_entity->normal_buffer_coordinate_count, // vertex attrib coordinates count
                           GL_FLOAT, // type
                           GL_FALSE, // normalized
                           0, // stride
                           (void*)0); // vbo offset
-    glBindTexture(GL_TEXTURE_2D, drawEntity->textureId);
-    GLint uniformLocation = glGetUniformLocation(drawEntity->program, "texture0");
-    glUniform1i(uniformLocation, 0);
-    glDrawArrays(GL_TRIANGLES, 0, drawEntity->vertexBufferElementsCount / drawEntity->vertexBufferCoordinateCount);
-    glDisableVertexAttribArray(vertexAttribPos);
-    glDisableVertexAttribArray(texCoordAttribPos);
-    glDisableVertexAttribArray(normalAttribPos);
+    glBindTexture(GL_TEXTURE_2D, draw_entity->texture_id);
+    GLint uniform_location = glGetUniformLocation(draw_entity->program, "texture0");
+    glUniform1i(uniform_location, 0);
+    glDrawArrays(GL_TRIANGLES, 0, draw_entity->vertex_buffer_elements_count / draw_entity->vertex_buffer_coordinate_count);
+    glDisableVertexAttribArray(vertex_attrib_pos);
+    glDisableVertexAttribArray(tex_coord_attrib_pos);
+    glDisableVertexAttribArray(normal_attrib_pos);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-    printGlError(glGetError());
+    print_gl_error(glGetError());
 }

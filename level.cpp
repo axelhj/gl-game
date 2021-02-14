@@ -79,9 +79,9 @@ bool update_level(int keys[], float dt, float t)
 bool draw_level()
 {
     update_model_mat(draw_sprite);
-    drawGl(draw_sprite->draw_entity);
+    draw_gl(draw_sprite->draw_entity);
     for (int i = 0; i < TILES_X * TILES_Y; ++i) {
-        drawGl(tiles[i]->draw_entity);
+        draw_gl(tiles[i]->draw_entity);
     }
     return true;
 }

@@ -26,49 +26,49 @@
 
 typedef struct draw_entity {
     GLuint program;
-    int vertexBufferCoordinateCount;
-    int texCoordBufferCoordinateCount;
-    int normalBufferCoordinateCount;
-    int vertexBufferElementsCount;
-    int texCoordBufferElementsCount;
-    int normalBufferElementsCount;
-    int vertexBufferSize;
-    int texCoordBufferSize;
-    int normalBufferSize;
-    GLuint textureId;
+    int vertex_buffer_coordinate_count;
+    int tex_coord_buffer_coordinate_count;
+    int normal_buffer_coordinate_count;
+    int vertex_buffer_elements_count;
+    int tex_coord_buffer_elements_count;
+    int normal_buffer_elements_count;
+    int vertex_buffer_size;
+    int tex_coord_buffer_size;
+    int normal_buffer_size;
+    GLuint texture_id;
     GLfloat* vertices;
-    GLfloat* texCoords;
+    GLfloat* tex_coords;
     GLfloat* normals;
     GLuint vao;
     GLuint vbo[3];
-    GLfloat modelMat[16];
-    GLfloat viewMat[16];
-    GLfloat projectionMat[16];
+    GLfloat model_mat[16];
+    GLfloat view_mat[16];
+    GLfloat projection_mat[16];
 } DRAW_ENTITY;
 
 extern int keys[7];
 
-extern bool initGl(const char* windowTitle, const int windowWidth, const int windowHeight);
+extern bool init_gl(const char* window_title, const int window_width, const int window_height);
 
-extern void terminateGl();
+extern void terminate_gl();
 
-extern void setSquareVertexData(DRAW_ENTITY* drawEntity);
+extern void set_square_vertex_data(DRAW_ENTITY* draw_entity);
 
-extern bool loadGl(DRAW_ENTITY* drawEntity);
+extern bool load_gl(DRAW_ENTITY* draw_entity);
 
-extern bool loadGlTexture(DRAW_ENTITY* drawEntity, const char* fileName);
+extern bool load_gl_texture(DRAW_ENTITY* draw_entity, const char* file_name);
 
-extern bool unloadGl(DRAW_ENTITY* drawEntity);
+extern bool unload_gl(DRAW_ENTITY* draw_entity);
 
-extern bool unloadGlTexture(DRAW_ENTITY* drawEntity);
+extern bool unload_gl_texture(DRAW_ENTITY* draw_entity);
 
-extern void printGlError(GLenum error);
+extern void print_gl_error(GLenum error);
 
-extern void preDraw();
+extern void pre_draw();
 
-extern bool postDraw();
+extern bool post_draw();
 
-extern void drawGl(DRAW_ENTITY* drawEntity);
+extern void draw_gl(DRAW_ENTITY* draw_entity);
 
 #endif /* DRAW_H */
 

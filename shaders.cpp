@@ -7,31 +7,31 @@
 
 #include "shaders.h"
 
-static bool getCompileSuccessful(bool print, int shaderId, const char* shaderType) {
+static bool get_compile_successful(bool print, int shader_id, const char* shader_type) {
     int successful = 0;
-    glGetShaderiv(shaderId, GL_COMPILE_STATUS, &successful);
+    glGetShaderiv(shader_id, GL_COMPILE_STATUS, &successful);
     if (print && successful == GL_FALSE) {
-        int logLength = 0;
-        glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logLength);
-        char* infoLog = (char*)malloc(logLength + 1);
-        glGetShaderInfoLog(shaderId, logLength, &logLength, infoLog);
-        printf("Error compiling %s:\n%s\n", shaderType, infoLog);
-        free(infoLog);
+        int log_length = 0;
+        glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &log_length);
+        char* info_log = (char*)malloc(log_length + 1);
+        glGetShaderInfoLog(shader_id, log_length, &log_length, info_log);
+        printf("Error compiling %s:\n%s\n", shader_type, info_log);
+        free(info_log);
         return false;
     }
     return true;
 }
 
-static bool getLinkSuccessful(bool print, int program) {
-    int linkSuccessful = 0;
-    glGetProgramiv(program, GL_LINK_STATUS, &linkSuccessful);
-    if (print && linkSuccessful == GL_FALSE) {
-        int logLength = 0;
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
-        char* infoLog = (char*)malloc(logLength + 1);
-        glGetProgramInfoLog(program, logLength, &logLength, infoLog);
-        printf("%s\n", infoLog);
-        free(infoLog);
+static bool get_link_successful(bool print, int program) {
+    int link_successful = 0;
+    glGetProgramiv(program, GL_LINK_STATUS, &link_successful);
+    if (print && link_successful == GL_FALSE) {
+        int log_length = 0;
+        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &log_length);
+        char* info_log = (char*)malloc(log_length + 1);
+        glGetProgramInfoLog(program, log_length, &log_length, info_log);
+        printf("%s\n", info_log);
+        free(info_log);
         return false;
     }
     return true;
@@ -40,49 +40,49 @@ static bool getLinkSuccessful(bool print, int program) {
 /*
  * Compile the shader programs
  */
-int compileShaderProgram(
-    const char* vShader,
-    size_t vShaderLength,
-    const char* fShader,
-    size_t fShaderLength,
+int compile_shader_program(
+    const char* v_shader,
+    size_t v_shader_length,
+    const char* f_shader,
+    size_t f_shader_length,
     GLuint* program
  ) {
-    GLuint vShaderId = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vShaderId, 1, &vShader, (const GLint *)&vShaderLength);
-    glCompileShader(vShaderId);
-    const char* shaderType = "vertex shader";
-    if (!getCompileSuccessful(true, vShaderId, shaderType)) {
-        glDeleteShader(vShaderId);
+    GLuint v_shader_id = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(v_shader_id, 1, &v_shader, (const GLint *)&v_shader_length);
+    glCompileShader(v_shader_id);
+    const char* shader_type = "vertex shader";
+    if (!get_compile_successful(true, v_shader_id, shader_type)) {
+        glDeleteShader(v_shader_id);
         return -1;
     }
-    GLuint fShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fShaderId, 1, &fShader, (const GLint *)&fShaderLength);
-    glCompileShader(fShaderId);
-    shaderType = "fragment shader";
-    if (!getCompileSuccessful(true, fShaderId, shaderType)) {
-        glDeleteShader(vShaderId);
-        glDeleteShader(fShaderId);
+    GLuint f_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(f_shader_id, 1, &f_shader, (const GLint *)&f_shader_length);
+    glCompileShader(f_shader_id);
+    shader_type = "fragment shader";
+    if (!get_compile_successful(true, f_shader_id, shader_type)) {
+        glDeleteShader(v_shader_id);
+        glDeleteShader(f_shader_id);
         return -1;
     }
     *program = glCreateProgram();
-    glAttachShader(*program, vShaderId);
-    glAttachShader(*program, fShaderId);
+    glAttachShader(*program, v_shader_id);
+    glAttachShader(*program, f_shader_id);
     glLinkProgram(*program);
-    GLuint linkSuccessful = getLinkSuccessful(true, *program);
-    if (linkSuccessful == GL_FALSE) {
+    GLuint link_successful = get_link_successful(true, *program);
+    if (link_successful == GL_FALSE) {
         glDeleteProgram(*program);
-        glDeleteShader(vShaderId);
-        glDeleteShader(fShaderId);
+        glDeleteShader(v_shader_id);
+        glDeleteShader(f_shader_id);
         return -1;
     }
-    glDetachShader(*program, vShaderId);
-    glDetachShader(*program, fShaderId);
-    glDeleteShader(vShaderId);
-    glDeleteShader(fShaderId);
+    glDetachShader(*program, v_shader_id);
+    glDetachShader(*program, f_shader_id);
+    glDeleteShader(v_shader_id);
+    glDeleteShader(f_shader_id);
     return 0;
 }
 
-int deleteShaderProgram(GLuint program) {
+int delete_shader_program(GLuint program) {
     glDeleteProgram(program);
     return 0;
 }

@@ -1,21 +1,21 @@
 #include "sprite.h"
 
-bool create_sprite(SPRITE** sprite, const char* textureName)
+bool create_sprite(SPRITE** sprite, const char* texture_name)
 {
     *sprite = (SPRITE*)malloc(sizeof(SPRITE));
     bool success = *sprite != NULL;
     (*sprite)->draw_entity = (DRAW_ENTITY*)malloc(sizeof(DRAW_ENTITY));
     success = success && (*sprite)->draw_entity != NULL;
-    setSquareVertexData((*sprite)->draw_entity);
-    success = success && loadGl((*sprite)->draw_entity);
-    success = success && loadGlTexture((*sprite)->draw_entity, textureName);
+    set_square_vertex_data((*sprite)->draw_entity);
+    success = success && load_gl((*sprite)->draw_entity);
+    success = success && load_gl_texture((*sprite)->draw_entity, texture_name);
     return success;
 }
 
 bool destroy_sprite(SPRITE* sprite)
 {
-    bool success = success && unloadGl(sprite->draw_entity);
-    success = success && unloadGlTexture(sprite->draw_entity);
+    bool success = success && unload_gl(sprite->draw_entity);
+    success = success && unload_gl_texture(sprite->draw_entity);
     free(sprite->draw_entity);
     free(sprite);
     return true;
@@ -36,12 +36,12 @@ void set_sprite_size(SPRITE* sprite, float w, float h)
 
 void update_model_mat(SPRITE* sprite)
 {
-    GLfloat* modelMat = sprite->draw_entity->modelMat;
+    GLfloat* model_mat = sprite->draw_entity->model_mat;
     float* pos = sprite->pos;
     float* size = sprite->size;
     GLfloat intermediate[16];
-    GLfloat modelMatCopy[16];
-    mat_scale(modelMatCopy, size[0], size[1], 1);
+    GLfloat model_mat_copy[16];
+    mat_scale(model_mat_copy, size[0], size[1], 1);
     mat_translation(intermediate, pos[0], pos[1], pos[2]);
-    mat_multiplicate(modelMatCopy, intermediate, modelMat);
+    mat_multiplicate(model_mat_copy, intermediate, model_mat);
 }
