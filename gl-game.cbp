@@ -12,7 +12,9 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
 				<Compiler>
+					<Add option="-std=c99" />
 					<Add option="-m64" />
 					<Add option="-DGLEW_STATIC" />
 					<Add directory="glew-2.1.0/include" />
@@ -31,11 +33,22 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add option="-std=c99" />
+					<Add option="-m64" />
+					<Add option="-DGLEW_STATIC" />
+					<Add directory="glew-2.1.0/include" />
+					<Add directory="glfw-3.3.2.bin.WIN64/include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-static" />
+					<Add option="-m64" />
+					<Add library="glew-2.1.0/lib/libglew32.a" />
+					<Add library="glfw-3.3.2.bin.WIN64/lib-mingw-w64/libglfw3.a" />
+					<Add library="opengl32 -lglu32 -lgdi32" />
 				</Linker>
 			</Target>
 		</Build>
