@@ -73,6 +73,8 @@
 		<Unit filename="shaders.h" />
 		<Unit filename="sprite.cpp" />
 		<Unit filename="sprite.h" />
+		<Unit filename="sprite_collider.cpp" />
+		<Unit filename="sprite_collider.h" />
 		<Unit filename="stb_image.h" />
 		<Unit filename="util.cpp" />
 		<Unit filename="util.h" />

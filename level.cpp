@@ -1,16 +1,14 @@
 #include "level.h"
 
-static SPRITE* draw_sprite;
-
-static float pos[3] = {
-    -0.495, 0.495, 0.198
-};
-
 #define TILES_X 12
 #define TILES_Y 9
 
 #define TILE_WIDTH 1.0f
 #define TILE_HEIGHT 1.0f
+
+#define DRAW_SPRITES_COUNT 10
+
+#define Z_POS 11.0f
 
 static SPRITE* tiles[TILES_X * TILES_Y];
 
@@ -26,10 +24,40 @@ static int grid[TILES_X * TILES_Y] = {
     1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 };
 
+static SPRITE* draw_sprites[DRAW_SPRITES_COUNT];
+
+static bool init_crates()
+{
+    bool ok = true;
+    for (int i = 1; i < DRAW_SPRITES_COUNT && ok; ++i) {
+        ok = ok && create_sprite(&draw_sprites[i], "crate.png");
+        if (ok) {
+            set_sprite_size(draw_sprites[i], 1, 1);
+        }
+    }
+    set_sprite_pos(draw_sprites[1], 1.0f, 1.0f, Z_POS);
+    set_sprite_pos(draw_sprites[2], 2.0f, 1.0f, Z_POS);
+    set_sprite_pos(draw_sprites[3], 3.0f, 1.0f, Z_POS);
+    set_sprite_pos(draw_sprites[4], 1.0f, 3.0f, Z_POS);
+    set_sprite_pos(draw_sprites[5], 3.0f, 3.0f, Z_POS);
+    set_sprite_pos(draw_sprites[6], 4.0f, 3.0f, Z_POS);
+    set_sprite_pos(draw_sprites[7], -1.0f, -1.0f, Z_POS);
+    set_sprite_pos(draw_sprites[8], -1.0f, -2.0f, Z_POS);
+    set_sprite_pos(draw_sprites[9], -1.0f, -3.0f, Z_POS);
+    set_sprite_vel(draw_sprites[0], 0, 0, 0);
+    for (int i = 1; i < DRAW_SPRITES_COUNT; ++i) {
+        set_sprite_vel(draw_sprites[i], i > 5 ? 0.07 : -0.07, i > 5 ? 0.07 : -0.07, 0);
+    }
+    return ok;
+}
+
 bool init_level()
 {
-    bool ok = create_sprite(&draw_sprite, "game-hero.png");
-    set_sprite_size(draw_sprite, 0.3, 0.3);
+    bool ok = create_sprite(&draw_sprites[0], "game-hero.png");
+    ok = ok && init_crates();
+    ok = ok && add_sprites(draw_sprites, DRAW_SPRITES_COUNT);
+    set_sprite_pos(draw_sprites[0], -1.495, 0.7, Z_POS);
+    set_sprite_size(draw_sprites[0], 0.3, 0.3);
     for (int i = 0; i < TILES_X; ++i) {
         for (int j = 0; j < TILES_Y && ok; ++j) {
             int offset= i + TILES_X * j;
@@ -54,43 +82,46 @@ bool update_level(int keys[], float dt, float t)
     int r = keys[1];
     int u = keys[2];
     int d = keys[3];
-    int a = keys[4];
-    int b = keys[5];
-    float rate = 3.0 * 0.0165;
+//    int a = keys[4];
+//    int b = keys[5];
+    float rate = 1.2;
+    float* vel = draw_sprites[0]->vel;
+    vel[0] = 0;
+    vel[1] = 0;
     if (d) {
-        pos[1] -= rate;
+        vel[1] -= rate;
     } else if (u) {
-        pos[1] += rate;
+        vel[1] += rate;
     }
     if (l) {
-        pos[0] -= rate;
+        vel[0] -= rate;
     } else if (r) {
-        pos[0] += rate;
+        vel[0] += rate;
     }
-    if (a) {
-        pos[2] -= rate;
-    } else if (b) {
-        pos[2] += rate;
-    }
-    set_sprite_pos(draw_sprite, pos[0], pos[1], pos[2]);
+    process_sprites(dt);
     return true;
 }
 
 bool draw_level()
 {
-    update_model_mat(draw_sprite);
-    draw_gl(draw_sprite->draw_entity);
     for (int i = 0; i < TILES_X * TILES_Y; ++i) {
         draw_gl(tiles[i]->draw_entity);
+    }
+    for (int i = 0; i < DRAW_SPRITES_COUNT; ++i) {
+        update_model_mat(draw_sprites[i]);
+        draw_gl(draw_sprites[i]->draw_entity);
     }
     return true;
 }
 
 bool destroy_level()
 {
-    destroy_sprite(draw_sprite);
+    remove_sprites();
     for (int i = 0; i < TILES_X * TILES_Y; ++i) {
         destroy_sprite(tiles[i]);
+    }
+    for (int i = 0; i < DRAW_SPRITES_COUNT; ++i) {
+        destroy_sprite(draw_sprites[i]);
     }
     return true;
 }

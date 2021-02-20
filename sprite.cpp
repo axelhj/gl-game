@@ -28,6 +28,13 @@ void set_sprite_pos(SPRITE* sprite, float x, float y, float z)
     sprite->pos[2] = z;
 }
 
+void set_sprite_vel(SPRITE* sprite, float x, float y, float z)
+{
+    sprite->vel[0] = x;
+    sprite->vel[1] = y;
+    sprite->vel[2] = z;
+}
+
 void set_sprite_size(SPRITE* sprite, float w, float h)
 {
     sprite->size[0] = w;

@@ -3,6 +3,7 @@
 
 #include "mat4.h"
 #include "sprite.h"
+#include "sprite_collider.h"
 
 extern bool init_level();
 

@@ -7,6 +7,7 @@
 
 typedef struct sprite {
     float pos[3];
+    float vel[3];
     float size[2];
     DRAW_ENTITY* draw_entity;
 } SPRITE;
@@ -16,6 +17,8 @@ extern bool create_sprite(SPRITE** sprite, const char* textureName);
 extern bool destroy_sprite(SPRITE* sprite);
 
 extern void set_sprite_pos(SPRITE* sprite, float x, float y, float z);
+
+extern void set_sprite_vel(SPRITE* sprite, float x, float y, float z);
 
 extern void set_sprite_size(SPRITE* sprite, float w, float h);
 
