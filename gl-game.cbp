@@ -78,6 +78,8 @@
 		<Unit filename="stb_image.h" />
 		<Unit filename="util.cpp" />
 		<Unit filename="util.h" />
+		<Unit filename="vec3.cpp" />
+		<Unit filename="vec3.h" />
 		<Unit filename="vertex_gen.cpp" />
 		<Unit filename="vertex_gen.h" />
 		<Extensions>

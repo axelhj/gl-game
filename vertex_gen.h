@@ -17,6 +17,7 @@
 #include <GLFW/glfw3.h>
 #include <math.h>
 #include "util.h"
+#include "vec3.h"
 
 extern unsigned char* get_image_data(const char* imageName, int* imageWidth, int* imageHeight);
 
@@ -28,4 +29,3 @@ extern void generate_vertexes(GLfloat** vertexData, GLfloat** texCoordData, GLfl
 extern void free_vertexes(GLfloat* vertexData, GLfloat* normalData);
 
 #endif /* VERTEX_GEN_H */
-

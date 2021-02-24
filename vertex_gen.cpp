@@ -19,31 +19,6 @@ void delete_image_data(unsigned char* image_data) {
     stbi_image_free(image_data);
 }
 
-static GLfloat* vec_3_normalize(GLfloat* vec3) {
-    float vec_length = (float)sqrt(vec3[0] * vec3[0] + vec3[1] * vec3[1] + vec3[2] * vec3[2]);
-    if (vec_length == 0.0f) {
-        return vec3;
-    }
-    vec3[0] /= vec_length;
-    vec3[1] /= vec_length;
-    vec3[2] /= vec_length;
-    return vec3;
-}
-
-static GLfloat* vec_3_cross(GLfloat* res, GLfloat* vec_3_a, GLfloat* vec_3_b) {
-    res[0] = vec_3_a[1] * vec_3_b[2] - vec_3_a[2] * vec_3_b[1];
-    res[1] = vec_3_a[2] * vec_3_b[0] - vec_3_a[0] * vec_3_b[2];
-    res[2] = vec_3_a[0] * vec_3_b[1] - vec_3_a[1] * vec_3_b[0];
-    return res;
-}
-
-static GLfloat* vec_3_sub(GLfloat* res, GLfloat* vec_3_l, GLfloat* vec_3_r) {
-    res[0] = vec_3_l[0] - vec_3_r[0];
-    res[1] = vec_3_l[1] - vec_3_r[1];
-    res[2] = vec_3_l[2] - vec_3_r[2];
-    return res;
-}
-
 static void calculate_normal(GLfloat* normal, GLfloat* vertex_a, GLfloat* vertex_b, GLfloat* vertex_c) {
     GLfloat temp_vec[9];
     vec_3_cross(normal, vec_3_sub(temp_vec + 3, vertex_b, vertex_a), vec_3_sub(temp_vec + 6, vertex_c, vertex_a));

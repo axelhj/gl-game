@@ -33,13 +33,6 @@ void remove_sprites()
     }
 }
 
-static float distance(SPRITE* sprite_a, SPRITE* sprite_b)
-{
-    float diff_x = sprite_b->pos[0] - sprite_a->pos[0];
-    float diff_y = sprite_b->pos[1] - sprite_a->pos[1];
-    return (float)sqrt(diff_x * diff_x - diff_y * diff_y);
-}
-
 const char* coll_mode_labels [8 + 1] = {
     "",
     "a right", // 1
