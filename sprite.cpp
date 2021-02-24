@@ -14,7 +14,7 @@ bool create_sprite(SPRITE** sprite, const char* texture_name)
 
 bool destroy_sprite(SPRITE* sprite)
 {
-    bool success = success && unload_gl(sprite->draw_entity);
+    bool success = unload_gl(sprite->draw_entity) || false;
     success = success && unload_gl_texture(sprite->draw_entity);
     free(sprite->draw_entity);
     free(sprite);

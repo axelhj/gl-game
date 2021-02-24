@@ -257,12 +257,14 @@ extern bool unload_gl(DRAW_ENTITY* draw_entity)
     glBindVertexArray(0);
     delete_shader_program(draw_entity->program);
     glDeleteVertexArrays(1, &draw_entity->vao);
+    return true;
 }
 
 extern bool unload_gl_texture(DRAW_ENTITY* draw_entity)
 {
     glBindTexture(GL_TEXTURE_2D, 0);
     glDeleteTextures(1, &draw_entity->texture_id);
+    return true;
 }
 
 void pre_draw() {
