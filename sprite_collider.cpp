@@ -40,7 +40,7 @@ void remove_sprites()
     }
 }
 
-const char* coll_mode_labels [8 + 1] = {
+const char* coll_mode_labels [5] = {
     "",
     "a right", // 1
     "a left", // 2
@@ -48,29 +48,31 @@ const char* coll_mode_labels [8 + 1] = {
     "a bottom" // 4
 };
 
-typedef struct collision_object {
-    float pos[2];
-    float vel[2];
-    float size[2];
-    int coll_mode;
-    SPRITE* sprite;
-} COLLISION_OBJECT;
+static float normals[12] = {
+    -1.0f, 0.0f, 0.0f, // right
+    1.0f, 0.0f, 0.0f, // left
+    0.0f, -1.0f, 0.0f, // top
+    0.0f, 1.0f, 0.0f // bottom
+};
 
-static bool intersects(COLLISION_OBJECT* a, COLLISION_OBJECT* b)
+typedef struct collision_values {
+    int mode_a;
+    int mode_b;
+    float time;
+    SPRITE* other;
+} COLLISION_VALUES;
+
+static bool is_colliding_x(
+    SPRITE* a,
+    SPRITE* b,
+    float time
+)
 {
-    float left_a = a->pos[0];
-    float left_b = b->pos[0];
-    float right_a = a->pos[0] + a->size[0];
-    float right_b = b->pos[0] + b->size[0];
-    float top_a = a->pos[1] + a->size[1];
-    float top_b = b->pos[1] + b->size[1];
-    float bottom_a = a->pos[1];
-    float bottom_b = b->pos[1];
+    float top_a = a->pos[1] + a->vel[1] * time + a->size[1];
+    float top_b = b->pos[1] + b->vel[1] * time + b->size[1];
+    float bottom_a = a->pos[1] + a->vel[1] * time;
+    float bottom_b = b->pos[1] + b->vel[1] * time;
     return (
-        (left_a < right_b &&
-        left_b < right_a) &&
-        (right_a > left_b &&
-        right_b > left_a) &&
         (top_a > bottom_b &&
         top_b > bottom_a) &&
         (bottom_a < top_b &&
@@ -78,11 +80,26 @@ static bool intersects(COLLISION_OBJECT* a, COLLISION_OBJECT* b)
     );
 }
 
-static float intersection_time(COLLISION_OBJECT* a, COLLISION_OBJECT* b)
+static bool is_colliding_y(
+    SPRITE* a,
+    SPRITE* b,
+    float time
+)
 {
-    if (intersects(a, b)) {
-        return 0;
-    }
+    float left_a = a->pos[0] + a->vel[0] * time;
+    float left_b = b->pos[0] + b->vel[0] * time;
+    float right_a = a->pos[0] + a->vel[0] * time + a->size[0];
+    float right_b = b->pos[0] + b->vel[0] * time + b->size[0];
+    return (
+        (left_a < right_b &&
+        left_b < right_a) &&
+        (right_a > left_b &&
+        right_b > left_a)
+    );
+}
+
+static COLLISION_VALUES intersection_time(SPRITE* a, SPRITE* b)
+{
     float left_a = a->pos[0];
     float left_b = b->pos[0];
     float right_a = a->pos[0] + a->size[0];
@@ -97,135 +114,112 @@ static float intersection_time(COLLISION_OBJECT* a, COLLISION_OBJECT* b)
     float b_vel_x = b->vel[0];
     float b_vel_y = b->vel[1];
 
-    float first_coll_time = FLT_MAX;
-    float coll_time = 0;
-    int coll_mode = NONE;
-
+    float time = 0;
+    COLLISION_VALUES collision;
+    collision.time = FLT_MAX;
+    collision.mode_a = NONE;
+    collision.mode_b = NONE;
     if (a_vel_x > 0 && right_a < left_b) {
-        coll_time = (left_b - right_a) / (a_vel_x + b_vel_x);
-        if (coll_time > 0 && coll_time < first_coll_time) {
-            first_coll_time = coll_time;
-            coll_mode = RIGHT;
+        time = (left_b - right_a) / (a_vel_x - b_vel_x);
+        if (time >= 0 && time < collision.time && is_colliding_x(a, b, time)) {
+            collision.time = time;
+            collision.mode_a = RIGHT;
+            collision.mode_b = LEFT;
+            collision.other = b;
         }
     }
-    // Rarely recognized.
     if (a_vel_x < 0 && left_a > right_b) {
-        coll_time = (right_b - left_a) / (a_vel_x - b_vel_x);
-        if (coll_time > 0 && coll_time < first_coll_time) {
-            first_coll_time = coll_time;
-            coll_mode = LEFT;
+        time = (right_b - left_a) / (a_vel_x - b_vel_x);
+        if (time >= 0 && time < collision.time && is_colliding_x(a, b, time)) {
+            collision.time = time;
+            collision.mode_a = LEFT;
+            collision.mode_b = RIGHT;
+            collision.other = b;
         }
     }
     if (a_vel_y > 0 && top_a < bottom_b) {
-        coll_time = (bottom_b - top_a) / (a_vel_y + b_vel_y);
-        if (coll_time > 0 && coll_time < first_coll_time) {
-            first_coll_time = coll_time;
-            coll_mode = TOP;
+        time = (bottom_b - top_a) / (a_vel_y - b_vel_y);
+        if (time >= 0 && time < collision.time && is_colliding_y(a, b, time)) {
+            collision.time = time;
+            collision.mode_a = TOP;
+            collision.mode_b = BOTTOM;
+            collision.other = b;
         }
     }
-    // Rarely recognized.
     if (a_vel_y < 0 && bottom_a > top_b) {
-        coll_time = (top_b - bottom_a) / (a_vel_y - b_vel_y);
-        if (coll_time > 0 && coll_time < first_coll_time) {
-            first_coll_time = coll_time;
-            coll_mode = BOTTOM;
+        time = (top_b - bottom_a) / (a_vel_y - b_vel_y);
+        if (time >= 0 && time < collision.time && is_colliding_y(a, b, time)) {
+            collision.time = time;
+            collision.mode_a = BOTTOM;
+            collision.mode_b = TOP;
+            collision.other = b;
         }
     }
-    a->coll_mode = coll_mode;
-    b->coll_mode = coll_mode;
-    return first_coll_time;
+    return collision;
 }
 
-static void advance_time(COLLISION_OBJECT* object, float time) {
-    object->pos[0] += object->vel[0] * time;
-    object->pos[1] += object->vel[1] * time;
-}
-
-static void copy_fields(SPRITE* source, COLLISION_OBJECT* target) {
-    target->pos[0] = source->pos[0];
-    target->pos[1] = source->pos[1];
-    target->vel[0] = source->vel[0];
-    target->vel[1] = source->vel[1];
-    target->size[0] = source->size[0];
-    target->size[1] = source->size[1];
-    target->sprite = source;
-}
-
-static void restore_fields(COLLISION_OBJECT* source, SPRITE* target) {
-    target->pos[0] = source->pos[0];
-    target->pos[1] = source->pos[1];
-    target->vel[0] = source->vel[0];
-    target->vel[1] = source->vel[1];
-    target->size[0] = source->size[0];
-    target->size[1] = source->size[1];
-}
-
-static float find_collision_time(COLLISION_OBJECT* collision_object_a, float dt)
+static COLLISION_VALUES find_collision_time(SPRITE* a, float dt)
 {
-    float time = dt + 1.0f;
-    COLLISION_OBJECT collision_object_b;
-    for (int i = 0; i < /*sprites_count*/2; ++i) {
-        copy_fields(sprites[i], &collision_object_b);
-        if (sprites[i] != collision_object_a->sprite) {
-            float collision_time = intersection_time(collision_object_a, &collision_object_b);
-            if (collision_time > 0 && collision_time < time) {
-                advance_time(collision_object_a, collision_time);
-                advance_time(&collision_object_b, collision_time);
-                if (intersects(collision_object_a, &collision_object_b)) {
-                    time = collision_time;
-                }
+    COLLISION_VALUES found_collision;
+    found_collision.mode_a = NONE;
+    found_collision.mode_b = NONE;
+    found_collision.time = FLT_MAX;
+    for (int i = 0; i < sprites_count; ++i) {
+        if (sprites[i] != a) {
+            COLLISION_VALUES collision = intersection_time(a, sprites[i]);
+            if (collision.time >= 0 && collision.time < found_collision.time) {
+                found_collision = collision;
             }
         }
     }
-    if (time <= dt) {
-        return time;
-    }
-    return -1;
+    return found_collision;
 }
-
-static float normals[12] = {
-    -1.0f, 0.0f, 0.0f, // right
-    1.0f, 0.0f, 0.0f, // left
-    0.0f, -1.0f, 0.0f, // top
-    0.0f, 1.0f, 0.0f // bottom
-};
 
 bool process_sprites(float dt)
 {
-    float processed_time = 0;
-    COLLISION_OBJECT collision_object = {0};
-    int collision_mode = NONE;
-    float first_collision_time;
+    float processed_time = 0.0f;
+    SPRITE* first_collision_sprite = NULL;
+    COLLISION_VALUES first_collision;
+    first_collision.mode_a = NONE;
+    first_collision.mode_b = NONE;
+    first_collision.time = 0.0f;
     while (processed_time < dt) {
-        collision_mode = NONE;
-        for (int i = 0; i < /*sprites_count*/1; ++i) {
-            copy_fields(sprites[i], &collision_object);
-            float time = find_collision_time(&collision_object, dt);
-            if (time > -1 && (time > processed_time && processed_time + time <= dt)) {
-                collision_mode = collision_object.coll_mode;
-                first_collision_time = time;
+        first_collision.mode_a = NONE;
+        for (int i = 0; i < sprites_count; ++i) {
+            COLLISION_VALUES collision = find_collision_time(sprites[i], dt);
+            if (collision.time >= processed_time && processed_time + collision.time < dt) {
+                first_collision = collision;
+                first_collision_sprite = sprites[i];
             }
         }
-        if (collision_mode != NONE) {
-            processed_time += first_collision_time;
+        if (first_collision.mode_a != NONE) {
             for (int i = 0; i < sprites_count; ++i) {
-                sprites[i]->pos[0] += sprites[i]->vel[0] * processed_time;
-                sprites[i]->pos[1] += sprites[i]->vel[1] * processed_time;
-                sprites[i]->pos[2] += sprites[i]->vel[2] * processed_time;
+                sprites[i]->pos[0] += first_collision_sprite->vel[0] * first_collision.time;
+                sprites[i]->pos[1] += first_collision_sprite->vel[1] * first_collision.time;
+                sprites[i]->pos[2] += sprites[i]->vel[2] * first_collision.time;
             }
+            processed_time += first_collision.time;
+            first_collision.time = 0.0f;
             float vel[3];
-            printf("resolving %s\n", coll_mode_labels[collision_mode]);
-            float* refd = vec_3_reflect(vel, sprites[0]->vel, normals + (collision_mode - 1) * 3);
-            sprites[0]->vel[0] = vel[0];
-            sprites[0]->vel[1] = vel[1];
-            sprites[0]->vel[2] = vel[2];
+            float orig_vel[3];
+            orig_vel[0] = first_collision_sprite->vel[0];
+            orig_vel[1] = first_collision_sprite->vel[1];
+            orig_vel[2] = first_collision_sprite->vel[2];
+            vec_3_reflect(vel, sprites[0]->vel, normals + (first_collision.mode_a - 1) * 3);
+            first_collision_sprite->vel[0] = vel[0] + first_collision.other->vel[0];
+            first_collision_sprite->vel[1] = vel[1] + first_collision.other->vel[1];
+            first_collision_sprite->vel[2] = vel[2] + first_collision.other->vel[2];
+            vec_3_reflect(vel, first_collision.other->vel, normals + (first_collision.mode_b - 1) * 3);
+            first_collision.other->vel[0] = vel[0] + orig_vel[0];
+            first_collision.other->vel[1] = vel[1] + orig_vel[1];
+            first_collision.other->vel[2] = vel[2] + orig_vel[2];
         } else {
-            processed_time += dt;
             for (int i = 0; i < sprites_count; ++i) {
-                sprites[i]->pos[0] += sprites[i]->vel[0] * dt;
-                sprites[i]->pos[1] += sprites[i]->vel[1] * dt;
-                sprites[i]->pos[2] += sprites[i]->vel[2] * dt;
+                sprites[i]->pos[0] += sprites[i]->vel[0] * (dt - processed_time);
+                sprites[i]->pos[1] += sprites[i]->vel[1] * (dt - processed_time);
+                sprites[i]->pos[2] += sprites[i]->vel[2] * (dt - processed_time);
             }
+            processed_time = dt;
         }
     }
     return true;
