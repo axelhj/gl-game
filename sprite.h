@@ -10,6 +10,7 @@ typedef struct sprite {
     float vel[3];
     float size[2];
     DRAW_ENTITY* draw_entity;
+    bool is_static;
 } SPRITE;
 
 extern bool create_sprite(SPRITE** sprite, const char* textureName);

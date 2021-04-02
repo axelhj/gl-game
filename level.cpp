@@ -6,7 +6,7 @@
 #define TILE_WIDTH 1.0f
 #define TILE_HEIGHT 1.0f
 
-#define DRAW_SPRITES_COUNT 10
+#define DRAW_SPRITES_COUNT 36
 
 #define Z_POS 11.0f
 
@@ -33,8 +33,11 @@ static bool init_crates()
         ok = ok && create_sprite(&draw_sprites[i], "crate.png");
         if (ok) {
             set_sprite_size(draw_sprites[i], 1, 1);
+            set_sprite_vel(draw_sprites[i], 0.0f, 0.0f, 0.0f);
+            draw_sprites[i]->is_static = false;
         }
     }
+    set_sprite_vel(draw_sprites[0], 0, 0, 0);
     set_sprite_pos(draw_sprites[1], 1.0f, 1.0f, Z_POS);
     set_sprite_pos(draw_sprites[2], 2.0f, 1.0f, Z_POS);
     set_sprite_pos(draw_sprites[3], 3.0f, 1.0f, Z_POS);
@@ -44,10 +47,65 @@ static bool init_crates()
     set_sprite_pos(draw_sprites[7], -1.0f, -1.0f, Z_POS);
     set_sprite_pos(draw_sprites[8], -1.0f, -2.0f, Z_POS);
     set_sprite_pos(draw_sprites[9], -1.0f, -3.0f, Z_POS);
-    set_sprite_vel(draw_sprites[0], 0, 0, 0);
-    for (int i = 1; i < DRAW_SPRITES_COUNT; ++i) {
-        set_sprite_vel(draw_sprites[i], i > 5 ? 0.07 : -0.07, i > 5 ? 0.07 : -0.07, 0);
+    for (int i = 1; i < 10; ++i) {
+//        set_sprite_vel(draw_sprites[i], i > 5 ? 0.07 : -0.07, i > 5 ? 0.07 : -0.07, 0);
     }
+    set_sprite_pos(draw_sprites[10], -5.5f, -3.0f, Z_POS);
+    draw_sprites[10]->is_static = true;
+    set_sprite_pos(draw_sprites[11], -5.5f, -2.0f, Z_POS);
+    draw_sprites[11]->is_static = true;
+    set_sprite_pos(draw_sprites[12], -5.5f, -1.0f, Z_POS);
+    draw_sprites[12]->is_static = true;
+    set_sprite_pos(draw_sprites[13], -5.5f, 0.0f, Z_POS);
+    draw_sprites[13]->is_static = true;
+    set_sprite_pos(draw_sprites[14], -5.5f, 1.0f, Z_POS);
+    draw_sprites[14]->is_static = true;
+    set_sprite_pos(draw_sprites[15], -5.5f, 2.0f, Z_POS);
+    draw_sprites[15]->is_static = true;
+
+    set_sprite_pos(draw_sprites[16], 1.5f, -3.0f, Z_POS);
+    draw_sprites[16]->is_static = true;
+    set_sprite_pos(draw_sprites[17], 1.5f, -2.0f, Z_POS);
+    draw_sprites[17]->is_static = true;
+    set_sprite_pos(draw_sprites[18], 1.5f, -1.0f, Z_POS);
+    draw_sprites[18]->is_static = true;
+    set_sprite_pos(draw_sprites[19], 1.5f, 0.0f, Z_POS);
+    draw_sprites[19]->is_static = true;
+    set_sprite_pos(draw_sprites[20], 1.5f, 1.0f, Z_POS);
+    draw_sprites[20]->is_static = true;
+    set_sprite_pos(draw_sprites[21], 1.5f, 2.0f, Z_POS);
+    draw_sprites[21]->is_static = true;
+
+    set_sprite_pos(draw_sprites[22], -4.5f, -3.0f, Z_POS);
+    draw_sprites[22]->is_static = true;
+    set_sprite_pos(draw_sprites[23], -3.5f, -3.0f, Z_POS);
+    draw_sprites[23]->is_static = true;
+    set_sprite_pos(draw_sprites[24], -2.5f, -3.0f, Z_POS);
+    draw_sprites[24]->is_static = true;
+    set_sprite_pos(draw_sprites[25], -1.5f, -3.0f, Z_POS);
+    draw_sprites[25]->is_static = true;
+    set_sprite_pos(draw_sprites[26], -0.5f, -3.0f, Z_POS);
+    draw_sprites[26]->is_static = true;
+    set_sprite_pos(draw_sprites[27], 0.5f, -3.0f, Z_POS);
+    draw_sprites[27]->is_static = true;
+
+    set_sprite_pos(draw_sprites[28], -5.5f, 3.0f, Z_POS);
+    draw_sprites[28]->is_static = true;
+    set_sprite_pos(draw_sprites[29], -4.5f, 3.0f, Z_POS);
+    draw_sprites[29]->is_static = true;
+    set_sprite_pos(draw_sprites[30], -3.5f, 3.0f, Z_POS);
+    draw_sprites[30]->is_static = true;
+    set_sprite_pos(draw_sprites[31], -2.5f, 3.0f, Z_POS);
+    draw_sprites[31]->is_static = true;
+    set_sprite_pos(draw_sprites[32], -1.5f, 3.0f, Z_POS);
+    draw_sprites[32]->is_static = true;
+    set_sprite_pos(draw_sprites[33], -0.5f, 3.0f, Z_POS);
+    draw_sprites[33]->is_static = true;
+    set_sprite_pos(draw_sprites[34], 0.5f, 3.0f, Z_POS);
+    draw_sprites[34]->is_static = true;
+
+    set_sprite_pos(draw_sprites[35], 1.5f, 3.0f, Z_POS);
+    draw_sprites[35]->is_static = true;
     return ok;
 }
 

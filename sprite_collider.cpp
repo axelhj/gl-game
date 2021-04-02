@@ -1,6 +1,7 @@
 #include "sprite_collider.h"
 
-#define SPRITES_MAX 25
+#define SPRITES_MAX 1000
+#define COLLISIONS_MAX 20
 
 #define NONE 0
 #define RIGHT 1
