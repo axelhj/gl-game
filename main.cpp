@@ -59,5 +59,6 @@ int main(int argc, char** argv) {
     }
     destroy_level();
     terminate_gl();
+    GetChWin();
     return 0;
 }

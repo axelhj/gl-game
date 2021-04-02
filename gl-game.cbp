@@ -12,7 +12,6 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-std=c99" />
 					<Add option="-m64" />
@@ -76,6 +75,7 @@
 		<Unit filename="sprite_collider.cpp" />
 		<Unit filename="sprite_collider.h" />
 		<Unit filename="stb_image.h" />
+		<Unit filename="unbuffered.h" />
 		<Unit filename="util.cpp" />
 		<Unit filename="util.h" />
 		<Unit filename="vec3.cpp" />
