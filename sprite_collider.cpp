@@ -60,7 +60,8 @@ typedef struct collision_values {
     int mode_a;
     int mode_b;
     float time;
-    SPRITE* other;
+    SPRITE* sprite;
+    SPRITE* other_sprite;
 } COLLISION_VALUES;
 
 static bool is_colliding_x(
@@ -120,13 +121,14 @@ static COLLISION_VALUES intersection_time(SPRITE* a, SPRITE* b)
     collision.time = FLT_MAX;
     collision.mode_a = NONE;
     collision.mode_b = NONE;
+    collision.sprite = a;
+    collision.other_sprite = b;
     if (a_vel_x > 0 && right_a < left_b) {
         time = (left_b - right_a) / (a_vel_x - b_vel_x);
         if (time >= 0 && time < collision.time && is_colliding_x(a, b, time)) {
             collision.time = time;
             collision.mode_a = RIGHT;
             collision.mode_b = LEFT;
-            collision.other = b;
         }
     }
     if (a_vel_x < 0 && left_a > right_b) {
@@ -135,7 +137,6 @@ static COLLISION_VALUES intersection_time(SPRITE* a, SPRITE* b)
             collision.time = time;
             collision.mode_a = LEFT;
             collision.mode_b = RIGHT;
-            collision.other = b;
         }
     }
     if (a_vel_y > 0 && top_a < bottom_b) {
@@ -144,7 +145,6 @@ static COLLISION_VALUES intersection_time(SPRITE* a, SPRITE* b)
             collision.time = time;
             collision.mode_a = TOP;
             collision.mode_b = BOTTOM;
-            collision.other = b;
         }
     }
     if (a_vel_y < 0 && bottom_a > top_b) {
@@ -153,75 +153,177 @@ static COLLISION_VALUES intersection_time(SPRITE* a, SPRITE* b)
             collision.time = time;
             collision.mode_a = BOTTOM;
             collision.mode_b = TOP;
-            collision.other = b;
         }
     }
     return collision;
 }
 
-static COLLISION_VALUES find_collision_time(SPRITE* a, float dt)
+static int find_collision_time(COLLISION_VALUES **collisions, int collisions_count, int max_collisions, SPRITE* a, float time)
 {
-    COLLISION_VALUES found_collision;
-    found_collision.mode_a = NONE;
-    found_collision.mode_b = NONE;
-    found_collision.time = FLT_MAX;
+    int count = collisions_count;
     for (int i = 0; i < sprites_count; ++i) {
-        if (sprites[i] != a) {
-            COLLISION_VALUES collision = intersection_time(a, sprites[i]);
-            if (collision.time >= 0 && collision.time < found_collision.time) {
-                found_collision = collision;
+        if (sprites[i] == a) {
+            continue;
+        }
+        COLLISION_VALUES collision = intersection_time(a, sprites[i]);
+        if (
+            count != 0 && collision.time >= 0 &&
+            collision.time != FLT_MAX && collision.time == (*collisions)[0].time &&
+            collision.time <= time
+        ) {
+            if (count >= max_collisions) {
+                printf("ALERT: Maximum simultaneous collisions exceeded %d\n", max_collisions);
+            } else {
+                (*collisions)[count] = collision;
+                ++count;
+            }
+        } else if (
+            collision.time >= 0 &&
+            collision.time != FLT_MAX && collision.time <= time
+         ){
+             if (count == 0) {
+                (*collisions)[0] = collision;
+                count = 1;
+            } else if (collision.time < (*collisions)[0].time) {
+                (*collisions)[0] = collision;
+                count = 1;
             }
         }
     }
-    return found_collision;
+    return count;
 }
 
 bool process_sprites(float dt)
 {
+    static SPRITE* resolved[COLLISIONS_MAX] = {};
+    static COLLISION_VALUES candidate_collision_set[COLLISIONS_MAX] = {};
+    static COLLISION_VALUES collision_set[COLLISIONS_MAX] = {};
+    static int candidate_collision_count = 0;
+    static int collision_count = 0;
     float processed_time = 0.0f;
-    SPRITE* first_collision_sprite = NULL;
-    COLLISION_VALUES first_collision;
-    first_collision.mode_a = NONE;
-    first_collision.mode_b = NONE;
-    first_collision.time = 0.0f;
     while (processed_time < dt) {
-        first_collision.mode_a = NONE;
         for (int i = 0; i < sprites_count; ++i) {
-            COLLISION_VALUES collision = find_collision_time(sprites[i], dt);
-            if (collision.time >= processed_time && processed_time + collision.time < dt) {
-                first_collision = collision;
-                first_collision_sprite = sprites[i];
+            COLLISION_VALUES* candidate_collision_set_ptr = &(*candidate_collision_set);
+            candidate_collision_count = find_collision_time(
+                &candidate_collision_set_ptr,
+                candidate_collision_count, COLLISIONS_MAX,
+                sprites[i], dt - processed_time
+            );
+            if (
+                candidate_collision_count != 0 && candidate_collision_set[0].time >= 0 &&
+                candidate_collision_set[0].time < dt - processed_time
+            ) {
+                collision_count = candidate_collision_count;
+                for (int j = 0; j < collision_count; ++j) {
+                    collision_set[j] = candidate_collision_set[j];
+                }
             }
         }
-        if (first_collision.mode_a != NONE) {
-            for (int i = 0; i < sprites_count; ++i) {
-                sprites[i]->pos[0] += first_collision_sprite->vel[0] * first_collision.time;
-                sprites[i]->pos[1] += first_collision_sprite->vel[1] * first_collision.time;
-                sprites[i]->pos[2] += sprites[i]->vel[2] * first_collision.time;
+        for (int i = 0; i < COLLISIONS_MAX; ++i) {
+            resolved[i] = NULL;
+        }
+        if (collision_count != 0) {
+            for (int j = 0; j < sprites_count; ++j) {
+                sprites[j]->pos[0] += sprites[j]->vel[0] * fmaxf(0.0f, collision_set[0].time - 0.0000001f);
+                sprites[j]->pos[1] += sprites[j]->vel[1] * fmaxf(0.0f, collision_set[0].time - 0.0000001f);
+                sprites[j]->pos[2] += sprites[j]->vel[2] * fmaxf(0.0f, collision_set[0].time - 0.0000001f);
             }
-            processed_time += first_collision.time;
-            first_collision.time = 0.0f;
+        }
+        for (int i = 0; i < collision_count; ++i) {
             float vel[3];
             float orig_vel[3];
-            orig_vel[0] = first_collision_sprite->vel[0];
-            orig_vel[1] = first_collision_sprite->vel[1];
-            orig_vel[2] = first_collision_sprite->vel[2];
-            vec_3_reflect(vel, sprites[0]->vel, normals + (first_collision.mode_a - 1) * 3);
-            first_collision_sprite->vel[0] = vel[0] + first_collision.other->vel[0];
-            first_collision_sprite->vel[1] = vel[1] + first_collision.other->vel[1];
-            first_collision_sprite->vel[2] = vel[2] + first_collision.other->vel[2];
-            vec_3_reflect(vel, first_collision.other->vel, normals + (first_collision.mode_b - 1) * 3);
-            first_collision.other->vel[0] = vel[0] + orig_vel[0];
-            first_collision.other->vel[1] = vel[1] + orig_vel[1];
-            first_collision.other->vel[2] = vel[2] + orig_vel[2];
-        } else {
+            orig_vel[0] = collision_set[i].sprite->vel[0];
+            orig_vel[1] = collision_set[i].sprite->vel[1];
+            orig_vel[2] = collision_set[i].sprite->vel[2];
+            float vel_a_momentum = vec_3_length(collision_set[i].sprite->vel);
+            float vel_b_momentum = vec_3_length(collision_set[i].other_sprite->vel);
+            bool skip = false;
+            if (!collision_set[i].sprite->is_static) {
+                for (int j = 0; j < COLLISIONS_MAX; ++j) {
+                    if (resolved[j] == collision_set[i].sprite) {
+                        skip = true;
+                        break;
+                    }
+                }
+                if (!skip) {
+                    vec_3_reflect(
+                        vel,
+                        collision_set[i].sprite->vel,
+                        normals + (collision_set[i].mode_a - 1) * 3
+                    );
+                    vec_3_normalize(vel);
+                    float factor = 2.0f;
+                    if (collision_set[i].other_sprite->is_static) {
+                        factor = 1.0f;
+                    }
+                    vec_3_mul_scalar(
+                        vel,
+                        vec_3_normalize(vel),
+                        (vel_a_momentum + vel_b_momentum) / factor
+                    );
+                    collision_set[i].sprite->vel[0] = vel[0];
+                    collision_set[i].sprite->vel[1] = vel[1];
+                    collision_set[i].sprite->vel[2] = vel[2];
+                    for (int j = 0; j < COLLISIONS_MAX; ++j) {
+                        if (resolved[j] == NULL) {
+                            resolved[j] = collision_set[i].sprite;
+                            break;
+                        }
+                    }
+                } else {
+                    skip = false;
+                }
+            }
+            if (!collision_set[i].other_sprite->is_static) {
+                for (int j = 0; j < COLLISIONS_MAX; ++j) {
+                    if (resolved[j] == collision_set[i].other_sprite) {
+                        skip = true;
+                        break;
+                    }
+                }
+                if (!skip) {
+                    vec_3_reflect(
+                        vel,
+                        collision_set[i].other_sprite->vel,
+                        normals + (collision_set[i].mode_b - 1) * 3
+                    );
+                    float factor = 2.0f;
+                    if (collision_set[i].other_sprite->is_static) {
+                        factor = 1.0f;
+                    }
+                    vec_3_mul_scalar(
+                        vel,
+                        vec_3_normalize(orig_vel),
+                        (vel_a_momentum + vel_b_momentum) / factor
+                    );
+                    collision_set[i].other_sprite->vel[0] = vel[0];
+                    collision_set[i].other_sprite->vel[1] = vel[1];
+                    collision_set[i].other_sprite->vel[2] = vel[2];
+                    for (int j = 0; j < COLLISIONS_MAX; ++j) {
+                        if (resolved[j] == NULL) {
+                            resolved[j] = collision_set[i].other_sprite;
+                            break;
+                        }
+                    }
+                }
+                skip = false;
+            }
+        }
+        for (int j = 0; j < COLLISIONS_MAX; ++j) {
+            resolved[j] = NULL;
+        }
+        if (collision_count == 0) {
             for (int i = 0; i < sprites_count; ++i) {
-                sprites[i]->pos[0] += sprites[i]->vel[0] * (dt - processed_time);
-                sprites[i]->pos[1] += sprites[i]->vel[1] * (dt - processed_time);
-                sprites[i]->pos[2] += sprites[i]->vel[2] * (dt - processed_time);
+                sprites[i]->pos[0] += sprites[i]->vel[0] * fmaxf(0.0f, (dt - processed_time) - 0.0000001f);
+                sprites[i]->pos[1] += sprites[i]->vel[1] * fmaxf(0.0f, (dt - processed_time) - 0.0000001f);
+                sprites[i]->pos[2] += sprites[i]->vel[2] * fmaxf(0.0f, (dt - processed_time) - 0.0000001f);
             }
             processed_time = dt;
+        } else {
+            processed_time += collision_set[0].time;
         }
+        candidate_collision_count = 0;
+        collision_count = 0;
     }
     return true;
 }
