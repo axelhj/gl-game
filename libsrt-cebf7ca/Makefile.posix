@@ -1,0 +1,408 @@
+#
+# Makefile for libsrt (POSIX systems: Linux, BSDs/Unix/Unix-like, etc.)
+#
+# Examples:
+# Build with defaults: make
+# " gcc and profiling: make -f Makefile.posix CC=gcc PROFILING=1
+# " gcc using C89/90 standard: make -f Makefile.posix CC=gcc C99=0
+# " g++ default C++ settings: make -f Makefile.posix CC=g++
+# " clang++ using C++11 standard: make -f Makefile.posix CC=clang++ CPP11=1
+# " TinyCC with debug symbols: make -f Makefile.posix CC=tcc DEBUG=1
+# " gcc cross compiler (PPC): make -f Makefile.posix CC=powerpc-linux-gnu-gcc
+# " gcc cross compiler (ARM): make -f Makefile.posix CC=arm-linux-gnueabi-gcc
+# Build without CRC32 hash tables, 1 bit/loop (100MB/s on i5@3GHz):
+#	make -f Makefile.posix ADD_CFLAGS="-DS_CRC32_SLC=0"
+#   or	make -f Makefile.posix MINIMAL=1
+# Build with CRC32 1024 byte hash table, 1 byte/loop (400MB/s on i5@3GHz):
+#	make -f Makefile.posix ADD_CFLAGS="-DS_CRC32_SLC=1"
+# Build with CRC32 4096 byte hash table, 4 bytes/loop (1000MB/s on i5@3GHz):
+#	make -f Makefile.posix ADD_CFLAGS="-DS_CRC32_SLC=4"
+# Build with CRC32 8192 byte hash table, 8 bytes/loop (2000MB/s on i5@3GHz):
+#	make -f Makefile.posix ADD_CFLAGS="-DS_CRC32_SLC=8"
+# Build with CRC32 12288 byte hash table, 12 bytes/loop (2500MB/s on i5@3GHz):
+#	make -f Makefile.posix ADD_CFLAGS="-DS_CRC32_SLC=12"
+#   or	make -f Makefile.posix   # this is the default
+# Build with CRC32 16384 byte hash table, 16 bytes/loop (2700MB/s on i5@3GHz):
+#	make -f Makefile.posix ADD_CFLAGS="-DS_CRC32_SLC=16"
+# Build without VARGS support (default VARGS=1):
+#	make -f Makefile.posix VARGS=0
+#
+# Observations:
+# - On FreeBSD use gmake instead of make (as in that system "make" is "pmake",
+#   and not GNU make). If not installed, use: pkg install gmake
+#
+# Copyright (c) 2015-2019 F. Aragon. All rights reserved.
+# Released under the BSD 3-Clause License (see the doc/LICENSE)
+#
+
+# Makefile parameters and context detection handling
+
+ifndef C99
+	C99 = 0
+endif
+ifdef C89
+	C90 = $(C89)
+endif
+ifndef VARGS
+	VARGS=1
+endif
+ifndef C11
+	C11 = 0
+endif
+ifndef CPP11
+	CPP11 = 0
+endif
+ifndef CPP0X
+	CPP0X = 0
+endif
+ifndef PROFILING
+	PROFILING = 0
+endif
+ifndef DEBUG
+	DEBUG = 0
+endif
+ifndef PEDANTIC
+	PEDANTIC = 0
+endif
+ifndef MINIMAL
+	MINIMAL = 0
+endif
+ifdef MINIMAL_BUILD
+	MINIMAL = $(MINIMAL_BUILD)
+endif
+ifndef FORCE32
+	FORCE32 = 0
+endif
+ifndef HAS_PNG
+	HAS_PNG = 0
+endif
+ifndef HAS_JPG
+	HAS_JPG = 0
+endif
+ifdef HAS_JPEG
+	HAS_JPG = $(HAS_JPEG)
+endif
+
+# Configure compiler context
+
+ifndef UNAME
+	UNAME = $(shell uname)
+endif
+ifndef UNAME_M
+	UNAME_M = $(shell uname -m)
+endif
+ifndef UNAME_P
+	UNAME_P = $(shell uname -p)
+endif
+ifndef OCTEON
+	OCTEON = 0
+	ifeq ($(UNAME_M), mips64)
+		ifeq ($(UNAME), Linux)
+			OCTEON = $(shell cat /proc/cpuinfo | grep cpu.model | \
+					 grep Octeon | head -1 | wc -l)
+		endif
+	endif
+endif
+
+CFLAGS =
+CXXFLAGS =
+LDLIBS =
+LDFLAGS =
+COMMON_FLAGS = -pipe
+CPP_MODE = 0
+GNUC = 0
+CLANG = 0
+EN_BENCH = 1
+USE_LRT = 1
+
+ifeq ($(CC), gcc)
+	GNUC = 1
+endif
+
+GCCLOC = $(shell cc -dM -E - < /dev/null | grep __GNUC__ | head -1 | wc -l)
+ifeq ($(shell expr $(GCCLOC) == 1), 1)
+	GNUC = 1
+endif
+
+ifeq ($(GNUC), 1)
+	GCC_MAJOR = $(shell gcc -dM -E - < /dev/null | grep __GNUC__ | \
+		      awk '{print $$3}')
+	GCC_MINOR = $(shell gcc -dM -E - < /dev/null | grep __GNUC_MINOR__ | \
+		      awk '{print $$3}')
+	GCCV = $(shell printf "%i%02i" $(GCC_MAJOR) $(GCC_MINOR))
+	ifeq ($(shell expr $(GCCV) \< 208), 1)
+		OLD_GCC = 1
+		EN_BENCH = 0
+		USE_LRT = 0
+	endif
+else
+	USE_LRT = 0
+	# Add CPP targets only if not using TCC
+	ifeq (,$(findstring tcc,$(CC)))
+		# Add librt for all but for mingw and Darwin cases
+		ifeq (,$(findstring mingw,$(CC)))
+			ifeq (,$(findstring Darwin,$(UNAME)))
+				USE_LRT = 1
+			endif
+		endif
+	else
+		EN_BENCH = 0
+	endif
+
+endif
+
+ifeq ($(CC), g++)
+	GNUC = 1
+	CPP_MODE = 1
+endif
+ifeq ($(CC), clang)
+	CLANG = 1
+	CL_MAJOR = $(shell clang -dM -E - < /dev/null | grep __clang_major__ | \
+		      awk '{print $$3}')
+	CL_MINOR = $(shell clang -dM -E - < /dev/null | grep __clang_minor__ | \
+		      awk '{print $$3}')
+	CLV = $(shell printf "%i%02i" $(CL_MAJOR) $(CL_MINOR))
+endif
+ifeq ($(CC), clang++)
+	CLANG = 1
+	CPP_MODE = 1
+endif
+
+ifeq ($(CC), tcc)
+	PROFILING = 0
+else
+	ifeq ($(CPP_MODE), 1)
+		ifeq ($(CPP11), 1)
+			CFLAGS += -std=c++11
+		endif
+		ifeq ($(CPP0X), 1)
+			CFLAGS += -std=c++0x
+		endif
+	else
+		ifeq ($(C11), 1)
+			CFLAGS += -std=c1x
+		else
+			ifeq ($(C99), 1)
+				CFLAGS += -std=c99
+			else
+				ifeq ($(C90), 1)
+					CFLAGS += -std=c89 -DS_C90
+				endif
+			endif
+		endif
+	endif
+
+	ifeq ($(CPP11), 1)
+		CXXFLAGS += -std=c++11
+	endif
+	ifeq ($(CPP0X), 1)
+		CXXFLAGS += -std=c++0x
+	endif
+
+	ifeq ($(PEDANTIC), 1)
+		ifeq ($(GNUC), 1)
+			CFLAGS += -Wall -Wextra # -Werror
+		endif
+		ifeq ($(CLANG), 1)
+			CFLAGS += -Weverything -Wno-old-style-cast \
+				  -Wno-format-nonliteral
+		endif
+		COMMON_FLAGS += -pedantic
+	endif
+	ifeq ($(GNUC), 1)
+		ifneq ($(OLD_GCC), 1)
+			COMMON_FLAGS += -Wstrict-aliasing
+		endif
+	endif
+endif
+
+ifeq ($(VARGS), 0)
+	CFLAGS += -DS_NO_VARGS
+endif
+
+ifeq ($(DEBUG), 1)
+	COMMON_FLAGS += -O0 -ggdb -DS_DEBUG
+	ifeq ($(MINIMAL), 1)
+		COMMON_FLAGS += -DS_MINIMAL
+	endif
+
+	ifeq ($(CLANG), 1)
+		ifeq ($(shell expr $(CLV) \> 599), 1)
+			# Clang 6.0 or later
+			COMMON_FLAGS += -fsanitize=bounds
+		endif
+	else
+		ifeq ($(GNUC), 1)
+			ifeq ($(shell expr $(GCCV) \> 408), 1)
+				# gcc >= 4.9
+				COMMON_FLAGS += -fstack-protector-strong
+			else
+				ifeq ($(shell expr $(GCCV) \> 400), 1)
+					# gcc >= 4.1
+					COMMON_FLAGS += -fstack-protector-all
+				endif
+			endif
+		endif
+	endif
+else
+	ifeq ($(MINIMAL), 1)
+		COMMON_FLAGS += -Os -DS_MINIMAL
+	else
+		COMMON_FLAGS += -O3
+	endif
+	COMMON_FLAGS += -DNDEBUG
+endif
+
+ifeq ($(PROFILING), 1)
+	COMMON_FLAGS += -ggdb
+	# gcov flags:
+	COMMON_FLAGS += -fprofile-arcs -ftest-coverage
+	LDFLAGS += -lgcov -coverage
+	# gprof flags:
+	COMMON_FLAGS += -pg
+else
+	ifeq ($(DEBUG), 1)
+		COMMON_FLAGS += -fno-omit-frame-pointer
+	else
+		COMMON_FLAGS += -fomit-frame-pointer
+	endif
+endif
+
+ifeq ($(FORCE32), 1)
+	ifeq ($(UNAME_M), x86_64)
+		COMMON_FLAGS += -m32
+	endif
+	ifeq ($(UNAME_M), ppc64)
+		COMMON_FLAGS += -m32
+	endif
+	ifeq ($(UNAME_M), mips64)
+		ifeq ($(OCTEON), 1)
+			GCC_COMMON_FLAGS += -march=octeon
+		else
+			GCC_COMMON_FLAGS += -mips32
+		endif
+	endif
+else
+	ifeq ($(UNAME_M), mips64)
+		GCC_COMMON_FLAGS += -mabi=64
+		ifeq ($(OCTEON), 1)
+			GCC_COMMON_FLAGS += -march=octeon
+		else
+			GCC_COMMON_FLAGS += -mips64
+		endif
+	endif
+	ifeq ($(UNAME_M), ppc64)
+		COMMON_FLAGS += -m64
+	endif
+endif
+
+# ARM v6 little endian (e.g. ARM11 on Raspberr Pi I): the flag will enable
+# HW unaligned access
+ifeq ($(UNAME_M), armv6l)
+	COMMON_FLAGS += -march=armv6
+endif
+
+# ARM v7-a little endian (e.g. ARM Cortex A5/7/8/9/15/17, QC Scorpion/Krait)
+# (ARM v7-m and v7-r will be built as ARM v5)
+ifeq ($(UNAME_M), armv7l)
+	COMMON_FLAGS += -march=armv7-a
+endif
+
+# ARM v8
+ifeq ($(UNAME_M), armv8l)
+	COMMON_FLAGS += -march=armv8-a
+endif
+
+ifneq ($(HAS_PNG), 0)
+	COMMON_FLAGS += -DHAS_PNG=$(HAS_PNG)
+	LDLIBS += -lz
+	ifeq ($(HAS_PNG), 16)
+		LDLIBS += -lpng16
+	else
+		ifeq ($(HAS_PNG), 15)
+			LDLIBS += -lpng15
+		else
+			LDLIBS += -lpng
+		endif
+	endif
+endif
+
+ifeq ($(HAS_JPG), 1)
+	COMMON_FLAGS += -DHAS_JPG
+	LDLIBS += -ljpeg
+endif
+
+ifeq ($(GNUC), 1)
+	COMMON_FLAGS += $(GCC_COMMON_FLAGS)
+endif
+
+CFLAGS += $(COMMON_FLAGS) -Isrc
+CXXFLAGS += $(COMMON_FLAGS) -Isrc
+LDFLAGS += $(COMMON_FLAGS)
+
+ifdef ADD_CFLAGS
+	CFLAGS += $(ADD_CFLAGS)
+endif
+
+ifdef ADD_CXXFLAGS
+	CXXFLAGS += $(ADD_CXXFLAGS)
+endif
+
+ifdef ADD_FLAGS
+	CFLAGS += $(ADD_FLAGS)
+	CXXFLAGS += $(ADD_FLAGS)
+endif
+
+ifdef ADD_FLAGS2
+	CFLAGS += $(ADD_FLAGS2)
+	CXXFLAGS += $(ADD_FLAGS2)
+endif
+
+# Build rules
+
+VPATH   = src:src/saux:test
+SOURCES	= sdata.c sdbg.c senc.c sstring.c sstringo.c schar.c ssearch.c ssort.c \
+	  svector.c stree.c smap.c smset.c shmap.c shset.c shash.c scommon.c \
+	  sbitset.c
+ESOURCES= imgtools.c
+HEADERS	= scommon.h $(SOURCES:.c=.h) test/*.h
+OBJECTS	= $(SOURCES:.c=.o)
+EOBJECTS= $(ESOURCES:.c=.o)
+LIBSRT	= libsrt.a
+ELIBSRT = elibsrt.a
+TEST	= stest
+EXAMPLES = counter enc histogram imgc imgd table
+ifeq ($(UNAME_M), mips)
+	# Disable CPP targets on MIPS with unknown processor (e.g. PS2)
+	ifeq ($(UNAME_P), unknown)
+		EN_BENCH = 0
+	endif
+endif
+ifeq ($(EN_BENCH), 1)
+	EXAMPLES += bench counterpp histogrampp
+endif
+
+ifeq ($(USE_LRT), 1)
+	LDLIBS += -lrt
+endif
+
+EXES	= $(TEST) $(EXAMPLES)
+
+# Rules for building: library, test
+
+all: $(EXES) run_tests
+$(OBJECTS): $(HEADERS)
+$(LIBSRT): $(OBJECTS)
+	ar rcs $@ $^
+$(ELIBSRT): $(EOBJECTS)
+	ar rcs $@ $^
+$(EXES): $% $(ELIBSRT) $(LIBSRT)
+
+run_tests: stest
+	@./$(TEST)
+clean:
+	@rm -f $(OBJECTS) $(LIBSRT) $(ELIBSRT) *\.o *\.dSYM *\.gcno *\.gcda \
+		*\.gcov *\.out callgrind* out\.txt clang_analysis.txt \
+		*\.errors*
+	@for X in $(EXES) ; do rm -f $$X $$X.o ; done
+.PHONY: clean all run_tests

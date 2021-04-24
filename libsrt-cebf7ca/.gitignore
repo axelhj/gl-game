@@ -1,0 +1,62 @@
+# Object files
+*.slo
+*.lo
+*.o
+*.obj
+# Precompiled Headers
+*.gch
+*.pch
+# Dynamic libraries
+*.so
+*.dylib
+*.dll
+# Static libraries
+*.lai
+*.la
+*.a
+*.lib
+# Executables
+*.exe
+bench
+counter
+enc
+histogram
+imgc
+imgd
+stest
+table
+counterpp
+histogrampp
+# Profiling
+*.gcda
+*.gcno
+gmon.out
+# Other
+*.suo
+*.swp
+win/vs2013/Debug/
+win/vs2013/Release/
+win/vs2013/stest_Debug/
+win/vs2013/stest_Release/
+win/vs2013/x64/
+private/
+doc/out/
+# Auto-tools
+Makefile.in
+Makefile
+.deps
+.libs
+autom4te.cache
+config.*
+configure
+install-sh
+ltmain.sh
+missing
+depcomp
+libtool
+compile
+aclocal.m4
+utl/tmp
+.dirstamp
+*.log
+*.trs
