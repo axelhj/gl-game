@@ -58,6 +58,8 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="a_star.cpp" />
+		<Unit filename="a_star.h" />
 		<Unit filename="draw.cpp" />
 		<Unit filename="draw.h" />
 		<Unit filename="game-hero.png" />
@@ -74,6 +76,8 @@
 		<Unit filename="mat4.h" />
 		<Unit filename="shaders.cpp" />
 		<Unit filename="shaders.h" />
+		<Unit filename="sorted_set.cpp" />
+		<Unit filename="sorted_set.h" />
 		<Unit filename="sprite.cpp" />
 		<Unit filename="sprite.h" />
 		<Unit filename="sprite_collider.cpp" />
