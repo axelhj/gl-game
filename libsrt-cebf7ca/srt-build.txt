@@ -1,0 +1,20 @@
+gcc -c src\sbitset.c -o sbitset.o -std=c99
+gcc -c src\shmap.c -o shmap.o -std=c99
+gcc -c src\shset.c -o shset.o -std=c99
+gcc -c src\smap.c -o smap.o -std=c99
+gcc -c src\smset.c -o smset.o -std=c99
+gcc -c src\sstring.c -o sstring.o -std=c99
+gcc -c src\svector.c -o svector.o -std=c99
+
+gcc -c src\saux\schar.c -o schar.o -std=c99
+gcc -c src\saux\scommon.c -o scommon.o -std=c99
+gcc -c src\saux\sdata.c -o sdata.o -std=c99
+gcc -c src\saux\sdbg.c -o sdbg.o -std=c99
+gcc -c src\saux\senc.c -o senc.o -std=c99
+gcc -c src\saux\shash.c -o shash.o -std=c99
+gcc -c src\saux\ssearch.c -o ssearch.o -std=c99
+gcc -c src\saux\ssort.c -o ssort.o -std=c99
+gcc -c src\saux\sstringo.c -o sstringo.o -std=c99
+gcc -c src\saux\stree.c -o stree.o -std=c99
+
+ar -rcs libsrt.a sbitset.o shmap.o shset.o smap.o smset.o sstring.o svector.o schar.o scommon.o sdata.o sdbg.o senc.o shash.o ssearch.o ssort.o sstringo.o stree.o
