@@ -1,5 +1,12 @@
 #include "vec3.h"
 
+float* vec_3_copy(float* to, float* from) {
+    to[0] = from[0];
+    to[1] = from[1];
+    to[2] = from[2];
+    return to;
+}
+
 float* vec_3_normalize(float* vec3)
 {
     float vec_length = vec_3_length(vec3);

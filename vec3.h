@@ -2,6 +2,8 @@
 #define VEC3_H
 #include <math.h>
 
+extern float* vec_3_copy(float* to, float* from);
+
 extern float* vec_3_normalize(float* vec3);
 
 extern float* vec_3_cross(float* res, float* vec_a, float* vec_b);

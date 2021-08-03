@@ -219,7 +219,7 @@ bool process_sprites(float dt)
                 }
             }
         }
-        for (int i = 0; i < COLLISIONS_MAX; ++i) {
+        for (int i = 0; i < COLLISIONS_MAX && resolved[i] != NULL; ++i) {
             resolved[i] = NULL;
         }
         if (collision_count != 0) {
@@ -239,7 +239,7 @@ bool process_sprites(float dt)
             float vel_b_momentum = vec_3_length(collision_set[i].other_sprite->vel);
             bool skip = false;
             if (!collision_set[i].sprite->is_static) {
-                for (int j = 0; j < COLLISIONS_MAX; ++j) {
+                for (int j = 0; j < COLLISIONS_MAX && resolved[j] != NULL; ++j) {
                     if (resolved[j] == collision_set[i].sprite) {
                         skip = true;
                         break;
@@ -251,7 +251,6 @@ bool process_sprites(float dt)
                         collision_set[i].sprite->vel,
                         normals + (collision_set[i].mode_a - 1) * 3
                     );
-                    vec_3_normalize(vel);
                     float factor = 2.0f;
                     if (collision_set[i].other_sprite->is_static) {
                         factor = 1.0f;
@@ -275,7 +274,7 @@ bool process_sprites(float dt)
                 }
             }
             if (!collision_set[i].other_sprite->is_static) {
-                for (int j = 0; j < COLLISIONS_MAX; ++j) {
+                for (int j = 0; j < COLLISIONS_MAX && resolved[j] != NULL; ++j) {
                     if (resolved[j] == collision_set[i].other_sprite) {
                         skip = true;
                         break;

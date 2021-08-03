@@ -32,7 +32,7 @@ static bool init_crates()
     for (int i = 1; i < DRAW_SPRITES_COUNT && ok; ++i) {
         ok = ok && create_sprite(&draw_sprites[i], "crate.png");
         if (ok) {
-            set_sprite_size(draw_sprites[i], 1, 1);
+            set_sprite_size(draw_sprites[i], 0.999f, 0.999f);
             set_sprite_vel(draw_sprites[i], 0.0f, 0.0f, 0.0f);
             draw_sprites[i]->is_static = false;
         }
