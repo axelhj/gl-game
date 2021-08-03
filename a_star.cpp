@@ -4,6 +4,7 @@
 #include "svector.h"
 #include <cstdlib>
 #include <math.h>
+#include <windows.h> // For sleep
 
 typedef struct graph_node GRAPH_NODE;
 
@@ -58,6 +59,7 @@ void init_grid_search(
     grid_search->excluded_nodes = excluded_nodes;
     grid_search->excluded_nodes_count = shs_size(excluded_nodes);
     grid_search->node_count = hor * ver;
+    // TODO: Figure out how to dispose of array afterwards without VLA.
     grid_search->nodes = (GRAPH_NODE**)malloc(sizeof(GRAPH_NODE*) * grid_search->node_count);
     for (int i = 0; i < grid_search->node_count; ++i) {
         grid_search->nodes[i] = NULL;
@@ -72,7 +74,7 @@ GRAPH_NODE* find_or_create_node(
     if (shs_count_i(grid_search->excluded_nodes, node_index) > 0) {
         return NULL;
     }
-    GRAPH_NODE* node = (*grid_search->nodes) + node_index;
+    GRAPH_NODE* node = grid_search->nodes[node_index];
     if (node != NULL) {
         return node;
     }
@@ -85,29 +87,31 @@ GRAPH_NODE* find_or_create_node(
 void find_adjacent(GRID_SEARCH_INSTANCE* grid_search, int node_index)
 {
     GRAPH_NODE* node = find_or_create_node(grid_search, node_index);
+    if (node == NULL) {
+        return;
+    }
     for (int i = 0; i < 8; ++i) {
         if (node->adjacent[i] != NULL) {
             return;
         }
     }
-    GRAPH_NODE** adjacent = (GRAPH_NODE**)malloc(sizeof(GRAPH_NODE*) * 8);
+    for (int i = 0; i < 8; ++i) {
+        node->adjacent[i] = NULL;
+    }
     //  Skip diagonals for now. [node, cost]
     int x = (int)fmod(node_index, grid_search->hor);
     int y = (int)node_index / grid_search->hor;
     if (x != grid_search->hor - 1) {
-        adjacent[1] = find_or_create_node(grid_search, node_index + 1);
+        node->adjacent[1] = find_or_create_node(grid_search, node_index + 1);
     }
     if (y != grid_search->ver - 1) {
-        adjacent[3] = find_or_create_node(grid_search, node_index + grid_search->hor);
+        node->adjacent[3] = find_or_create_node(grid_search, node_index + grid_search->hor);
     }
     if (x != 0) {
-        adjacent[4] = find_or_create_node(grid_search, node_index - 1);
+        node->adjacent[4] = find_or_create_node(grid_search, node_index - 1);
     }
     if (y != 0) {
-        adjacent[6] = find_or_create_node(grid_search, node_index - grid_search->hor);
-    }
-    for (int i = 0; i < 8; ++i) {
-        node->adjacent[i] = adjacent[i];
+        node->adjacent[6] = find_or_create_node(grid_search, node_index - grid_search->hor);
     }
 }
 
@@ -135,10 +139,10 @@ GRAPH_NODE* find_path(GRID_SEARCH_INSTANCE* grid_search, GRAPH_NODE* start, GRAP
     while (true) {
         find_adjacent(grid_search, current->index);
         for (int i = 0; i < 8; ++i) {
-            if (grid_search->nodes[i] == NULL) {
+            GRAPH_NODE* node = current->adjacent[i];
+            if (node == NULL) {
                 continue;
             }
-            GRAPH_NODE* node = grid_search->nodes[i];
             if (node->estimated_cost == 0) {
                 node->estimated_cost = cost(node, end);
             }
@@ -157,7 +161,6 @@ GRAPH_NODE* find_path(GRID_SEARCH_INSTANCE* grid_search, GRAPH_NODE* start, GRAP
             }
         }
         if (current->index == end->index) {
-            end->previous = current->previous;
             sv_clear(path);
             sv_push(&path, end);
             GRAPH_NODE* node = end->previous;
@@ -171,16 +174,19 @@ GRAPH_NODE* find_path(GRID_SEARCH_INSTANCE* grid_search, GRAPH_NODE* start, GRAP
         if ((int)shs_size(visited_nodes) == (grid_search->node_count - grid_search->excluded_nodes_count)) {
             return NULL;
         }
-        GRAPH_NODE* node = (GRAPH_NODE*)sorted_set_end(&sorted_nodes);
+        SET_ITEM* item = sorted_set_top(&sorted_nodes);
+        GRAPH_NODE* node;
+        node = item == NULL ? NULL : (GRAPH_NODE*)item->node;
         while (
             (node == NULL && sorted_set_count(&sorted_nodes) != 0) ||
             (node != NULL && shs_count_i(visited_nodes, node->index))
         )
         {
-            GRAPH_NODE* next = (GRAPH_NODE*)sorted_set_end(&sorted_nodes);
-            if (next != NULL) {
-                node = next;
+            SET_ITEM* item = sorted_set_top(&sorted_nodes);
+            if (item == NULL) {
+                return NULL;
             }
+            node = (GRAPH_NODE*)item->node;
         }
         current = node;
         shs_insert_i(&visited_nodes, node->index);
@@ -193,40 +199,48 @@ GRAPH_NODE* find_path(GRID_SEARCH_INSTANCE* grid_search, GRAPH_NODE* start, GRAP
 void find_path_in_grid(
     int* path_length,
     int** path,
-    bool* blocked,
     int blocked_count,
+    int* blocked,
     int horizontal_element_count,
     int vertical_element_count,
-    int* start_pos,
-    int* end_pos
+    int start_index,
+    int end_index
 ) {
-    int start_index = start_pos[0] + start_pos[1] * horizontal_element_count;
-    int end_index = end_pos[0] + end_pos[1] * horizontal_element_count;
     srt_hset* excluded_items = shs_alloc(SHS_I, blocked_count);
     for (int i = 0; i < blocked_count; ++i) {
-        if (blocked[i]) {
-            shs_insert_i(&excluded_items, i);
-        }
+        shs_insert_i(&excluded_items, blocked[i]);
     }
+    int i = 0;
     GRID_SEARCH_INSTANCE* grid_search = (GRID_SEARCH_INSTANCE*)malloc(sizeof(GRID_SEARCH_INSTANCE));
     init_grid_search(grid_search, excluded_items, horizontal_element_count, vertical_element_count);
-    GRAPH_NODE start_node, end_node;
-    init_node(&start_node, start_index, horizontal_element_count, vertical_element_count);
-    init_node(&end_node, end_index, horizontal_element_count, vertical_element_count);
-    GRAPH_NODE* result = find_path(grid_search, &start_node, &end_node);
-    *path_length = 0;
-    GRAPH_NODE* graph_iterator = result;
-    while (graph_iterator != NULL) {
-        ++*path_length;
-        graph_iterator = graph_iterator->previous;
-    }
-    if (*path_length > 0) {
-        *path = (int*)malloc(sizeof(int) * *path_length);
-        graph_iterator = result;
-        for (int i = 0; i < *path_length; ++i) {
-            *path[i] = graph_iterator->index;
-            graph_iterator = graph_iterator->previous;
-        }
-        *path[*path_length - 1] = graph_iterator->index;
-    }
+    GRAPH_NODE* result = find_path(
+        grid_search,
+        find_or_create_node(grid_search, start_index),
+        find_or_create_node(grid_search, end_index)
+    );
+//    *path_length = 0;
+//    GRAPH_NODE* graph_iterator = result;
+//    printf("yo\n");
+//    while (
+//       graph_iterator != NULL &&
+//       graph_iterator->index != start_index
+//   ) {
+//        ++*path_length;
+//        printf("wh %d\n", graph_iterator->index);
+//        graph_iterator = graph_iterator->previous;
+//    }
+//    Sleep(2000);
+//    if (*path_length > 0) {
+//        *path = (int*)malloc(sizeof(int) * *path_length);
+//        graph_iterator = result;
+//        for (int i = 0; i < *path_length; ++i) {
+//            *path[i] = graph_iterator->index;
+//            graph_iterator = graph_iterator->previous;
+//            printf("bucko\n");
+//    Sleep(2000);
+//        }
+//        *path[*path_length - 1] = graph_iterator->index;
+//    }
+//    printf("end\n");
+//    Sleep(2000);
 }

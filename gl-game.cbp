@@ -74,6 +74,8 @@
 		<Unit filename="main.h" />
 		<Unit filename="mat4.cpp" />
 		<Unit filename="mat4.h" />
+		<Unit filename="maze.cpp" />
+		<Unit filename="maze.h" />
 		<Unit filename="shaders.cpp" />
 		<Unit filename="shaders.h" />
 		<Unit filename="sorted_set.cpp" />
