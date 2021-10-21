@@ -25,8 +25,8 @@ bool add_sprites(SPRITE** add_sprites, int count)
             return false;
         }
     }
-    for (int i = sprites_count; i < new_count; ++i) {
-        sprites[i] = add_sprites[i];
+    for (int i = sprites_count, j = 0; i < new_count; ++i, ++j) {
+        sprites[i] = add_sprites[j];
     }
     sprites_count = new_count;
     return true;

@@ -3,8 +3,8 @@
 #define TILES_X 12
 #define TILES_Y 9
 
-#define TILE_WIDTH 1.0f
-#define TILE_HEIGHT 1.0f
+#define TILE_WIDTH 0.999f
+#define TILE_HEIGHT 0.999f
 
 #define DRAW_SPRITES_COUNT 36
 
@@ -34,110 +34,97 @@ static bool init_crates()
         if (ok) {
             set_sprite_size(draw_sprites[i], 0.999f, 0.999f);
             set_sprite_vel(draw_sprites[i], 0.0f, 0.0f, 0.0f);
+            set_sprite_pos(draw_sprites[i], 1.0f, 1.0f, Z_POS);
             draw_sprites[i]->is_static = false;
         }
     }
-//    set_sprite_vel(draw_sprites[0], 0, 0, 0);
-//    set_sprite_pos(draw_sprites[1], 1.0f, 1.0f, Z_POS);
-//    set_sprite_pos(draw_sprites[2], 2.0f, 1.0f, Z_POS);
-//    set_sprite_pos(draw_sprites[3], 3.0f, 1.0f, Z_POS);
-//    set_sprite_pos(draw_sprites[4], 1.0f, 3.0f, Z_POS);
-//    set_sprite_pos(draw_sprites[5], 3.0f, 3.0f, Z_POS);
-//    set_sprite_pos(draw_sprites[6], 4.0f, 3.0f, Z_POS);
-//    set_sprite_pos(draw_sprites[7], -1.0f, -1.0f, Z_POS);
-//    set_sprite_pos(draw_sprites[8], -1.0f, -2.0f, Z_POS);
-//    set_sprite_pos(draw_sprites[9], -1.0f, -3.0f, Z_POS);
-//    for (int i = 1; i < 10; ++i) {
-//        set_sprite_vel(draw_sprites[i], i > 5 ? 0.07 : -0.07, i > 5 ? 0.07 : -0.07, 0);
-//    }
-//    set_sprite_pos(draw_sprites[10], -5.5f, -3.0f, Z_POS);
-//    draw_sprites[10]->is_static = true;
-//    set_sprite_pos(draw_sprites[11], -5.5f, -2.0f, Z_POS);
-//    draw_sprites[11]->is_static = true;
-//    set_sprite_pos(draw_sprites[12], -5.5f, -1.0f, Z_POS);
-//    draw_sprites[12]->is_static = true;
-//    set_sprite_pos(draw_sprites[13], -5.5f, 0.0f, Z_POS);
-//    draw_sprites[13]->is_static = true;
-//    set_sprite_pos(draw_sprites[14], -5.5f, 1.0f, Z_POS);
-//    draw_sprites[14]->is_static = true;
-//    set_sprite_pos(draw_sprites[15], -5.5f, 2.0f, Z_POS);
-//    draw_sprites[15]->is_static = true;
+    set_sprite_pos(draw_sprites[1], 1.0f, 1.0f, Z_POS);
+    set_sprite_pos(draw_sprites[2], 2.0f, 1.0f, Z_POS);
+    set_sprite_pos(draw_sprites[3], 3.0f, 1.0f, Z_POS);
+    set_sprite_pos(draw_sprites[4], 1.0f, 3.0f, Z_POS);
+    set_sprite_pos(draw_sprites[5], 3.0f, 3.0f, Z_POS);
+    set_sprite_pos(draw_sprites[6], 4.0f, 3.0f, Z_POS);
+    set_sprite_pos(draw_sprites[7], -1.0f, -1.0f, Z_POS);
+    set_sprite_pos(draw_sprites[8], -1.0f, -2.0f, Z_POS);
+    set_sprite_pos(draw_sprites[9], -1.0f, -3.0f, Z_POS);
+    for (int i = 1; i < 10; ++i) {
+        set_sprite_vel(draw_sprites[i], i > 5 ? 0.07 : -0.07, i > 5 ? 0.07 : -0.07, 0);
+    }
+    set_sprite_pos(draw_sprites[10], -5.5f, -3.0f, Z_POS);
+    draw_sprites[10]->is_static = true;
+    set_sprite_pos(draw_sprites[11], -5.5f, -2.0f, Z_POS);
+    draw_sprites[11]->is_static = true;
+    set_sprite_pos(draw_sprites[12], -5.5f, -1.0f, Z_POS);
+    draw_sprites[12]->is_static = true;
+    set_sprite_pos(draw_sprites[13], -5.5f, 0.0f, Z_POS);
+    draw_sprites[13]->is_static = true;
+    set_sprite_pos(draw_sprites[14], -5.5f, 1.0f, Z_POS);
+    draw_sprites[14]->is_static = true;
+    set_sprite_pos(draw_sprites[15], -5.5f, 2.0f, Z_POS);
+    draw_sprites[15]->is_static = true;
 
-//    set_sprite_pos(draw_sprites[16], 1.5f, -3.0f, Z_POS);
-//    draw_sprites[16]->is_static = true;
-//    set_sprite_pos(draw_sprites[17], 1.5f, -2.0f, Z_POS);
-//    draw_sprites[17]->is_static = true;
-//    set_sprite_pos(draw_sprites[18], 1.5f, -1.0f, Z_POS);
-//    draw_sprites[18]->is_static = true;
-//    set_sprite_pos(draw_sprites[19], 1.5f, 0.0f, Z_POS);
-//    draw_sprites[19]->is_static = true;
-//    set_sprite_pos(draw_sprites[20], 1.5f, 1.0f, Z_POS);
-//    draw_sprites[20]->is_static = true;
-//    set_sprite_pos(draw_sprites[21], 1.5f, 2.0f, Z_POS);
-//    draw_sprites[21]->is_static = true;
-//
-//    set_sprite_pos(draw_sprites[22], -4.5f, -3.0f, Z_POS);
-//    draw_sprites[22]->is_static = true;
-//    set_sprite_pos(draw_sprites[23], -3.5f, -3.0f, Z_POS);
-//    draw_sprites[23]->is_static = true;
-//    set_sprite_pos(draw_sprites[24], -2.5f, -3.0f, Z_POS);
-//    draw_sprites[24]->is_static = true;
-//    set_sprite_pos(draw_sprites[25], -1.5f, -3.0f, Z_POS);
-//    draw_sprites[25]->is_static = true;
-//    set_sprite_pos(draw_sprites[26], -0.5f, -3.0f, Z_POS);
-//    draw_sprites[26]->is_static = true;
-//    set_sprite_pos(draw_sprites[27], 0.5f, -3.0f, Z_POS);
-//    draw_sprites[27]->is_static = true;
-//
-//    set_sprite_pos(draw_sprites[28], -5.5f, 3.0f, Z_POS);
-//    draw_sprites[28]->is_static = true;
-//    set_sprite_pos(draw_sprites[29], -4.5f, 3.0f, Z_POS);
-//    draw_sprites[29]->is_static = true;
-//    set_sprite_pos(draw_sprites[30], -3.5f, 3.0f, Z_POS);
-//    draw_sprites[30]->is_static = true;
-//    set_sprite_pos(draw_sprites[31], -2.5f, 3.0f, Z_POS);
-//    draw_sprites[31]->is_static = true;
-//    set_sprite_pos(draw_sprites[32], -1.5f, 3.0f, Z_POS);
-//    draw_sprites[32]->is_static = true;
-//    set_sprite_pos(draw_sprites[33], -0.5f, 3.0f, Z_POS);
-//    draw_sprites[33]->is_static = true;
-//    set_sprite_pos(draw_sprites[34], 0.5f, 3.0f, Z_POS);
-//    draw_sprites[34]->is_static = true;
+    set_sprite_pos(draw_sprites[16], 1.5f, -3.0f, Z_POS);
+    draw_sprites[16]->is_static = true;
+    set_sprite_pos(draw_sprites[17], 1.5f, -2.0f, Z_POS);
+    draw_sprites[17]->is_static = true;
+    set_sprite_pos(draw_sprites[18], 1.5f, -1.0f, Z_POS);
+    draw_sprites[18]->is_static = true;
+    set_sprite_pos(draw_sprites[19], 1.5f, 0.0f, Z_POS);
+    draw_sprites[19]->is_static = true;
+    set_sprite_pos(draw_sprites[20], 1.5f, 1.0f, Z_POS);
+    draw_sprites[20]->is_static = true;
+    set_sprite_pos(draw_sprites[21], 1.5f, 2.0f, Z_POS);
+    draw_sprites[21]->is_static = true;
 
-//    set_sprite_pos(draw_sprites[35], 1.5f, 3.0f, Z_POS);
-//    draw_sprites[35]->is_static = true;
+    set_sprite_pos(draw_sprites[22], -4.5f, -3.0f, Z_POS);
+    draw_sprites[22]->is_static = true;
+    set_sprite_pos(draw_sprites[23], -3.5f, -3.0f, Z_POS);
+    draw_sprites[23]->is_static = true;
+    set_sprite_pos(draw_sprites[24], -2.5f, -3.0f, Z_POS);
+    draw_sprites[24]->is_static = true;
+    set_sprite_pos(draw_sprites[25], -1.5f, -3.0f, Z_POS);
+    draw_sprites[25]->is_static = true;
+    set_sprite_pos(draw_sprites[26], -0.5f, -3.0f, Z_POS);
+    draw_sprites[26]->is_static = true;
+    set_sprite_pos(draw_sprites[27], 0.5f, -3.0f, Z_POS);
+    draw_sprites[27]->is_static = true;
+
+    set_sprite_pos(draw_sprites[28], -5.5f, 3.0f, Z_POS);
+    draw_sprites[28]->is_static = true;
+    set_sprite_pos(draw_sprites[29], -4.5f, 3.0f, Z_POS);
+    draw_sprites[29]->is_static = true;
+    set_sprite_pos(draw_sprites[30], -3.5f, 3.0f, Z_POS);
+    draw_sprites[30]->is_static = true;
+    set_sprite_pos(draw_sprites[31], -2.5f, 3.0f, Z_POS);
+    draw_sprites[31]->is_static = true;
+    set_sprite_pos(draw_sprites[32], -1.5f, 3.0f, Z_POS);
+    draw_sprites[32]->is_static = true;
+    set_sprite_pos(draw_sprites[33], -0.5f, 3.0f, Z_POS);
+    draw_sprites[33]->is_static = true;
+    set_sprite_pos(draw_sprites[34], 0.5f, 3.0f, Z_POS);
+    draw_sprites[34]->is_static = true;
+
+    set_sprite_pos(draw_sprites[35], 1.5f, 3.0f, Z_POS);
+    draw_sprites[35]->is_static = true;
     return ok;
 }
 
 bool init_maze()
 {
-    bool ok = create_sprite(&draw_sprites[0], "game-hero.png");
+    bool ok = create_sprite(draw_sprites, "game-hero.png");
     ok = ok && init_crates();
-    ok = ok && add_sprites(draw_sprites, DRAW_SPRITES_COUNT);
+//    ok = ok && add_sprites(draw_sprites + 1, DRAW_SPRITES_COUNT - 1);
+    ok = ok && add_sprites(draw_sprites, 1);
     set_sprite_pos(draw_sprites[0], -1.495, 0.7, Z_POS);
     set_sprite_size(draw_sprites[0], 0.3, 0.3);
-    int blocked[TILES_X * TILES_Y] = {};
-    int blocked_count = 0;
-    for (int i = 0; i < TILES_X; ++i) {
-        for (int j = 0; j < TILES_Y && ok; ++j) {
-            int offset = i + TILES_X * j;
-            if (grid[offset]) {
-                ok = create_sprite(tiles + offset, "wall.png");
-                blocked[blocked_count++] = i;
-            } else {
-                ok = create_sprite(tiles + offset, "ground.png");
-            }
-            SPRITE* tile = tiles[i + TILES_X * j];
-            set_sprite_pos(tile, i * TILE_WIDTH - 6.0f, j * TILE_HEIGHT - 4.5f, 12.0f);
-            tile->size[0] = TILE_WIDTH;
-            tile->size[1] = TILE_HEIGHT;
-            update_model_mat(tile);
-        }
-    }
+    set_sprite_vel(draw_sprites[0], 0, 0, 0);
+    draw_sprites[0]->is_static = false;
     int path_length = 0;
     int* path = NULL;
     int start_index = 14 - 1;
-    int end_index = 70 - 1;
+    int end_index = 65 - 1;
+    int blocked[TILES_X * TILES_Y] = {};
+    int blocked_count = 0;
     find_path_in_grid(
         &path_length,
         &path,
@@ -148,21 +135,41 @@ bool init_maze()
         start_index,
         end_index
     );
-//    printf("AFT %d, %d, %d, %d, ""TILES_X"", ""TILES_Y"", %d, %d\n", path_length,
-//        *path,
-//        blocked_count,
-//        *blocked,
-//        TILES_X,
-//        TILES_Y,
-//        start_index,
-//        end_index
-//    );
 //    for (int i = 0; i < path_length; ++i) {
 //        int path_step = path[i];
-//        int x = (int)fmod(i, TILES_X);
-//        int y = (int)(i / TILES_X);
+//        int x = (int)fmod(path_step, TILES_X);
+//        int y = (int)(path_step / TILES_X);
+//        blocked[blocked_count++] = i;
 //        printf("%d, %d is %s\n", x, y, "not blocked");
 //    }
+    for (int i = 0; i < TILES_X; ++i) {
+        for (int j = 0; j < TILES_Y && ok; ++j) {
+            int offset = i + TILES_X * j;
+            bool is_blocked = true;
+            for (int k = 0; k < path_length; ++k) {
+                int path_step = path[k];
+                if (path_step == offset) {
+                    is_blocked = false;
+                    int x = (int)fmod(path_step, TILES_X);
+                    int y = (int)(path_step / TILES_X);
+                    printf("%d, %d is %s\n", x, y, "unblocked is true");
+                }
+            }
+            if (is_blocked) {
+                ok = ok && create_sprite(tiles + offset, "wall.png");
+                ok = ok && add_sprites(tiles + offset, 1);
+            } else {
+                ok = ok && create_sprite(tiles + offset, "ground.png");
+            }
+            SPRITE* tile = tiles[offset];
+            tile->is_static = true;
+            set_sprite_pos(tile, i * TILE_WIDTH - 6.0f, j * TILE_HEIGHT - 4.5f, Z_POS + 0.0001f);
+            tile->size[0] = TILE_WIDTH;
+            tile->size[1] = TILE_HEIGHT;
+            set_sprite_vel(tile, 0.0f, 0.0f, 0.0f);
+            update_model_mat(tile);
+        }
+    }
     return ok;
 }
 
@@ -195,6 +202,7 @@ bool update_maze(int keys[], float dt, float t)
 bool draw_maze()
 {
     for (int i = 0; i < TILES_X * TILES_Y; ++i) {
+        update_model_mat(tiles[i]);
         draw_gl(tiles[i]->draw_entity);
     }
     for (int i = 0; i < DRAW_SPRITES_COUNT; ++i) {

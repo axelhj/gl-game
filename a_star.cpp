@@ -4,7 +4,6 @@
 #include "svector.h"
 #include <cstdlib>
 #include <math.h>
-#include <windows.h> // For sleep
 
 typedef struct graph_node GRAPH_NODE;
 
@@ -218,29 +217,26 @@ void find_path_in_grid(
         find_or_create_node(grid_search, start_index),
         find_or_create_node(grid_search, end_index)
     );
-//    *path_length = 0;
-//    GRAPH_NODE* graph_iterator = result;
-//    printf("yo\n");
-//    while (
-//       graph_iterator != NULL &&
-//       graph_iterator->index != start_index
-//   ) {
-//        ++*path_length;
-//        printf("wh %d\n", graph_iterator->index);
-//        graph_iterator = graph_iterator->previous;
-//    }
-//    Sleep(2000);
-//    if (*path_length > 0) {
-//        *path = (int*)malloc(sizeof(int) * *path_length);
-//        graph_iterator = result;
-//        for (int i = 0; i < *path_length; ++i) {
-//            *path[i] = graph_iterator->index;
-//            graph_iterator = graph_iterator->previous;
-//            printf("bucko\n");
-//    Sleep(2000);
-//        }
-//        *path[*path_length - 1] = graph_iterator->index;
-//    }
-//    printf("end\n");
-//    Sleep(2000);
+    *path_length = 0;
+    GRAPH_NODE* graph_iterator = result;
+    while (
+       graph_iterator != NULL &&
+       graph_iterator->index != start_index
+   ) {
+        ++*path_length;
+        if (graph_iterator->previous != NULL) {
+            graph_iterator = graph_iterator->previous;
+        } else {
+            break;
+        }
+    }
+    if (*path_length > 0 && result != NULL) {
+        *path = (int*)malloc(sizeof(int) * ((*path_length) + 1));
+        graph_iterator = result;
+        for (int i = 0; i < (*path_length) && graph_iterator != NULL; ++i) {
+            (*path)[i] = graph_iterator->index;
+            graph_iterator = graph_iterator->previous;
+        }
+        (*path)[*path_length] = graph_iterator->index;
+    }
 }
