@@ -6,7 +6,7 @@
 #define TILE_WIDTH 0.999f
 #define TILE_HEIGHT 0.999f
 
-#define DRAW_SPRITES_COUNT 36
+#define DRAW_SPRITES_COUNT 37
 
 #define Z_POS 11.0f
 
@@ -38,6 +38,10 @@ static bool init_crates()
             draw_sprites[i]->is_static = false;
         }
     }
+    create_text_sprite(&draw_sprites[36]);
+    set_sprite_size(draw_sprites[36], 1.5f, 1.5f);
+    set_sprite_vel(draw_sprites[36], 0.0f, 0.0f, 0.0f);
+    set_sprite_pos(draw_sprites[36], 1.5f - 2.0f, 2.0f - 5.0f, Z_POS - 0.05f);
     set_sprite_pos(draw_sprites[1], 1.0f, 1.0f, Z_POS);
     set_sprite_pos(draw_sprites[2], 2.0f, 1.0f, Z_POS);
     set_sprite_pos(draw_sprites[3], 3.0f, 1.0f, Z_POS);
@@ -205,10 +209,12 @@ bool draw_maze()
         update_model_mat(tiles[i]);
         draw_gl(tiles[i]->draw_entity);
     }
-    for (int i = 0; i < DRAW_SPRITES_COUNT; ++i) {
+    for (int i = 0; i < DRAW_SPRITES_COUNT - 1; ++i) {
         update_model_mat(draw_sprites[i]);
         draw_gl(draw_sprites[i]->draw_entity);
     }
+    update_model_mat(draw_sprites[36]);
+    draw_sprite_text(draw_sprites[36], "Hej!3\"!", 3);
     return true;
 }
 

@@ -44,6 +44,7 @@ typedef struct draw_entity {
     GLfloat model_mat[16];
     GLfloat view_mat[16];
     GLfloat projection_mat[16];
+    GLfloat texture_transform_mat[16];
 } DRAW_ENTITY;
 
 extern int keys[7];

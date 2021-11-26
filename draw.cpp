@@ -9,6 +9,8 @@ uniform mat4 view;\n\
 \n\
 uniform mat4 projection;\n\
 \n\
+uniform mat4 textureTransform;\n\
+\n\
 in vec3 vertexAttr;\n\
 \n\
 in vec2 texCoordAttr;\n\
@@ -23,7 +25,7 @@ void main(void) {\n\
     normal = normalAttr;\n\
     gl_Position = vec4(vertexAttr, 1) * model * view * projection;\n\
     normal = vec4(normalAttr, 0).xyz;\n\
-    texCoord = texCoordAttr;\n\
+    texCoord = (vec4(texCoordAttr, 0, 1) * textureTransform).xy;\n\
 }\n";
 
 static const char* f_program =
@@ -217,6 +219,7 @@ bool load_gl(DRAW_ENTITY* draw_entity) {
     mat_identity(draw_entity->model_mat);
     mat_identity(draw_entity->view_mat);
     mat_perspective(draw_entity->projection_mat, 90.0f, 0.1f, 100.0f);
+    mat_identity(draw_entity->texture_transform_mat);
 
     return successful;
 }
@@ -292,6 +295,10 @@ void draw_gl(DRAW_ENTITY* draw_entity) {
     uniform_loc = glGetUniformLocation(draw_entity->program, "projection");
     if (uniform_loc != -1) {
         glUniformMatrix4fv(uniform_loc, 1, false, draw_entity->projection_mat);
+    }
+    uniform_loc = glGetUniformLocation(draw_entity->program, "textureTransform");
+    if (uniform_loc != -1) {
+        glUniformMatrix4fv(uniform_loc, 1, false, draw_entity->texture_transform_mat);
     }
     GLint vertex_attrib_pos = glGetAttribLocation(draw_entity->program, "vertexAttr");
     GLint tex_coord_attrib_pos = glGetAttribLocation(draw_entity->program, "texCoordAttr");

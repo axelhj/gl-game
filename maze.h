@@ -3,6 +3,7 @@
 
 #include "mat4.h"
 #include "sprite.h"
+#include "text_sprite.h"
 #include "sprite_collider.h"
 #include "a_star.h"
 
