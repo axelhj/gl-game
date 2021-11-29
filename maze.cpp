@@ -39,7 +39,7 @@ static bool init_crates()
         }
     }
     create_text_sprite(&draw_sprites[36]);
-    set_sprite_size(draw_sprites[36], 1.5f, 1.5f);
+    set_sprite_size(draw_sprites[36], 0.3f, 0.3f);
     set_sprite_vel(draw_sprites[36], 0.0f, 0.0f, 0.0f);
     set_sprite_pos(draw_sprites[36], 1.5f - 2.0f, 2.0f - 5.0f, Z_POS - 0.05f);
     set_sprite_pos(draw_sprites[1], 1.0f, 1.0f, Z_POS);
@@ -214,7 +214,10 @@ bool draw_maze()
         draw_gl(draw_sprites[i]->draw_entity);
     }
     update_model_mat(draw_sprites[36]);
-    draw_sprite_text(draw_sprites[36], "Hej!3\"!", 3);
+    const char* full_string =
+        "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghi"
+        "jklmnopqrstuvwxyz{|}~";
+    draw_sprite_text(draw_sprites[36], full_string, 17);
     return true;
 }
 
