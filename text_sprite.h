@@ -22,7 +22,7 @@ bool create_text_sprite(SPRITE** sprite);
 
 bool destroy_text_sprite(SPRITE* sprite);
 
-void draw_sprite_text(SPRITE* sprite, const char* text, int wrapat);
+void draw_sprite_text(SPRITE* sprite, const char* text, int wrapat, int row_count);
 
 #endif /* TEXT_SPRITE_H */
 
