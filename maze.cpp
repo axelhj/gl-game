@@ -115,12 +115,12 @@ static bool init_crates()
 
 bool init_maze()
 {
-    bool ok = create_sprite(draw_sprites, "game-hero.png");
+    bool ok = create_sprite(draw_sprites, "pino.png");
     ok = ok && init_crates();
 //    ok = ok && add_sprites(draw_sprites + 1, DRAW_SPRITES_COUNT - 1);
     ok = ok && add_sprites(draw_sprites, 1);
-    set_sprite_pos(draw_sprites[0], -1.495, 0.7, Z_POS);
-    set_sprite_size(draw_sprites[0], 0.3, 0.3);
+    set_sprite_pos(draw_sprites[0], -1.795, 0.7, Z_POS);
+    set_sprite_size(draw_sprites[0], 0.7, 0.7);
     set_sprite_vel(draw_sprites[0], 0, 0, 0);
     draw_sprites[0]->is_static = false;
     int path_length = 0;
