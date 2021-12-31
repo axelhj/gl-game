@@ -62,10 +62,10 @@ void draw_sprite_text(SPRITE* sprite, const char* text, int wrapat)
             (1.0f - vertical_sprite_offset_reduction) * sprite_height);
         update_model_mat(sprite);
         update_texture_mat(
-            sprite->draw_entity->texture_transform_mat,
+            sprite->draw->texture_transform_mat,
             offset_values,
             offset_values + 2);
-        draw_gl(sprite->draw_entity);
+        sprite->draw->draw_gl();
     }
     sprite->pos[0] = original_x;
     sprite->pos[1] = original_y;

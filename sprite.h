@@ -9,7 +9,7 @@ typedef struct sprite {
     float pos[3];
     float vel[3];
     float size[2];
-    DRAW_ENTITY* draw_entity;
+    Draw* draw;
     bool is_static;
 } SPRITE;
 

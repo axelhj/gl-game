@@ -120,6 +120,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
+Draw::Draw()
+{
+}
+
+Draw::~Draw() {
+}
+
 bool init_gl(const char* window_title, const int window_width, const int window_height) {
     if (!glfwInit()) {
         printf("Init failed\n");
@@ -153,6 +160,16 @@ void terminate_gl() {
     glfwTerminate();
 }
 
+void pre_draw() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+bool post_draw() {
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+    return glfwWindowShouldClose(window) == 0;
+}
+
 static GLfloat square_vertices[] = {
     0.0f, 0.0f, 0.0f,
     1.0f, 1.0f, 0.0f,
@@ -180,56 +197,53 @@ static GLfloat square_normals[] = {
     0.0f, 0.0f, 1.0f
 };
 
-void set_square_vertex_data(DRAW_ENTITY* draw_entity) {
-    draw_entity->vertex_buffer_coordinate_count = 3;
-    draw_entity->tex_coord_buffer_coordinate_count = 2;
-    draw_entity->normal_buffer_coordinate_count = 3;
-    draw_entity->vertex_buffer_elements_count = 3 * 6;
-    draw_entity->tex_coord_buffer_elements_count = 2 * 6;
-    draw_entity->normal_buffer_elements_count = 3 * 6;
-    draw_entity->vertex_buffer_size = sizeof(GLfloat) * draw_entity->vertex_buffer_elements_count;
-    draw_entity->tex_coord_buffer_size = sizeof(GLfloat) * draw_entity->tex_coord_buffer_elements_count;
-    draw_entity->normal_buffer_size = sizeof(GLfloat) * draw_entity->normal_buffer_elements_count;
-    draw_entity->vertices = square_vertices;
-    draw_entity->tex_coords = square_text_coords;
-    draw_entity->normals = square_normals;
+void Draw::set_square_vertex_data() {
+    vertex_buffer_coordinate_count = 3;
+    tex_coord_buffer_coordinate_count = 2;
+    normal_buffer_coordinate_count = 3;
+    vertex_buffer_elements_count = 3 * 6;
+    tex_coord_buffer_elements_count = 2 * 6;
+    normal_buffer_elements_count = 3 * 6;
+    vertex_buffer_size = sizeof(GLfloat) * vertex_buffer_elements_count;
+    tex_coord_buffer_size = sizeof(GLfloat) * tex_coord_buffer_elements_count;
+    normal_buffer_size = sizeof(GLfloat) * normal_buffer_elements_count;
+    vertices = square_vertices;
+    tex_coords = square_text_coords;
+    normals = square_normals;
 }
 
-bool load_gl(DRAW_ENTITY* draw_entity) {
-    bool successful = compile_shader_program(v_program, strlen(v_program), f_program, strlen(f_program), &draw_entity->program) == 0;
-    glGenVertexArrays(1, &draw_entity->vao);
-    glBindVertexArray(draw_entity->vao);
-    glGenBuffers(3, draw_entity->vbo);
+bool Draw::load_gl() {
+    bool successful = compile_shader_program(v_program, strlen(v_program), f_program, strlen(f_program), &program) == 0;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+    glGenBuffers(3, vbo);
     // Note: glBufferData can cause GL_OUT_OF_MEMORY error.
-    glBindBuffer(GL_ARRAY_BUFFER, draw_entity->vbo[0]);
-    glBufferData(GL_ARRAY_BUFFER, draw_entity->vertex_buffer_size, draw_entity->vertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+    glBufferData(GL_ARRAY_BUFFER, vertex_buffer_size, vertices, GL_STATIC_DRAW);
     print_gl_error(glGetError());
-    glBindBuffer(GL_ARRAY_BUFFER, draw_entity->vbo[1]);
-    glBufferData(GL_ARRAY_BUFFER, draw_entity->tex_coord_buffer_size, draw_entity->tex_coords, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+    glBufferData(GL_ARRAY_BUFFER, tex_coord_buffer_size, tex_coords, GL_STATIC_DRAW);
     print_gl_error(glGetError());
-    glBindBuffer(GL_ARRAY_BUFFER, draw_entity->vbo[2]);
-    glBufferData(GL_ARRAY_BUFFER, draw_entity->normal_buffer_size, draw_entity->normals, GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+    glBufferData(GL_ARRAY_BUFFER, normal_buffer_size, normals, GL_STATIC_DRAW);
     print_gl_error(glGetError());
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
     glDisable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
-
-    mat_identity(draw_entity->model_mat);
-    mat_identity(draw_entity->view_mat);
-    mat_perspective(draw_entity->projection_mat, 90.0f, 0.1f, 100.0f);
-    mat_identity(draw_entity->texture_transform_mat);
-
+    mat_identity(model_mat);
+    mat_identity(view_mat);
+    mat_perspective(projection_mat, 90.0f, 0.1f, 100.0f);
+    mat_identity(texture_transform_mat);
     return successful;
 }
 
-bool load_gl_texture(DRAW_ENTITY* draw_entity, const char* file_name) {
+bool Draw::load_gl_texture(const char* file_name) {
     int image_width, image_height;
     unsigned char* imageData = get_image_data(file_name, &image_width, &image_height);
-    glGenTextures(1, &draw_entity->texture_id);
+    glGenTextures(1, &texture_id);
     print_gl_error(glGetError());
-    glBindTexture(GL_TEXTURE_2D, draw_entity->texture_id);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
     print_gl_error(glGetError());
     glTexImage2D(
         GL_TEXTURE_2D,
@@ -247,90 +261,80 @@ bool load_gl_texture(DRAW_ENTITY* draw_entity, const char* file_name) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 //    Not used since filter parameter is GL_NEAREST.
 //    glGenerateMipmap(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, draw_entity->texture_id);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
     GLenum error = glGetError();
     print_gl_error(error);
     return error == GL_NO_ERROR;
 }
 
-extern bool unload_gl(DRAW_ENTITY* draw_entity)
+extern bool Draw::unload_gl()
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glDeleteBuffers(3, draw_entity->vbo);
+    glDeleteBuffers(3, vbo);
     glBindVertexArray(0);
-    delete_shader_program(draw_entity->program);
-    glDeleteVertexArrays(1, &draw_entity->vao);
+    delete_shader_program(program);
+    glDeleteVertexArrays(1, &vao);
     return true;
 }
 
-extern bool unload_gl_texture(DRAW_ENTITY* draw_entity)
+extern bool Draw::unload_gl_texture()
 {
     glBindTexture(GL_TEXTURE_2D, 0);
-    glDeleteTextures(1, &draw_entity->texture_id);
+    glDeleteTextures(1, &texture_id);
     return true;
 }
 
-void pre_draw() {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
-
-bool post_draw() {
-    glfwSwapBuffers(window);
-    glfwPollEvents();
-    return glfwWindowShouldClose(window) == 0;
-}
-
-void draw_gl(DRAW_ENTITY* draw_entity) {
-    glUseProgram(draw_entity->program);
+void Draw::draw_gl() {
+    glUseProgram(program);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    glBindVertexArray(draw_entity->vao);
-    GLint uniform_loc = glGetUniformLocation(draw_entity->program, "model");
+    glBindVertexArray(vao);
+    GLint uniform_loc = glGetUniformLocation(program, "model");
     if (uniform_loc != -1) {
-        glUniformMatrix4fv(uniform_loc, 1, false, draw_entity->model_mat);
+        glUniformMatrix4fv(uniform_loc, 1, false, model_mat);
     }
-    uniform_loc = glGetUniformLocation(draw_entity->program, "view");
+    uniform_loc = glGetUniformLocation(program, "view");
     if (uniform_loc != -1) {
-        glUniformMatrix4fv(uniform_loc, 1, false, draw_entity->view_mat);
+        glUniformMatrix4fv(uniform_loc, 1, false, view_mat);
     }
-    uniform_loc = glGetUniformLocation(draw_entity->program, "projection");
+    uniform_loc = glGetUniformLocation(program, "projection");
     if (uniform_loc != -1) {
-        glUniformMatrix4fv(uniform_loc, 1, false, draw_entity->projection_mat);
+        glUniformMatrix4fv(uniform_loc, 1, false, projection_mat);
     }
-    uniform_loc = glGetUniformLocation(draw_entity->program, "textureTransform");
+    uniform_loc = glGetUniformLocation(program, "textureTransform");
     if (uniform_loc != -1) {
-        glUniformMatrix4fv(uniform_loc, 1, false, draw_entity->texture_transform_mat);
+        glUniformMatrix4fv(uniform_loc, 1, false, texture_transform_mat);
     }
-    GLint vertex_attrib_pos = glGetAttribLocation(draw_entity->program, "vertexAttr");
-    GLint tex_coord_attrib_pos = glGetAttribLocation(draw_entity->program, "texCoordAttr");
-    GLint normal_attrib_pos = glGetAttribLocation(draw_entity->program, "normalAttr");
+    GLint vertex_attrib_pos = glGetAttribLocation(program, "vertexAttr");
+    GLint tex_coord_attrib_pos = glGetAttribLocation(program, "texCoordAttr");
+    GLint normal_attrib_pos = glGetAttribLocation(program, "normalAttr");
     glEnableVertexAttribArray(vertex_attrib_pos);
-    glBindBuffer(GL_ARRAY_BUFFER, draw_entity->vbo[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
     glVertexAttribPointer(vertex_attrib_pos, // attrib array index
-        draw_entity->vertex_buffer_coordinate_count, // vertex attrib coordinates count
+        vertex_buffer_coordinate_count, // vertex attrib coordinates count
         GL_FLOAT, // type
         GL_FALSE, // normalized
         0, // stride
         (void*)0); // vbo offset
     glEnableVertexAttribArray(tex_coord_attrib_pos);
-    glBindBuffer(GL_ARRAY_BUFFER, draw_entity->vbo[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
     glVertexAttribPointer(tex_coord_attrib_pos, // attrib array index
-        draw_entity->tex_coord_buffer_coordinate_count, // vertex attrib coordinates count
+        tex_coord_buffer_coordinate_count, // vertex attrib coordinates count
         GL_FLOAT, // type
         GL_FALSE, // normalized
         0, // stride
         (void*)0); // vbo offset
     glEnableVertexAttribArray(normal_attrib_pos);
-    glBindBuffer(GL_ARRAY_BUFFER, draw_entity->vbo[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
     glVertexAttribPointer(normal_attrib_pos, // attrib array index
-                          draw_entity->normal_buffer_coordinate_count, // vertex attrib coordinates count
-                          GL_FLOAT, // type
-                          GL_FALSE, // normalized
-                          0, // stride
-                          (void*)0); // vbo offset
-    glBindTexture(GL_TEXTURE_2D, draw_entity->texture_id);
-    GLint uniform_location = glGetUniformLocation(draw_entity->program, "texture0");
+        normal_buffer_coordinate_count, // vertex attrib coordinates count
+        GL_FLOAT, // type
+        GL_FALSE, // normalized
+        0, // stride
+        (void*)0); // vbo offset
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+    GLint uniform_location = glGetUniformLocation(program, "texture0");
     glUniform1i(uniform_location, 0);
-    glDrawArrays(GL_TRIANGLES, 0, draw_entity->vertex_buffer_elements_count / draw_entity->vertex_buffer_coordinate_count);
+    glDrawArrays(GL_TRIANGLES, 0, vertex_buffer_elements_count / vertex_buffer_coordinate_count);
     glDisableVertexAttribArray(vertex_attrib_pos);
     glDisableVertexAttribArray(tex_coord_attrib_pos);
     glDisableVertexAttribArray(normal_attrib_pos);

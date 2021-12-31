@@ -24,7 +24,20 @@
 #include "draw.h"
 #include "mat4.h"
 
-typedef struct draw_entity {
+extern int keys[7];
+
+extern bool init_gl(const char* window_title, const int window_width, const int window_height);
+
+extern void terminate_gl();
+
+extern void print_gl_error(GLenum error);
+
+extern void pre_draw();
+
+extern bool post_draw();
+
+class Draw {
+public:
     GLuint program;
     int vertex_buffer_coordinate_count;
     int tex_coord_buffer_coordinate_count;
@@ -45,31 +58,15 @@ typedef struct draw_entity {
     GLfloat view_mat[16];
     GLfloat projection_mat[16];
     GLfloat texture_transform_mat[16];
-} DRAW_ENTITY;
-
-extern int keys[7];
-
-extern bool init_gl(const char* window_title, const int window_width, const int window_height);
-
-extern void terminate_gl();
-
-extern void set_square_vertex_data(DRAW_ENTITY* draw_entity);
-
-extern bool load_gl(DRAW_ENTITY* draw_entity);
-
-extern bool load_gl_texture(DRAW_ENTITY* draw_entity, const char* file_name);
-
-extern bool unload_gl(DRAW_ENTITY* draw_entity);
-
-extern bool unload_gl_texture(DRAW_ENTITY* draw_entity);
-
-extern void print_gl_error(GLenum error);
-
-extern void pre_draw();
-
-extern bool post_draw();
-
-extern void draw_gl(DRAW_ENTITY* draw_entity);
+    Draw();
+    ~Draw();
+    void set_square_vertex_data();
+    bool load_gl();
+    bool load_gl_texture(const char* file_name);
+    bool unload_gl();
+    bool unload_gl_texture();
+    void draw_gl();
+};
 
 #endif /* DRAW_H */
 

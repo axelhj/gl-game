@@ -207,17 +207,17 @@ bool draw_maze()
 {
     for (int i = 0; i < TILES_X * TILES_Y; ++i) {
         update_model_mat(tiles[i]);
-        draw_gl(tiles[i]->draw_entity);
+        tiles[i]->draw->draw_gl();
     }
     for (int i = 0; i < DRAW_SPRITES_COUNT - 1; ++i) {
         update_model_mat(draw_sprites[i]);
-        draw_gl(draw_sprites[i]->draw_entity);
+        draw_sprites[i]->draw->draw_gl();
     }
     update_model_mat(draw_sprites[36]);
     const char* full_string =
         "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghi"
         "jklmnopqrstuvwxyz{|}~ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│";
-    draw_sprite_text(draw_sprites[36], full_string, 17);
+    draw_sprite_text(draw_sprites[36], full_string, 17, 17);
     return true;
 }
 

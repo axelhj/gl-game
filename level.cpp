@@ -163,11 +163,11 @@ bool update_level(int keys[], float dt, float t)
 bool draw_level()
 {
     for (int i = 0; i < TILES_X * TILES_Y; ++i) {
-        draw_gl(tiles[i]->draw_entity);
+        tiles[i]->draw->draw_gl();
     }
     for (int i = 0; i < DRAW_SPRITES_COUNT; ++i) {
         update_model_mat(draw_sprites[i]);
-        draw_gl(draw_sprites[i]->draw_entity);
+        draw_sprites[i]->draw->draw_gl();
     }
     return true;
 }

@@ -4,19 +4,18 @@ bool create_sprite(SPRITE** sprite, const char* texture_name)
 {
     *sprite = (SPRITE*)malloc(sizeof(SPRITE));
     bool success = *sprite != NULL;
-    (*sprite)->draw_entity = (DRAW_ENTITY*)malloc(sizeof(DRAW_ENTITY));
-    success = success && (*sprite)->draw_entity != NULL;
-    set_square_vertex_data((*sprite)->draw_entity);
-    success = success && load_gl((*sprite)->draw_entity);
-    success = success && load_gl_texture((*sprite)->draw_entity, texture_name);
+    (*sprite)->draw = new Draw();
+    (*sprite)->draw->set_square_vertex_data();
+    success = success && (*sprite)->draw->load_gl();
+    success = success && (*sprite)->draw->load_gl_texture(texture_name);
     return success;
 }
 
 bool destroy_sprite(SPRITE* sprite)
 {
-    bool success = unload_gl(sprite->draw_entity) || false;
-    success = success && unload_gl_texture(sprite->draw_entity);
-    free(sprite->draw_entity);
+    bool success = sprite->draw->unload_gl() || false;
+    success = success && sprite->draw->unload_gl_texture();
+    delete sprite->draw;
     free(sprite);
     return true;
 }
@@ -43,7 +42,7 @@ void set_sprite_size(SPRITE* sprite, float w, float h)
 
 void update_model_mat(SPRITE* sprite)
 {
-    GLfloat* model_mat = sprite->draw_entity->model_mat;
+    GLfloat* model_mat = sprite->draw->model_mat;
     float* pos = sprite->pos;
     float* size = sprite->size;
     GLfloat intermediate[16];
