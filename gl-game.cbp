@@ -16,6 +16,9 @@
 					<Add option="-std=c++11" />
 					<Add option="-std=c99" />
 					<Add option="-m64" />
+					<Add option="-g" />
+					<Add option="-finput-charset=UTF-8" />
+					<Add option="-fexec-charset=850" />
 					<Add option="-DGLEW_STATIC" />
 					<Add directory="glew-2.1.0/include" />
 					<Add directory="glfw-3.3.2.bin.WIN64/include" />
