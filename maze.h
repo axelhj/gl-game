@@ -7,12 +7,20 @@
 #include "sprite_collider.h"
 #include "a_star.h"
 
-extern bool init_maze();
+#define TILES_X 12
+#define TILES_Y 9
 
-extern bool update_maze(int keys[], float dt, float t);
+#define DRAW_SPRITES_COUNT 37
 
-extern bool draw_maze();
-
-extern bool destroy_maze();
+class Maze {
+public:
+    Maze();
+    bool update(int keys[], float dt, float t);
+    bool draw();
+    ~Maze();
+private:
+    Sprite* draw_sprites[DRAW_SPRITES_COUNT];
+    Sprite* tiles[TILES_X * TILES_Y];
+};
 
 #endif // MAZE_H

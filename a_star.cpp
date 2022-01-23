@@ -209,7 +209,6 @@ void find_path_in_grid(
     for (int i = 0; i < blocked_count; ++i) {
         shs_insert_i(&excluded_items, blocked[i]);
     }
-    int i = 0;
     GRID_SEARCH_INSTANCE* grid_search = (GRID_SEARCH_INSTANCE*)malloc(sizeof(GRID_SEARCH_INSTANCE));
     init_grid_search(grid_search, excluded_items, horizontal_element_count, vertical_element_count);
     GRAPH_NODE* result = find_path(

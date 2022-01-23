@@ -11,18 +11,18 @@
 
 static int sprites_count = 0;
 
-static SPRITE** sprites = NULL;
+static Sprite** sprites = NULL;
 
-bool add_sprites(SPRITE** add_sprites, int count)
+bool add_sprites(Sprite** add_sprites, int count)
 {
     int new_count = count + sprites_count;
     if (new_count > SPRITES_MAX) {
         return false;
     }
     if (sprites_count == 0) {
-        sprites = (SPRITE**)malloc(sizeof(SPRITE**) * SPRITES_MAX);
-        if (sprites == NULL) {
-            return false;
+        sprites = new Sprite*[SPRITES_MAX];
+        for (int i = 0; i < SPRITES_MAX; ++i) {
+            sprites[i] = new Sprite();
         }
     }
     for (int i = sprites_count, j = 0; i < new_count; ++i, ++j) {
@@ -35,7 +35,7 @@ bool add_sprites(SPRITE** add_sprites, int count)
 void remove_sprites()
 {
     if (sprites_count != 0) {
-        free(sprites);
+        delete[] sprites;
         sprites = NULL;
         sprites_count = 0;
     }
@@ -60,13 +60,13 @@ typedef struct collision_values {
     int mode_a;
     int mode_b;
     float time;
-    SPRITE* sprite;
-    SPRITE* other_sprite;
+    Sprite* sprite;
+    Sprite* other_sprite;
 } COLLISION_VALUES;
 
 static bool is_colliding_x(
-    SPRITE* a,
-    SPRITE* b,
+    Sprite* a,
+    Sprite* b,
     float time
 )
 {
@@ -83,8 +83,8 @@ static bool is_colliding_x(
 }
 
 static bool is_colliding_y(
-    SPRITE* a,
-    SPRITE* b,
+    Sprite* a,
+    Sprite* b,
     float time
 )
 {
@@ -100,7 +100,7 @@ static bool is_colliding_y(
     );
 }
 
-static COLLISION_VALUES intersection_time(SPRITE* a, SPRITE* b)
+static COLLISION_VALUES intersection_time(Sprite* a, Sprite* b)
 {
     float left_a = a->pos[0];
     float left_b = b->pos[0];
@@ -158,7 +158,7 @@ static COLLISION_VALUES intersection_time(SPRITE* a, SPRITE* b)
     return collision;
 }
 
-static int find_collision_time(COLLISION_VALUES **collisions, int collisions_count, int max_collisions, SPRITE* a, float time)
+static int find_collision_time(COLLISION_VALUES **collisions, int collisions_count, int max_collisions, Sprite* a, float time)
 {
     int count = collisions_count;
     for (int i = 0; i < sprites_count; ++i) {
@@ -195,7 +195,7 @@ static int find_collision_time(COLLISION_VALUES **collisions, int collisions_cou
 
 bool process_sprites(float dt)
 {
-    static SPRITE* resolved[COLLISIONS_MAX] = {};
+    static Sprite* resolved[COLLISIONS_MAX] = {};
     static COLLISION_VALUES candidate_collision_set[COLLISIONS_MAX] = {};
     static COLLISION_VALUES collision_set[COLLISIONS_MAX] = {};
     static int candidate_collision_count = 0;

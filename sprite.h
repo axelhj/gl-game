@@ -5,24 +5,21 @@
 #include "draw.h"
 #include "mat4.h"
 
-typedef struct sprite {
+class Sprite {
+public:
+    Sprite();
+    Sprite(const char* textureName);
+    void set_pos(float x, float y, float z);
+    void set_vel(float x, float y, float z);
+    void set_size(float w, float h);
+    void update_mat();
+    ~Sprite();
+    bool is_static;
     float pos[3];
     float vel[3];
     float size[2];
     Draw* draw;
-    bool is_static;
-} SPRITE;
-
-extern bool create_sprite(SPRITE** sprite, const char* textureName);
-
-extern bool destroy_sprite(SPRITE* sprite);
-
-extern void set_sprite_pos(SPRITE* sprite, float x, float y, float z);
-
-extern void set_sprite_vel(SPRITE* sprite, float x, float y, float z);
-
-extern void set_sprite_size(SPRITE* sprite, float w, float h);
-
-extern void update_model_mat(SPRITE* sprite);
+private:
+};
 
 #endif /* SPRITE_H */

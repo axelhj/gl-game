@@ -5,12 +5,20 @@
 #include "sprite.h"
 #include "sprite_collider.h"
 
-extern bool init_level();
+#define TILES_X 12
+#define TILES_Y 9
 
-extern bool update_level(int keys[], float dt, float t);
+#define DRAW_SPRITES_COUNT 36
 
-extern bool draw_level();
-
-extern bool destroy_level();
+class Level {
+public:
+    Level();
+    bool update(int keys[], float dt, float t);
+    bool draw();
+    ~Level();
+private:
+    Sprite* draw_sprites[DRAW_SPRITES_COUNT];
+    Sprite* tiles[TILES_X * TILES_Y];
+};
 
 #endif // LEVEL_H

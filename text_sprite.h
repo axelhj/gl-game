@@ -18,11 +18,12 @@
 #include "draw.h"
 #include "sprite.h"
 
-bool create_text_sprite(SPRITE** sprite);
-
-bool destroy_text_sprite(SPRITE* sprite);
-
-void draw_sprite_text(SPRITE* sprite, const char* text, int wrapat, int row_count);
+class TextSprite : Sprite {
+public:
+    TextSprite();
+    void draw_text(const char* text, int wrapat, int row_count);
+    ~TextSprite();
+};
 
 #endif /* TEXT_SPRITE_H */
 

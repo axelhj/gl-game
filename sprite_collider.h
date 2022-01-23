@@ -5,7 +5,7 @@
 #include <float.h>
 #include "sprite.h"
 
-extern bool add_sprites(SPRITE** sprites, int count);
+extern bool add_sprites(Sprite** sprites, int count);
 
 extern void remove_sprites();
 

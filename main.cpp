@@ -39,8 +39,7 @@ static bool running = false;
  */
 int main(int argc, char** argv) {
     running = init_gl("Demo GL", WINDOW_WIDTH, WINDOW_HEIGHT);
-//    running = running && init_level();
-    running = running && init_maze();
+    Maze* level_instance = new Maze();
     if (!running) {
         printf("Loading failed");
         terminate_gl();
@@ -48,20 +47,17 @@ int main(int argc, char** argv) {
     }
     float time = 0;
     while (running) {
-//        update_level(keys, 0.0165f, time);
-        update_maze(keys, 0.0165f, time);
+        level_instance->update(keys, 0.0165f, time);
         time += 0.0165f;
         running = !keys[6];
         pre_draw();
-//        draw_level();
-        draw_maze();
+        level_instance->draw();
         running = running && post_draw();
         if (running) {
             millisleep(4); // not required as glfwSwapBuffers is blocking
         }
     }
-//    destroy_level();
-    destroy_maze();
+    delete level_instance;
     terminate_gl();
     GetChWin();
     return 0;
