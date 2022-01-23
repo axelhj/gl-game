@@ -99,11 +99,12 @@ static bool init(Sprite** draw_sprites)
     return ok;
 }
 
-Level::Level()
+Level::Level() :
+    spriteCollider()
 {
     draw_sprites[0] = new Sprite("game-hero.png");
     init(draw_sprites);
-    add_sprites(draw_sprites, DRAW_SPRITES_COUNT);
+    spriteCollider.add_sprites(draw_sprites, DRAW_SPRITES_COUNT);
     draw_sprites[0]->set_pos(-1.495, 0.7, Z_POS);
     draw_sprites[0]->set_size(0.3, 0.3);
     for (int i = 0; i < TILES_X; ++i) {
@@ -145,7 +146,7 @@ bool Level::update(int keys[], float dt, float t)
     } else if (r) {
         vel[0] += rate;
     }
-    process_sprites(dt);
+    spriteCollider.process_sprites(dt);
     return true;
 }
 
@@ -163,7 +164,7 @@ bool Level::draw()
 
 Level::~Level()
 {
-    remove_sprites();
+    spriteCollider.remove_sprites();
     for (int i = 0; i < TILES_X * TILES_Y; ++i) {
         delete tiles[i];
     }

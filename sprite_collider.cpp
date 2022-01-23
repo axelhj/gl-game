@@ -9,35 +9,36 @@
 #define TOP 3
 #define BOTTOM 4
 
-static int sprites_count = 0;
-
-static Sprite** sprites = NULL;
-
-bool add_sprites(Sprite** add_sprites, int count)
+SpriteCollider::SpriteCollider() :
+    sprites(NULL), sprite_count(0)
 {
-    int new_count = count + sprites_count;
+}
+
+bool SpriteCollider::add_sprites(Sprite** add_sprites, int count)
+{
+    int new_count = count + sprite_count;
     if (new_count > SPRITES_MAX) {
         return false;
     }
-    if (sprites_count == 0) {
+    if (sprite_count == 0) {
         sprites = new Sprite*[SPRITES_MAX];
         for (int i = 0; i < SPRITES_MAX; ++i) {
             sprites[i] = new Sprite();
         }
     }
-    for (int i = sprites_count, j = 0; i < new_count; ++i, ++j) {
+    for (int i = sprite_count, j = 0; i < new_count; ++i, ++j) {
         sprites[i] = add_sprites[j];
     }
-    sprites_count = new_count;
+    sprite_count = new_count;
     return true;
 }
 
-void remove_sprites()
+void SpriteCollider::remove_sprites()
 {
-    if (sprites_count != 0) {
+    if (sprite_count != 0) {
         delete[] sprites;
         sprites = NULL;
-        sprites_count = 0;
+        sprite_count = 0;
     }
 }
 
@@ -158,10 +159,18 @@ static COLLISION_VALUES intersection_time(Sprite* a, Sprite* b)
     return collision;
 }
 
-static int find_collision_time(COLLISION_VALUES **collisions, int collisions_count, int max_collisions, Sprite* a, float time)
+static int find_collision_time(
+    COLLISION_VALUES **collisions,
+    Sprite** sprites,
+    int sprite_count,
+    int collisions_count,
+    int max_collisions,
+    Sprite* a,
+    float time
+)
 {
     int count = collisions_count;
-    for (int i = 0; i < sprites_count; ++i) {
+    for (int i = 0; i < sprite_count; ++i) {
         if (sprites[i] == a) {
             continue;
         }
@@ -193,7 +202,7 @@ static int find_collision_time(COLLISION_VALUES **collisions, int collisions_cou
     return count;
 }
 
-bool process_sprites(float dt)
+bool SpriteCollider::process_sprites(float dt)
 {
     static Sprite* resolved[COLLISIONS_MAX] = {};
     static COLLISION_VALUES candidate_collision_set[COLLISIONS_MAX] = {};
@@ -202,12 +211,16 @@ bool process_sprites(float dt)
     static int collision_count = 0;
     float processed_time = 0.0f;
     while (processed_time < dt) {
-        for (int i = 0; i < sprites_count; ++i) {
+        for (int i = 0; i < sprite_count; ++i) {
             COLLISION_VALUES* candidate_collision_set_ptr = &(*candidate_collision_set);
             candidate_collision_count = find_collision_time(
                 &candidate_collision_set_ptr,
-                candidate_collision_count, COLLISIONS_MAX,
-                sprites[i], dt - processed_time
+                sprites,
+                sprite_count,
+                candidate_collision_count,
+                COLLISIONS_MAX,
+                sprites[i],
+                dt - processed_time
             );
             if (
                 candidate_collision_count != 0 && candidate_collision_set[0].time >= 0 &&
@@ -223,7 +236,7 @@ bool process_sprites(float dt)
             resolved[i] = NULL;
         }
         if (collision_count != 0) {
-            for (int j = 0; j < sprites_count; ++j) {
+            for (int j = 0; j < sprite_count; ++j) {
                 sprites[j]->pos[0] += sprites[j]->vel[0] * fmaxf(0.0f, collision_set[0].time - 0.0000001f);
                 sprites[j]->pos[1] += sprites[j]->vel[1] * fmaxf(0.0f, collision_set[0].time - 0.0000001f);
                 sprites[j]->pos[2] += sprites[j]->vel[2] * fmaxf(0.0f, collision_set[0].time - 0.0000001f);
@@ -312,7 +325,7 @@ bool process_sprites(float dt)
             resolved[j] = NULL;
         }
         if (collision_count == 0) {
-            for (int i = 0; i < sprites_count; ++i) {
+            for (int i = 0; i < sprite_count; ++i) {
                 sprites[i]->pos[0] += sprites[i]->vel[0] * fmaxf(0.0f, (dt - processed_time) - 0.0000001f);
                 sprites[i]->pos[1] += sprites[i]->vel[1] * fmaxf(0.0f, (dt - processed_time) - 0.0000001f);
                 sprites[i]->pos[2] += sprites[i]->vel[2] * fmaxf(0.0f, (dt - processed_time) - 0.0000001f);
@@ -325,4 +338,9 @@ bool process_sprites(float dt)
         collision_count = 0;
     }
     return true;
+}
+
+SpriteCollider::~SpriteCollider()
+{
+    remove_sprites();
 }

@@ -5,10 +5,16 @@
 #include <float.h>
 #include "sprite.h"
 
-extern bool add_sprites(Sprite** sprites, int count);
-
-extern void remove_sprites();
-
-extern bool process_sprites(float dt);
+class SpriteCollider {
+public:
+    SpriteCollider();
+    bool add_sprites(Sprite** sprites, int count);
+    bool process_sprites(float dt);
+    void remove_sprites();
+    ~SpriteCollider();
+private:
+    Sprite** sprites;
+    int sprite_count;
+};
 
 #endif // SPRITE_COLLIDER

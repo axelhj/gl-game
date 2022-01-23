@@ -106,7 +106,7 @@ Maze::Maze()
     draw_sprites[0] = new Sprite("pino.png");
     init(draw_sprites);
 //    ok = ok && add_sprites(draw_sprites + 1, DRAW_SPRITES_COUNT - 1);
-    add_sprites(draw_sprites, 1);
+    spriteCollider.add_sprites(draw_sprites, 1);
     draw_sprites[0]->set_pos(-1.795, 0.7, Z_POS);
     draw_sprites[0]->set_size(.7, 0.7);
     draw_sprites[0]->set_vel(0, 0, 0);
@@ -149,7 +149,7 @@ Maze::Maze()
             }
             if (is_blocked) {
                 tiles[offset] = new Sprite("wall.png");
-                add_sprites(tiles + offset, 1);
+                spriteCollider.add_sprites(tiles + offset, 1);
             } else {
                 tiles[offset] = new Sprite("ground.png");
             }
@@ -186,7 +186,7 @@ bool Maze::update(int keys[], float dt, float t)
     } else if (r) {
         vel[0] += rate;
     }
-    process_sprites(dt);
+    spriteCollider.process_sprites(dt);
     return true;
 }
 
@@ -210,7 +210,7 @@ bool Maze::draw()
 
 Maze::~Maze()
 {
-    remove_sprites();
+    spriteCollider.remove_sprites();
     for (int i = 0; i < TILES_X * TILES_Y; ++i) {
         delete tiles[i];
     }
