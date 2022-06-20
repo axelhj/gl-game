@@ -1,6 +1,6 @@
-#include "text_sprite.h"
+#include "impl/Engine/text_sprite.h"
 
-static const char* text_sprite_file_name = "asciiextse146-transp.png";
+static const char* text_sprite_file_name = "asset/asciiextse146-transp.png";
 
 static void update_texture_mat(float* texture_transform_mat, float* pos, float* size)
 {
@@ -19,7 +19,7 @@ void TextSprite::draw_text(const char* text, int wrapat, int row_count)
     float sprite_height = size[1];
     int sprite_file_letters_x = 17;
     int sprite_file_letters_y = 15;
-float tile_char_top_offset = 0.0f;
+    float tile_char_top_offset = 0.0f;
     float tile_char_left_offset = 0.0f;
     float tile_char_bottom_offset = 0.0f;
     float tile_char_right_offset = 0.0f;

@@ -1,4 +1,4 @@
-#include "level.h"
+#include "impl/Game/level.h"
 
 #define TILE_WIDTH 1.0f
 #define TILE_HEIGHT 1.0f
@@ -20,7 +20,7 @@ static bool init(Sprite** draw_sprites)
 {
     bool ok = true;
     for (int i = 1; i < DRAW_SPRITES_COUNT && ok; ++i) {
-        draw_sprites[i] = new Sprite("crate.png");
+        draw_sprites[i] = new Sprite("asset/crate.png");
         if (ok) {
             draw_sprites[i]->set_size(0.999f, 0.999f);
             draw_sprites[i]->set_vel(0.0f, 0.0f, 0.0f);
@@ -102,7 +102,7 @@ static bool init(Sprite** draw_sprites)
 Level::Level() :
     spriteCollider()
 {
-    draw_sprites[0] = new Sprite("game-hero.png");
+    draw_sprites[0] = new Sprite("asset/game-hero.png");
     init(draw_sprites);
     spriteCollider.add_sprites(draw_sprites, DRAW_SPRITES_COUNT);
     draw_sprites[0]->set_pos(-1.495, 0.7, Z_POS);
@@ -111,9 +111,9 @@ Level::Level() :
         for (int j = 0; j < TILES_Y; ++j) {
             int offset= i + TILES_X * j;
             if (grid[offset]) {
-                tiles[offset] = new Sprite("wall.png");
+                tiles[offset] = new Sprite("asset/wall.png");
             } else {
-                tiles[offset] = new Sprite("ground.png");
+                tiles[offset] = new Sprite("asset/ground.png");
             }
             Sprite* tile = tiles[i + TILES_X * j];
             tile->set_pos(i * TILE_WIDTH - 6.0f, j * TILE_HEIGHT - 4.5f, 12.0f);

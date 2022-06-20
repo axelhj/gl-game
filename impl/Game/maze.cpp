@@ -1,26 +1,14 @@
-#include "maze.h"
+#include "impl/Game/maze.h"
 
 #define TILE_WIDTH 0.999f
 #define TILE_HEIGHT 0.999f
 
 #define Z_POS 11.0f
 
-static int grid[TILES_X * TILES_Y] = {
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
-    1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1,
-    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
-    1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
-    1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1,
-    1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1,
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-};
-
 static bool init(Sprite** draw_sprites)
 {
     for (int i = 1; i < DRAW_SPRITES_COUNT; ++i) {
-        draw_sprites[i] = new Sprite("crate.png");
+        draw_sprites[i] = new Sprite("asset/crate.png");
         draw_sprites[i]->set_size(0.999f, 0.999f);
         draw_sprites[i]->set_vel(0.0f, 0.0f, 0.0f);
         draw_sprites[i]->set_pos(1.0f, 1.0f, Z_POS);
@@ -103,7 +91,7 @@ static bool init(Sprite** draw_sprites)
 
 Maze::Maze()
 {
-    draw_sprites[0] = new Sprite("pino.png");
+    draw_sprites[0] = new Sprite("asset/pino.png");
     init(draw_sprites);
 //    ok = ok && add_sprites(draw_sprites + 1, DRAW_SPRITES_COUNT - 1);
     spriteCollider.add_sprites(draw_sprites, 1);
@@ -148,10 +136,10 @@ Maze::Maze()
                 }
             }
             if (is_blocked) {
-                tiles[offset] = new Sprite("wall.png");
+                tiles[offset] = new Sprite("asset/wall.png");
                 spriteCollider.add_sprites(tiles + offset, 1);
             } else {
-                tiles[offset] = new Sprite("ground.png");
+                tiles[offset] = new Sprite("asset/ground.png");
             }
             Sprite* tile = tiles[offset];
             tile->is_static = true;

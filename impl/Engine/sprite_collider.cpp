@@ -1,4 +1,4 @@
-#include "sprite_collider.h"
+#include "impl/Engine/sprite_collider.h"
 
 #define SPRITES_MAX 1000
 #define COLLISIONS_MAX 20

@@ -20,17 +20,17 @@
 					<Add option="-finput-charset=UTF-8" />
 					<Add option="-fexec-charset=850" />
 					<Add option="-DGLEW_STATIC" />
-					<Add directory="glew-2.1.0/include" />
-					<Add directory="glfw-3.3.2.bin.WIN64/include" />
-					<Add directory="libsrt-cebf7ca/src" />
+					<Add directory="deps/glew-2.1.0/include" />
+					<Add directory="deps/glfw-3.3.2.bin.WIN64/include" />
+					<Add directory="deps/libsrt-cebf7ca/src" />
 				</Compiler>
 				<Linker>
 					<Add option="-static" />
 					<Add option="-m64" />
-					<Add library="glew-2.1.0/lib/libglew32.a" />
-					<Add library="glfw-3.3.2.bin.WIN64/lib-mingw-w64/libglfw3.a" />
+					<Add library="deps/glew-2.1.0/lib/libglew32.a" />
+					<Add library="deps/glfw-3.3.2.bin.WIN64/lib-mingw-w64/libglfw3.a" />
 					<Add library="opengl32 -lglu32 -lgdi32" />
-					<Add library="libsrt-cebf7ca/libsrt.a" />
+					<Add library="deps/libsrt-cebf7ca/libsrt.a" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -53,52 +53,59 @@
 					<Add option="-s" />
 					<Add option="-static" />
 					<Add option="-m64" />
-					<Add library="glew-2.1.0/lib/libglew32.a" />
-					<Add library="glfw-3.3.2.bin.WIN64/lib-mingw-w64/libglfw3.a" />
+					<Add library="deps/glew-2.1.0/lib/libglew32.a" />
+					<Add library="deps/glfw-3.3.2.bin.WIN64/lib-mingw-w64/libglfw3.a" />
 					<Add library="opengl32 -lglu32 -lgdi32" />
-					<Add library="libsrt-cebf7ca/libsrt.a" />
+					<Add library="deps/libsrt-cebf7ca/libsrt.a" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add directory="$(PROJECT_DIR)/" />
 		</Compiler>
-		<Unit filename="a_star.cpp" />
-		<Unit filename="a_star.h" />
-		<Unit filename="draw.cpp" />
-		<Unit filename="draw.h" />
-		<Unit filename="game-hero.png" />
-		<Unit filename="ground.png" />
-		<Unit filename="hill kopia.png" />
-		<Unit filename="hill.png" />
-		<Unit filename="hill2.png" />
-		<Unit filename="hill3.png" />
-		<Unit filename="level.cpp" />
-		<Unit filename="level.h" />
-		<Unit filename="main.cpp" />
-		<Unit filename="main.h" />
-		<Unit filename="mat4.cpp" />
-		<Unit filename="mat4.h" />
-		<Unit filename="maze.cpp" />
-		<Unit filename="maze.h" />
-		<Unit filename="shaders.cpp" />
-		<Unit filename="shaders.h" />
-		<Unit filename="sorted_set.cpp" />
-		<Unit filename="sorted_set.h" />
-		<Unit filename="sprite.cpp" />
-		<Unit filename="sprite.h" />
-		<Unit filename="sprite_collider.cpp" />
-		<Unit filename="sprite_collider.h" />
-		<Unit filename="stb_image.h" />
-		<Unit filename="text_sprite.cpp" />
-		<Unit filename="text_sprite.h" />
-		<Unit filename="unbuffered.h" />
-		<Unit filename="util.cpp" />
-		<Unit filename="util.h" />
-		<Unit filename="vec3.cpp" />
-		<Unit filename="vec3.h" />
-		<Unit filename="vertex_gen.cpp" />
-		<Unit filename="vertex_gen.h" />
+		<Unit filename="asset/asciiextse146-transp.png" />
+		<Unit filename="asset/blw.png" />
+		<Unit filename="asset/circle.png" />
+		<Unit filename="asset/crate.png" />
+		<Unit filename="asset/game-hero.png" />
+		<Unit filename="asset/ground.png" />
+		<Unit filename="asset/hill kopia.png" />
+		<Unit filename="asset/hill.png" />
+		<Unit filename="asset/hill2.png" />
+		<Unit filename="asset/hill3.png" />
+		<Unit filename="asset/pino.png" />
+		<Unit filename="asset/signpost.png" />
+		<Unit filename="asset/wall.png" />
+		<Unit filename="impl/Engine/sprite.cpp" />
+		<Unit filename="impl/Engine/sprite.h" />
+		<Unit filename="impl/Engine/sprite_collider.cpp" />
+		<Unit filename="impl/Engine/sprite_collider.h" />
+		<Unit filename="impl/Engine/text_sprite.cpp" />
+		<Unit filename="impl/Engine/text_sprite.h" />
+		<Unit filename="impl/Game/level.cpp" />
+		<Unit filename="impl/Game/level.h" />
+		<Unit filename="impl/Game/maze.cpp" />
+		<Unit filename="impl/Game/maze.h" />
+		<Unit filename="impl/Util/a_star.cpp" />
+		<Unit filename="impl/Util/a_star.h" />
+		<Unit filename="impl/Util/draw.cpp" />
+		<Unit filename="impl/Util/draw.h" />
+		<Unit filename="impl/Util/mat4.cpp" />
+		<Unit filename="impl/Util/mat4.h" />
+		<Unit filename="impl/Util/noise.cpp" />
+		<Unit filename="impl/Util/noise.h" />
+		<Unit filename="impl/Util/shaders.cpp" />
+		<Unit filename="impl/Util/shaders.h" />
+		<Unit filename="impl/Util/sorted_set.cpp" />
+		<Unit filename="impl/Util/sorted_set.h" />
+		<Unit filename="impl/Util/unbuffered.h" />
+		<Unit filename="impl/Util/vec3.cpp" />
+		<Unit filename="impl/Util/vec3.h" />
+		<Unit filename="impl/Util/vertex_gen.cpp" />
+		<Unit filename="impl/Util/vertex_gen.h" />
+		<Unit filename="impl/main.cpp" />
+		<Unit filename="impl/main.h" />
 		<Extensions>
 			<code_completion>
 				<search_path add="C:\Users\Axel\code\gl-game\" />

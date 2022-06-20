@@ -1,4 +1,4 @@
-#include "mat4.h"
+#include "impl/Util/mat4.h"
 
 float* mat_create() {
     return mat_identity((float*)malloc(sizeof(float) * 16));

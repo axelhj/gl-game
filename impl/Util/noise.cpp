@@ -5,13 +5,13 @@
  */
 
 /* 
- * File:   util.cpp
+ * File:   noise.cpp
  * Author: axelhjelmqvist
  * 
  * Created on den 30 januari 2017, 14:45
  */
 
-#include "util.h"
+#include "impl/Util/noise.h"
 #include <stdio.h>
 #include <math.h>
 

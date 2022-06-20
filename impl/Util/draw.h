@@ -19,10 +19,10 @@
 //#include <GL/gl.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "shaders.h"
-#include "vertex_gen.h"
-#include "draw.h"
-#include "mat4.h"
+#include "impl/Util/shaders.h"
+#include "impl/Util/vertex_gen.h"
+#include "impl/Util/draw.h"
+#include "impl/Util/mat4.h"
 
 extern int keys[7];
 

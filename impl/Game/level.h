@@ -1,9 +1,9 @@
 #ifndef LEVEL_H
 #define LEVEL_H
 
-#include "mat4.h"
-#include "sprite.h"
-#include "sprite_collider.h"
+#include "impl/Util/mat4.h"
+#include "impl/Engine/sprite_collider.h"
+#include "impl/Engine/sprite.h"
 
 #define TILES_X 12
 #define TILES_Y 9

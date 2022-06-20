@@ -2,8 +2,8 @@
 #define SPRITE_H
 
 #include <GL/glew.h>
-#include "draw.h"
-#include "mat4.h"
+#include "impl/Util/draw.h"
+#include "impl/Util/mat4.h"
 
 class Sprite {
 public:

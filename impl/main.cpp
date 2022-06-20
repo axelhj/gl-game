@@ -15,10 +15,10 @@
 #include <stdio.h>
 #include <windows.h> // For sleep
 //#include <time.h> // For nanosleep
-#include "main.h"
-#include "draw.h"
-#include "sprite.h"
-#include "maze.h"
+#include "impl/main.h"
+#include "impl/Util/draw.h"
+#include "impl/Engine/sprite.h"
+#include "impl/Game/maze.h"
 
 void millisleep(unsigned milliseconds) {
 //    struct timespec timespec;

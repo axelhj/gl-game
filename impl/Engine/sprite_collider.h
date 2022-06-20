@@ -3,7 +3,7 @@
 
 #include <math.h>
 #include <float.h>
-#include "sprite.h"
+#include "impl/Engine/sprite.h"
 
 class SpriteCollider {
 public:

@@ -1,7 +1,7 @@
-#include "vertex_gen.h"
+#include "impl/Util/vertex_gen.h"
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "deps/stb_image.h"
 
 unsigned char* get_image_data(const char* file_name, int* image_width, int* image_height) {
     int x, y, components_per_pixel;

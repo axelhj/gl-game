@@ -14,9 +14,9 @@
 #ifndef TEXT_SPRITE_H
 #define TEXT_SPRITE_H
 #include <stddef.h>
-#include "mat4.h"
-#include "draw.h"
-#include "sprite.h"
+#include "impl/Util/mat4.h"
+#include "impl/Util/draw.h"
+#include "impl/Engine/sprite.h"
 
 class TextSprite : Sprite {
 public:

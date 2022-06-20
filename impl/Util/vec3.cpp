@@ -1,4 +1,4 @@
-#include "vec3.h"
+#include "impl/Util/vec3.h"
 
 float* vec_3_copy(float* to, float* from) {
     to[0] = from[0];

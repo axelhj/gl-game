@@ -14,10 +14,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "mat4.h"
-#include "unbuffered.h"
-
-extern void millisleep(unsigned int milliseconds);
+#include "impl/Util/mat4.h"
+#include "impl/Util/unbuffered.h"
 
 #endif /* MAIN_H */
 
