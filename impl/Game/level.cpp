@@ -100,13 +100,15 @@ static bool init(Sprite** draw_sprites)
 }
 
 Level::Level() :
-    spriteCollider()
+    sprite_collider()
 {
     draw_sprites[0] = new Sprite("asset/game-hero.png");
     init(draw_sprites);
-    spriteCollider.add_sprites(draw_sprites, DRAW_SPRITES_COUNT);
+    vector<Sprite*> pass_sprites(draw_sprites, draw_sprites + DRAW_SPRITES_COUNT);
+    sprite_collider.add_sprites(pass_sprites);
     draw_sprites[0]->set_pos(-1.495, 0.7, Z_POS);
     draw_sprites[0]->set_size(0.3, 0.3);
+    draw_sprites[0]->is_static = false;
     for (int i = 0; i < TILES_X; ++i) {
         for (int j = 0; j < TILES_Y; ++j) {
             int offset= i + TILES_X * j;
@@ -146,7 +148,7 @@ bool Level::update(int keys[], float dt, float t)
     } else if (r) {
         vel[0] += rate;
     }
-    spriteCollider.process_sprites(dt);
+    sprite_collider.process_sprites(dt);
     return true;
 }
 
@@ -164,7 +166,7 @@ bool Level::draw()
 
 Level::~Level()
 {
-    spriteCollider.remove_sprites();
+    sprite_collider.remove_sprites();
     for (int i = 0; i < TILES_X * TILES_Y; ++i) {
         delete tiles[i];
     }

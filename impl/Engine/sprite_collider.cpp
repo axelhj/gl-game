@@ -10,36 +10,32 @@
 #define BOTTOM 4
 
 SpriteCollider::SpriteCollider() :
-    sprites(NULL), sprite_count(0)
+    sprites()
 {
 }
 
-bool SpriteCollider::add_sprites(Sprite** add_sprites, int count)
+bool SpriteCollider::add_sprites(vector<Sprite*> add_sprites)
 {
-    int new_count = count + sprite_count;
+    int sprites_count = sprites.size();
+    int new_count = sprites_count + add_sprites.size();
     if (new_count > SPRITES_MAX) {
         return false;
     }
-    if (sprite_count == 0) {
-        sprites = new Sprite*[SPRITES_MAX];
-        for (int i = 0; i < SPRITES_MAX; ++i) {
-            sprites[i] = new Sprite();
-        }
+    sprites.resize(new_count);
+    for (int i = sprites_count; i < new_count; ++i) {
+        sprites[i] = new Sprite(0);
     }
-    for (int i = sprite_count, j = 0; i < new_count; ++i, ++j) {
+    int i = sprites_count;
+    int j = 0;
+    for (i = sprites_count, j = 0; i < new_count; ++i, ++j) {
         sprites[i] = add_sprites[j];
     }
-    sprite_count = new_count;
     return true;
 }
 
 void SpriteCollider::remove_sprites()
 {
-    if (sprite_count != 0) {
-        delete[] sprites;
-        sprites = NULL;
-        sprite_count = 0;
-    }
+    sprites.resize(0);
 }
 
 const char* coll_mode_labels [5] = {
@@ -161,7 +157,7 @@ static COLLISION_VALUES intersection_time(Sprite* a, Sprite* b)
 
 static int find_collision_time(
     COLLISION_VALUES **collisions,
-    Sprite** sprites,
+    vector<Sprite*> sprites,
     int sprite_count,
     int collisions_count,
     int max_collisions,
@@ -211,12 +207,12 @@ bool SpriteCollider::process_sprites(float dt)
     static int collision_count = 0;
     float processed_time = 0.0f;
     while (processed_time < dt) {
-        for (int i = 0; i < sprite_count; ++i) {
+        for (unsigned int i = 0; i < sprites.size(); ++i) {
             COLLISION_VALUES* candidate_collision_set_ptr = &(*candidate_collision_set);
             candidate_collision_count = find_collision_time(
                 &candidate_collision_set_ptr,
                 sprites,
-                sprite_count,
+                sprites.size(),
                 candidate_collision_count,
                 COLLISIONS_MAX,
                 sprites[i],
@@ -236,10 +232,11 @@ bool SpriteCollider::process_sprites(float dt)
             resolved[i] = NULL;
         }
         if (collision_count != 0) {
-            for (int j = 0; j < sprite_count; ++j) {
-                sprites[j]->pos[0] += sprites[j]->vel[0] * fmaxf(0.0f, collision_set[0].time - 0.0000001f);
-                sprites[j]->pos[1] += sprites[j]->vel[1] * fmaxf(0.0f, collision_set[0].time - 0.0000001f);
-                sprites[j]->pos[2] += sprites[j]->vel[2] * fmaxf(0.0f, collision_set[0].time - 0.0000001f);
+            for (unsigned int j = 0; j < sprites.size(); ++j) {
+                Sprite* sprite = sprites[j];
+                sprite->pos[0] += sprite->vel[0] * fmaxf(0.0f, collision_set[0].time - 0.0000001f);
+                sprite->pos[1] += sprite->vel[1] * fmaxf(0.0f, collision_set[0].time - 0.0000001f);
+                sprite->pos[2] += sprite->vel[2] * fmaxf(0.0f, collision_set[0].time - 0.0000001f);
             }
         }
         for (int i = 0; i < collision_count; ++i) {
@@ -325,10 +322,11 @@ bool SpriteCollider::process_sprites(float dt)
             resolved[j] = NULL;
         }
         if (collision_count == 0) {
-            for (int i = 0; i < sprite_count; ++i) {
-                sprites[i]->pos[0] += sprites[i]->vel[0] * fmaxf(0.0f, (dt - processed_time) - 0.0000001f);
-                sprites[i]->pos[1] += sprites[i]->vel[1] * fmaxf(0.0f, (dt - processed_time) - 0.0000001f);
-                sprites[i]->pos[2] += sprites[i]->vel[2] * fmaxf(0.0f, (dt - processed_time) - 0.0000001f);
+            for (unsigned int i = 0; i < sprites.size(); ++i) {
+                Sprite* sprite = sprites[i];
+                sprite->pos[0] += sprite->vel[0] * fmaxf(0.0f, (dt - processed_time) - 0.0000001f);
+                sprite->pos[1] += sprite->vel[1] * fmaxf(0.0f, (dt - processed_time) - 0.0000001f);
+                sprite->pos[2] += sprite->vel[2] * fmaxf(0.0f, (dt - processed_time) - 0.0000001f);
             }
             processed_time = dt;
         } else {

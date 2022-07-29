@@ -7,8 +7,13 @@
 
 static bool init(Sprite** draw_sprites)
 {
+    draw_sprites[1] = new Sprite("asset/crate.png");
+    draw_sprites[1]->set_size(0.999f, 0.999f);
+    draw_sprites[1]->set_vel(0.0f, 0.0f, 0.0f);
+    draw_sprites[1]->set_pos(100.0f, 100.0f, Z_POS);
+    draw_sprites[1]->is_static = true;
     for (int i = 1; i < DRAW_SPRITES_COUNT; ++i) {
-        draw_sprites[i] = new Sprite("asset/crate.png");
+        draw_sprites[i] = new Sprite(draw_sprites[1]->draw->texture_id);
         draw_sprites[i]->set_size(0.999f, 0.999f);
         draw_sprites[i]->set_vel(0.0f, 0.0f, 0.0f);
         draw_sprites[i]->set_pos(1.0f, 1.0f, Z_POS);
@@ -93,8 +98,12 @@ Maze::Maze()
 {
     draw_sprites[0] = new Sprite("asset/pino.png");
     init(draw_sprites);
-//    ok = ok && add_sprites(draw_sprites + 1, DRAW_SPRITES_COUNT - 1);
-    spriteCollider.add_sprites(draw_sprites, 1);
+    vector<Sprite*> pass_sprites(
+        draw_sprites,
+        draw_sprites + 1
+    );
+    int size = pass_sprites.size();
+    sprite_collider.add_sprites(pass_sprites);
     draw_sprites[0]->set_pos(-1.795, 0.7, Z_POS);
     draw_sprites[0]->set_size(.7, 0.7);
     draw_sprites[0]->set_vel(0, 0, 0);
@@ -137,7 +146,8 @@ Maze::Maze()
             }
             if (is_blocked) {
                 tiles[offset] = new Sprite("asset/wall.png");
-                spriteCollider.add_sprites(tiles + offset, 1);
+                vector<Sprite*> pass_sprites(tiles + offset, tiles + offset + 1);
+                sprite_collider.add_sprites(pass_sprites);
             } else {
                 tiles[offset] = new Sprite("asset/ground.png");
             }
@@ -174,7 +184,7 @@ bool Maze::update(int keys[], float dt, float t)
     } else if (r) {
         vel[0] += rate;
     }
-    spriteCollider.process_sprites(dt);
+    sprite_collider.process_sprites(dt);
     return true;
 }
 
@@ -198,7 +208,7 @@ bool Maze::draw()
 
 Maze::~Maze()
 {
-    spriteCollider.remove_sprites();
+    sprite_collider.remove_sprites();
     for (int i = 0; i < TILES_X * TILES_Y; ++i) {
         delete tiles[i];
     }

@@ -21,7 +21,7 @@ public:
 private:
     Sprite* draw_sprites[DRAW_SPRITES_COUNT];
     Sprite* tiles[TILES_X * TILES_Y];
-    SpriteCollider spriteCollider;
+    SpriteCollider sprite_collider;
 };
 
 #endif // MAZE_H
