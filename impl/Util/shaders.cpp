@@ -1,10 +1,3 @@
-/* 
- * File:   shaders.cpp
- * Author: axelhjelmqvist
- *
- * Created on den 13 januari 2017, 10:18
- */
-
 #include "impl/Util/shaders.h"
 
 static bool get_compile_successful(bool print, int shader_id, const char* shader_type) {
