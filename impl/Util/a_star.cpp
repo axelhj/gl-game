@@ -156,6 +156,7 @@ GRAPH_NODE* find_path(GRID_SEARCH_INSTANCE* grid_search, GRAPH_NODE* start, GRAP
                 item.id = node->index;
                 item.size = sizeof (GRAPH_NODE);
                 item.node = (void*)node;
+                // Not clear if the set will copy the SET_ITEM?
                 sorted_set_add(&sorted_nodes, item);
             }
         }

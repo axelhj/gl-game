@@ -1,9 +1,9 @@
 #include "impl/Engine/sprite.h"
 
 Sprite::Sprite(GLint texture_id) :
-    pos {0.0f, 0.0f, 0.0f},
-    vel {0.0f, 0.0f, 0.0f},
-    size {0.0f, 0.0f }
+    pos { 0.0f, 0.0f, 0.0f },
+    vel { 0.0f, 0.0f, 0.0f },
+    size { 0.0f, 0.0f }
 {
     draw = new Draw();
     draw->set_square_vertex_data();
@@ -61,6 +61,7 @@ void Sprite::update_mat(float* view_matrix, float* projection_matrix)
 Sprite::~Sprite()
 {
     bool success = draw->unload_gl() || false;
+    // No way to know if texture was already released by a different sprite.
     success = success && draw->unload_gl_texture();
     delete draw;
 }
