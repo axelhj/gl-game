@@ -16,8 +16,6 @@
 #include <windows.h> // For sleep
 //#include <time.h> // For nanosleep
 #include "impl/main.h"
-#include "impl/Util/draw.h"
-#include "impl/Engine/sprite.h"
 #include "impl/Game/maze.h"
 
 void millisleep(unsigned milliseconds) {

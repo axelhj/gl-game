@@ -91,6 +91,8 @@
 		<Unit filename="impl/Util/a_star.h" />
 		<Unit filename="impl/Util/draw.cpp" />
 		<Unit filename="impl/Util/draw.h" />
+		<Unit filename="impl/Util/glfw_helper.cpp" />
+		<Unit filename="impl/Util/glfw_helper.h" />
 		<Unit filename="impl/Util/mat4.cpp" />
 		<Unit filename="impl/Util/mat4.h" />
 		<Unit filename="impl/Util/noise.cpp" />
