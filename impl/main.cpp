@@ -3,7 +3,7 @@
 #include <windows.h> // For sleep
 //#include <time.h> // For nanosleep
 #include "impl/main.h"
-#include "impl/Game/maze.h"
+#include "impl/Game/start.h"
 
 void millisleep(unsigned milliseconds) {
 //    struct timespec timespec;
@@ -24,7 +24,7 @@ static bool running = false;
  */
 int main(int argc, char** argv) {
     running = init_gl("Demo GL", WINDOW_WIDTH, WINDOW_HEIGHT);
-    Maze* level_instance = new Maze();
+    Start* level_instance = new Start();
     if (!running) {
         printf("Loading failed");
         terminate_gl();

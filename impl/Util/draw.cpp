@@ -127,6 +127,7 @@ bool Draw::load_gl() {
     glEnable(GL_DEPTH_TEST);
     mat_identity(model_mat);
     mat_identity(view_mat);
+//    mat_identity(projection_mat);
     mat_perspective(projection_mat, 90.0f, 0.1f, 100.0f);
     mat_identity(texture_transform_mat);
     return successful;

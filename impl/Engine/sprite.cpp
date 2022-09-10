@@ -61,7 +61,7 @@ void Sprite::update_mat(float* view_matrix, float* projection_matrix)
 Sprite::~Sprite()
 {
     bool success = draw->unload_gl() || false;
-    // No way to know if texture was already released by a different sprite.
+    // NOTE: No way to know if texture was already released by a different sprite.
     success = success && draw->unload_gl_texture();
     delete draw;
 }

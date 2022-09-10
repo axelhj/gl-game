@@ -1,33 +1,30 @@
-#include "impl/Game/maze.h"
+#include "impl/Game/start.h"
 
-#define TILE_WIDTH 0.999f
-#define TILE_HEIGHT 0.999f
-
+#define TILE_WIDTH 1.0f
+#define TILE_HEIGHT 1.0f
 #define Z_POS 11.0f
 
-static bool init(Sprite** draw_sprites)
+static int grid[12 * 9] = {
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
+    1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1,
+    1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+    1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1,
+    1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1,
+    1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1,
+    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+};
+
+static bool init(std::vector<Sprite*>& draw_sprites)
 {
-    draw_sprites[1] = new Sprite("asset/crate.png");
-    draw_sprites[1]->set_size(0.999f, 0.999f);
-    draw_sprites[1]->set_vel(0.0f, 0.0f, 0.0f);
-    draw_sprites[1]->set_pos(100.0f, 100.0f, Z_POS);
-    draw_sprites[1]->is_static = true;
-    for (int i = 1; i < DRAW_SPRITES_COUNT; ++i) {
-        draw_sprites[i] = new Sprite(draw_sprites[1]->draw->texture_id);
+    for (int i = 1; i < 37; ++i) {
+        draw_sprites.push_back(new Sprite("asset/crate.png"));
         draw_sprites[i]->set_size(0.999f, 0.999f);
         draw_sprites[i]->set_vel(0.0f, 0.0f, 0.0f);
-        draw_sprites[i]->set_pos(1.0f, 1.0f, Z_POS);
         draw_sprites[i]->is_static = false;
     }
-//    draw_sprites[36] = (Sprite*)new TextSprite();
-//    draw_sprites[36]->set_size(0.18f, 0.18f);
-//    draw_sprites[36]->set_vel(0.0f, 1.0f, 0.0f);
-//    draw_sprites[36]->set_pos(1.5f, -2.2f, Z_POS - 0.5f);
-//    draw_sprites[37] = new Sprite("asset/white.png");
-//    draw_sprites[37]->set_size(0.18f, 0.18f);
-//    draw_sprites[37]->set_vel(0.0f, -1.0f, 0.0f);
-//    draw_sprites[37]->set_pos(-1.5f, 2.2f, Z_POS - 0.5f);
-//    draw_sprites[37]->is_static = true;
+    draw_sprites[0]->set_vel(0, 0, 0);
     draw_sprites[1]->set_pos(1.0f, 1.0f, Z_POS);
     draw_sprites[2]->set_pos(2.0f, 1.0f, Z_POS);
     draw_sprites[3]->set_pos(3.0f, 1.0f, Z_POS);
@@ -38,7 +35,7 @@ static bool init(Sprite** draw_sprites)
     draw_sprites[8]->set_pos(-1.0f, -2.0f, Z_POS);
     draw_sprites[9]->set_pos(-1.0f, -3.0f, Z_POS);
     for (int i = 1; i < 10; ++i) {
-        draw_sprites[i]->set_vel(i > 5 ? 0.07 : -0.07, i > 5 ? 0.07 : -0.07, 0);
+//        draw_sprites[i]->set_vel(i > 5 ? 0.07 : -0.07, i > 5 ? 0.07 : -0.07, 0);
     }
     draw_sprites[10]->set_pos(-5.5f, -3.0f, Z_POS);
     draw_sprites[10]->is_static = true;
@@ -96,78 +93,39 @@ static bool init(Sprite** draw_sprites)
 
     draw_sprites[35]->set_pos(1.5f, 3.0f, Z_POS);
     draw_sprites[35]->is_static = true;
+    draw_sprites[36] = (Sprite*)new TextSprite();
+    draw_sprites[36]->set_size(0.18f, 0.18f);
+    draw_sprites[36]->set_vel(0.0f, 0.0f, 0.0f);
+    draw_sprites[36]->set_pos(1.5f, -2.2f, Z_POS - 0.5f);
+    draw_sprites[36]->is_static = true;
     return true;
 }
 
-Maze::Maze()
+Start::Start() :
+    draw_sprites(), sprite_collider()
 {
-    draw_sprites[0] = new Sprite("asset/pino.png");
+    draw_sprites.push_back(new Sprite("asset/pino.png"));
     init(draw_sprites);
-    vector<Sprite*> pass_sprites(
-        draw_sprites,
-        draw_sprites + 1
-    );
-    int size = pass_sprites.size();
+    vector<Sprite*> pass_sprites(draw_sprites);
     sprite_collider.add_sprites(pass_sprites);
-    draw_sprites[0]->set_pos(-1.795, 0.7, Z_POS);
-    draw_sprites[0]->set_size(.7, 0.7);
-    draw_sprites[0]->set_vel(0, 0, 0);
+    draw_sprites[0]->set_pos(-1.495, 0.7, Z_POS);
+    draw_sprites[0]->set_size(0.3, 0.3);
     draw_sprites[0]->is_static = false;
-    int path_length = 0;
-    int* path = NULL;
-    int start_index = 14 - 1;
-    int end_index = 65 - 1;
-    int blocked[TILES_X * TILES_Y] = {};
-    int blocked_count = 0;
-    find_path_in_grid(
-        &path_length,
-        &path,
-        blocked_count,
-        blocked,
-        TILES_X,
-        TILES_Y,
-        start_index,
-        end_index
-    );
-//    for (int i = 0; i < path_length; ++i) {
-//        int path_step = path[i];
-//        int x = (int)fmod(path_step, TILES_X);
-//        int y = (int)(path_step / TILES_X);
-//        blocked[blocked_count++] = i;
-//        printf("%d, %d is %s\n", x, y, "not blocked");
-//    }
-    for (int i = 0; i < TILES_X; ++i) {
-        for (int j = 0; j < TILES_Y; ++j) {
-            int offset = i + TILES_X * j;
-            bool is_blocked = true;
-            for (int k = 0; k < path_length; ++k) {
-                int path_step = path[k];
-                if (path_step == offset) {
-                    is_blocked = false;
-                    int x = (int)fmod(path_step, TILES_X);
-                    int y = (int)(path_step / TILES_X);
-                    printf("%d, %d is %s\n", x, y, "unblocked is true");
-                }
-            }
-            if (is_blocked) {
-                tiles[offset] = new Sprite("asset/wall.png");
-                vector<Sprite*> pass_sprites(tiles + offset, tiles + offset + 1);
-                sprite_collider.add_sprites(pass_sprites);
-            } else {
-                tiles[offset] = new Sprite("asset/ground.png");
-            }
-            Sprite* tile = tiles[offset];
-            tile->is_static = true;
-            tile->set_pos(i * TILE_WIDTH - 6.0f, j * TILE_HEIGHT - 4.5f, Z_POS + 0.0001f);
+    int sprites_size = draw_sprites.size();
+    for (int i = sprites_size; i < sprites_size + 12; ++i) {
+        for (int j = 0; j < 9; ++j) {
+            int offset = (i - sprites_size) + j * 12;
+            Sprite* tile = new Sprite(grid[offset] ? "asset/wall.png" : "asset/ground.png");
+            tile->set_pos((i - sprites_size) * TILE_WIDTH - 6.0f, j * TILE_HEIGHT - 4.5f, 23.0f);
             tile->size[0] = TILE_WIDTH;
             tile->size[1] = TILE_HEIGHT;
-            tile->set_vel(0.0f, 0.0f, 0.0f);
             tile->update_mat();
+            draw_sprites.push_back(tile);
         }
     }
 }
 
-bool Maze::update(int keys[], float dt, float t)
+bool Start::update(int keys[], float dt, float t)
 {
     int l = keys[0];
     int r = keys[1];
@@ -193,32 +151,21 @@ bool Maze::update(int keys[], float dt, float t)
     return true;
 }
 
-bool Maze::draw()
+bool Start::draw()
 {
-    for (int i = 0; i < TILES_X * TILES_Y; ++i) {
-        tiles[i]->update_mat();
-        tiles[i]->draw->draw_gl();
-    }
-    for (int i = 0; i < DRAW_SPRITES_COUNT - 1; ++i) {
+    for (int i = 0; i < draw_sprites.size(); ++i) {
+        if (i == 36) continue;
         draw_sprites[i]->update_mat();
         draw_sprites[i]->draw->draw_gl();
     }
-    draw_sprites[36]->update_mat();
     const char* full_string =
         "Det var en gång en liten fågel som hette Roger!";
-    ((TextSprite*)(draw_sprites[36]))->draw_text(full_string, 4, 17);
-    draw_sprites[37]->update_mat();
-    draw_sprites[37]->draw->draw_gl();
+    ((TextSprite*)(draw_sprites[36]))->draw_text(full_string, 17, 4);
     return true;
 }
 
-Maze::~Maze()
+Start::~Start()
 {
     sprite_collider.remove_sprites();
-    for (int i = 0; i < TILES_X * TILES_Y; ++i) {
-        delete tiles[i];
-    }
-    for (int i = 0; i < DRAW_SPRITES_COUNT; ++i) {
-        delete draw_sprites[i];
-    }
+    draw_sprites.clear();
 }
