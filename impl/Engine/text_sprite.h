@@ -13,4 +13,3 @@ public:
 };
 
 #endif /* TEXT_SPRITE_H */
-

@@ -89,6 +89,10 @@
 		<Unit filename="impl/Game/maze.h" />
 		<Unit filename="impl/Game/start.cpp" />
 		<Unit filename="impl/Game/start.h" />
+		<Unit filename="impl/Shader/shader_assembler.cpp" />
+		<Unit filename="impl/Shader/shader_assembler.h" />
+		<Unit filename="impl/Shader/shader_part.cpp" />
+		<Unit filename="impl/Shader/shader_part.h" />
 		<Unit filename="impl/Util/a_star.cpp" />
 		<Unit filename="impl/Util/a_star.h" />
 		<Unit filename="impl/Util/draw.cpp" />
