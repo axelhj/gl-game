@@ -13,6 +13,8 @@
 
 extern int keys[7];
 
+extern double mouse_pos[4];
+
 extern bool init_gl(const char* window_title, const int window_width, const int window_height);
 
 extern void terminate_gl();

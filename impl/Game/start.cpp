@@ -148,14 +148,24 @@ bool Start::update(int keys[], float dt, float t)
         vel[0] += rate;
     }
     sprite_collider.process_sprites(dt);
+    float intermediate[16];
+    float rotate[16];
+    mat_identity(intermediate);
+    mat_rot_y(rotate, (float)(mouse_pos[2] / M_PI));
+    mat_multiplicate(draw_sprites[0]->draw->view_mat, rotate, intermediate);
+    mat_copy_to(intermediate, draw_sprites[0]->draw->view_mat);
+    mat_rot_x(rotate, (float)(mouse_pos[3] / -M_PI));
+    mat_multiplicate(draw_sprites[0]->draw->view_mat, rotate, intermediate);
+    mat_copy_to(intermediate, draw_sprites[0]->draw->view_mat);
     return true;
 }
 
 bool Start::draw()
 {
-    for (int i = 0; i < draw_sprites.size(); ++i) {
+    for (unsigned int i = 0; i < draw_sprites.size(); ++i) {
         if (i == 36) continue;
         draw_sprites[i]->update_mat();
+        mat_copy_to(draw_sprites[0]->draw->view_mat, draw_sprites[i]->draw->view_mat);
         draw_sprites[i]->draw->draw_gl();
     }
     const char* full_string =

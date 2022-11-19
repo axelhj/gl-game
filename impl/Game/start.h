@@ -2,6 +2,8 @@
 #define START_H
 
 #include <vector>
+#undef __STRICT_ANSI__
+#include <cmath>
 
 #include "impl/Util/mat4.h"
 #include "impl/Engine/sprite_collider.h"

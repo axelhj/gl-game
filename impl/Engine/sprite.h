@@ -1,6 +1,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#include <memory>
 #include <GL/glew.h>
 #include "impl/Util/draw.h"
 #include "impl/Util/mat4.h"
@@ -19,7 +20,7 @@ public:
     float pos[3];
     float vel[3];
     float size[2];
-    Draw* draw;
+    std::shared_ptr<Draw> draw;
 private:
 };
 

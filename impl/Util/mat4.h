@@ -10,6 +10,8 @@ extern void mat_destroy(float* m);
 
 extern float* mat_copy(float *m);
 
+extern float* mat_copy_to(float *f, float *t);
+
 extern float* mat_set_to(float * from, float* to);
 
 //extern float* transpose();

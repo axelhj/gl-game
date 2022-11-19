@@ -107,7 +107,6 @@ Maze::Maze()
         draw_sprites,
         draw_sprites + 1
     );
-    int size = pass_sprites.size();
     sprite_collider.add_sprites(pass_sprites);
     draw_sprites[0]->set_pos(-1.795, 0.7, Z_POS);
     draw_sprites[0]->set_size(.7, 0.7);

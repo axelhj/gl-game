@@ -68,17 +68,32 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
+static int window_size[2] = { 0, 0 };
+double mouse_pos[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+static void cursor_position_callback(double x_pos, double y_pos) {
+    float previous_mouse_pos[2];
+    previous_mouse_pos[0] = mouse_pos[0];
+    previous_mouse_pos[1] = mouse_pos[1];
+    mouse_pos[0] = x_pos / (float)window_size[0];
+    mouse_pos[1] = y_pos / (float)window_size[1];
+    mouse_pos[2] = mouse_pos[0] - previous_mouse_pos[0];
+    mouse_pos[3] = mouse_pos[1] - previous_mouse_pos[1];
+}
+
 bool init_gl(const char* window_title, const int window_width, const int window_height) {
     if (!glfwInit()) {
         printf("Init failed\n");
         return false;
     }
+    window_size[0] = window_width;
+    window_size[1] = window_height;
     bool initSuccessful = true;
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     window = glfwCreateWindow(window_width, window_height, window_title, NULL, NULL);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glfwSetKeyCallback(window, key_callback);
     glfwMakeContextCurrent(window);
     GLenum error = glewInit();
@@ -108,6 +123,9 @@ void terminate_gl() {
 
 void pre_draw() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    double mouse_pos[2];
+    glfwGetCursorPos(window, &mouse_pos[0], &mouse_pos[1]);
+    cursor_position_callback(mouse_pos[0], mouse_pos[1]);
 }
 
 bool post_draw() {

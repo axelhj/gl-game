@@ -5,17 +5,16 @@
 		<Option title="gl-game" />
 		<Option platforms="Windows;" />
 		<Option pch_mode="2" />
-		<Option compiler="gcc" />
+		<Option compiler="gcc-msys2-mingw64" />
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/gl-game" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option compiler="gcc-msys2-mingw64" />
 				<Option use_console_runner="0" />
 				<Compiler>
-					<Add option="-std=c++11" />
-					<Add option="-std=c99" />
+					<Add option="-std=c++17" />
 					<Add option="-m64" />
 					<Add option="-g" />
 					<Add option="-finput-charset=UTF-8" />
@@ -38,7 +37,7 @@
 				<Option output="bin/Release/gl-game" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option compiler="gcc-msys2-mingw64" />
 				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-O2" />

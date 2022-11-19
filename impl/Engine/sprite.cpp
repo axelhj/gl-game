@@ -5,7 +5,7 @@ Sprite::Sprite(GLint texture_id) :
     vel { 0.0f, 0.0f, 0.0f },
     size { 0.0f, 0.0f }
 {
-    draw = new Draw();
+    draw = std::make_shared<Draw>();
     draw->set_square_vertex_data();
     draw->load_gl();
     draw->texture_id = texture_id;
@@ -13,7 +13,7 @@ Sprite::Sprite(GLint texture_id) :
 
 Sprite::Sprite(const char* texture_name)
 {
-    draw = new Draw();
+    draw = std::make_shared<Draw>();
     draw->set_square_vertex_data();
     draw->load_gl();
     draw->load_gl_texture(texture_name);
@@ -63,5 +63,5 @@ Sprite::~Sprite()
     bool success = draw->unload_gl() || false;
     // NOTE: No way to know if texture was already released by a different sprite.
     success = success && draw->unload_gl_texture();
-    delete draw;
+    draw.reset();
 }

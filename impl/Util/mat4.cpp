@@ -10,11 +10,19 @@ void mat_destroy(float* m) {
 
 float* mat_copy(float *m) {
     float* copy = (float*)malloc(sizeof(float) * 16);
-    copy[0] = m[0]; copy[1] = m[1]; copy[2] = m[2]; copy[3] = m[3]; 
-    copy[4] = m[4]; copy[5] = m[5]; copy[6] = m[6]; copy[7] = m[7]; 
-    copy[8] = m[8]; copy[9] = m[9]; copy[10] = m[10]; copy[11] = m[11]; 
+    copy[0] = m[0]; copy[1] = m[1]; copy[2] = m[2]; copy[3] = m[3];
+    copy[4] = m[4]; copy[5] = m[5]; copy[6] = m[6]; copy[7] = m[7];
+    copy[8] = m[8]; copy[9] = m[9]; copy[10] = m[10]; copy[11] = m[11];
     copy[12] = m[12]; copy[13] = m[13]; copy[14] = m[14]; copy[15] = m[15];
     return copy;
+}
+
+float* mat_copy_to(float *f, float *t) {
+    t[0] = f[0]; t[1] = f[1]; t[2] = f[2]; t[3] =f[3];
+    t[4] = f[4]; t[5] = f[5]; t[6] = f[6]; t[7] = f[7];
+    t[8] = f[8]; t[9] = f[9]; t[10] = f[10]; t[11] = f[11];
+    t[12] = f[12]; t[13] = f[13]; t[14] = f[14]; t[15] = f[15];
+    return t;
 }
 
 float* mat_set_to(float * from, float* to) {
