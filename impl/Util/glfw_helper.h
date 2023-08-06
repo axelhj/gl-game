@@ -8,7 +8,7 @@
 #include <GLFW/glfw3.h>
 #include "impl/Util/shaders.h"
 #include "impl/Util/vertex_gen.h"
-#include "impl/Util/draw.h"
+#include "impl/Util/static_shader_draw.h"
 #include "impl/Util/mat4.h"
 
 extern int keys[7];

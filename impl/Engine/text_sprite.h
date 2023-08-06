@@ -2,7 +2,7 @@
 #define TEXT_SPRITE_H
 #include <stddef.h>
 #include "impl/Util/mat4.h"
-#include "impl/Util/draw.h"
+#include "impl/Util/static_shader_draw.h"
 #include "impl/Engine/sprite.h"
 
 class TextSprite : Sprite {

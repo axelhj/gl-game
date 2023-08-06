@@ -1,4 +1,4 @@
-#include "impl/Util/draw.h"
+#include "impl/Engine/shader_draw.h"
 
 static const char* v_program =
 "#version 150\n\
@@ -52,12 +52,6 @@ void main(void) {\n\
     fragColor = vec4(angle * texColor.rgb, texColor.a);\n\
 }\n";
 
-Draw::Draw() {
-}
-
-Draw::~Draw() {
-}
-
 static GLfloat square_vertices[] = {
     0.0f, 0.0f, 0.0f,
     1.0f, 1.0f, 0.0f,
@@ -85,7 +79,7 @@ static GLfloat square_normals[] = {
     0.0f, 0.0f, 1.0f
 };
 
-void Draw::set_square_vertex_data() {
+void ShaderDraw::set_square_vertex_data() {
     vertex_buffer_coordinate_count = 3;
     tex_coord_buffer_coordinate_count = 2;
     normal_buffer_coordinate_count = 3;
@@ -100,7 +94,7 @@ void Draw::set_square_vertex_data() {
     normals = square_normals;
 }
 
-bool Draw::load_gl() {
+bool ShaderDraw::load_gl() {
     bool successful = compile_shader_program(
         v_program,
         strlen(v_program),
@@ -133,7 +127,7 @@ bool Draw::load_gl() {
     return successful;
 }
 
-bool Draw::load_gl_texture(const char* file_name) {
+bool ShaderDraw::load_gl_texture(const char* file_name) {
     int image_width, image_height;
     unsigned char* imageData = get_image_data(file_name, &image_width, &image_height);
     glGenTextures(1, &texture_id);
@@ -162,7 +156,7 @@ bool Draw::load_gl_texture(const char* file_name) {
     return error == GL_NO_ERROR;
 }
 
-extern bool Draw::unload_gl()
+extern bool ShaderDraw::unload_gl()
 {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glDeleteBuffers(3, vbo);
@@ -172,14 +166,14 @@ extern bool Draw::unload_gl()
     return true;
 }
 
-extern bool Draw::unload_gl_texture()
+extern bool ShaderDraw::unload_gl_texture()
 {
     glBindTexture(GL_TEXTURE_2D, 0);
     glDeleteTextures(1, &texture_id);
     return true;
 }
 
-void Draw::draw_gl() {
+void ShaderDraw::draw_gl() {
     glUseProgram(program);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     glBindVertexArray(vao);

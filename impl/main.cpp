@@ -44,6 +44,5 @@ int main(int argc, char** argv) {
     }
     delete level_instance;
     terminate_gl();
-    GetChWin();
     return 0;
 }

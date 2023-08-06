@@ -1,5 +1,5 @@
-#ifndef DRAW_H
-#define DRAW_H
+#ifndef SHADER_DRAW_H
+#define SHADER_DRAW_H
 #include <stdio.h>
 #include <string.h>
 //#include <OpenGL/gl3.h>
@@ -8,10 +8,10 @@
 #include "impl/Util/glfw_helper.h"
 #include "impl/Util/shaders.h"
 #include "impl/Util/vertex_gen.h"
-#include "impl/Util/draw.h"
+#include "impl/Engine/shader_draw.h"
 #include "impl/Util/mat4.h"
 
-class Draw {
+class ShaderDraw {
 public:
     GLuint program;
     int vertex_buffer_coordinate_count;
@@ -33,8 +33,8 @@ public:
     GLfloat view_mat[16];
     GLfloat projection_mat[16];
     GLfloat texture_transform_mat[16];
-    Draw();
-    ~Draw();
+    ShaderDraw();
+    ~ShaderDraw();
     void set_square_vertex_data();
     bool load_gl();
     bool load_gl_texture(const char* file_name);
@@ -43,5 +43,5 @@ public:
     void draw_gl();
 };
 
-#endif /* DRAW_H */
+#endif /* SHADER_DRAW_H */
 

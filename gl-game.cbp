@@ -64,6 +64,13 @@
 			<Add option="-Wall" />
 			<Add directory="$(PROJECT_DIR)/" />
 		</Compiler>
+		<Unit filename="asset/art/arm.png" />
+		<Unit filename="asset/art/gun_front.png" />
+		<Unit filename="asset/art/gun_side.png" />
+		<Unit filename="asset/art/gun_top.png" />
+		<Unit filename="asset/art/hoodie_shoulders.png" />
+		<Unit filename="asset/art/hoodie_top.png" />
+		<Unit filename="asset/art/legs_top.png" />
 		<Unit filename="asset/asciiextse146-transp.png" />
 		<Unit filename="asset/blw.png" />
 		<Unit filename="asset/circle.png" />
@@ -77,6 +84,8 @@
 		<Unit filename="asset/pino.png" />
 		<Unit filename="asset/signpost.png" />
 		<Unit filename="asset/wall.png" />
+		<Unit filename="impl/Engine/shader_draw.cpp" />
+		<Unit filename="impl/Engine/shader_draw.h" />
 		<Unit filename="impl/Engine/sprite.cpp" />
 		<Unit filename="impl/Engine/sprite.h" />
 		<Unit filename="impl/Engine/sprite_collider.cpp" />
@@ -89,14 +98,20 @@
 		<Unit filename="impl/Game/maze.h" />
 		<Unit filename="impl/Game/start.cpp" />
 		<Unit filename="impl/Game/start.h" />
-		<Unit filename="impl/Shader/shader_assembler.cpp" />
-		<Unit filename="impl/Shader/shader_assembler.h" />
-		<Unit filename="impl/Shader/shader_part.cpp" />
-		<Unit filename="impl/Shader/shader_part.h" />
+		<Unit filename="impl/Shader/field.cpp">
+			<Option link="0" />
+		</Unit>
+		<Unit filename="impl/Shader/field.h" />
+		<Unit filename="impl/Shader/shader.cpp">
+			<Option link="0" />
+		</Unit>
+		<Unit filename="impl/Shader/shader.h" />
+		<Unit filename="impl/Shader/shader_program.cpp">
+			<Option link="0" />
+		</Unit>
+		<Unit filename="impl/Shader/shader_program.h" />
 		<Unit filename="impl/Util/a_star.cpp" />
 		<Unit filename="impl/Util/a_star.h" />
-		<Unit filename="impl/Util/draw.cpp" />
-		<Unit filename="impl/Util/draw.h" />
 		<Unit filename="impl/Util/glfw_helper.cpp" />
 		<Unit filename="impl/Util/glfw_helper.h" />
 		<Unit filename="impl/Util/mat4.cpp" />
@@ -107,6 +122,8 @@
 		<Unit filename="impl/Util/shaders.h" />
 		<Unit filename="impl/Util/sorted_set.cpp" />
 		<Unit filename="impl/Util/sorted_set.h" />
+		<Unit filename="impl/Util/static_shader_draw.cpp" />
+		<Unit filename="impl/Util/static_shader_draw.h" />
 		<Unit filename="impl/Util/unbuffered.h" />
 		<Unit filename="impl/Util/vec3.cpp" />
 		<Unit filename="impl/Util/vec3.h" />
