@@ -1,7 +1,6 @@
 #include "impl/Shader/shader_program.h"
 
-ShaderProgram::ShaderProgram(
-) {
+ShaderProgram::ShaderProgram() {
 }
 
 void ShaderProgram::add_field(
@@ -18,7 +17,6 @@ void ShaderProgram::add_field(
         }
     }
     if (target_shader == NULL) {
-        
         target_shader = std::make_shared<Shader>(
             shader_type, std::string(""),
             std::vector<std::shared_ptr<Field>>()

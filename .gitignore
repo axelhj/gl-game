@@ -10,3 +10,4 @@
 /nbproject/*.mk
 /nbproject/*.bash
 /.dep.inc
+/CMakeCache.txt
