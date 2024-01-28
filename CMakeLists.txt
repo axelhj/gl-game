@@ -4,8 +4,9 @@ project(gl-game)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
+set(CMAKE_CXX_FLAGS -I${PROJECT_SOURCE_DIR})
 
-file(GLOB_RECURSE headers RELATIVE ${PROJECT_SOURCE_DIR} impl/**/*.h)
+file(GLOB_RECURSE headers RELATIVE ${PROJECT_SOURCE_DIR} impl/**/*.h impl/*.h)
 file(GLOB_RECURSE sources RELATIVE ${PROJECT_SOURCE_DIR} impl/**/*.cpp impl/*.cpp)
 
 add_executable("gl-game" ${sources})
