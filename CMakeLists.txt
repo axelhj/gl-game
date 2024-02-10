@@ -4,12 +4,12 @@ project(gl-game)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
-set(CMAKE_CXX_FLAGS -I${PROJECT_SOURCE_DIR})
 
 file(GLOB_RECURSE headers RELATIVE ${PROJECT_SOURCE_DIR} impl/**/*.h impl/*.h)
 file(GLOB_RECURSE sources RELATIVE ${PROJECT_SOURCE_DIR} impl/**/*.cpp impl/*.cpp)
 
 add_executable("gl-game" ${sources})
+target_include_directories("gl-game" PRIVATE ${PROJECT_SOURCE_DIR})
 target_sources("gl-game" PRIVATE FILE_SET headers BASE_DIRS . TYPE HEADERS)
 
 include(CMakePrintHelpers)
@@ -17,7 +17,7 @@ include(CMakePrintHelpers)
 
 # GLORIOUS GLEW
 add_library("glew" STATIC IMPORTED)
-target_include_directories("glew" INTERFACE deps/glew-2.1.0/include)
+target_include_directories("glew" INTERFACE "deps/glew-2.1.0/include")
 set_target_properties(
         "glew"
         PROPERTIES IMPORTED_LOCATION
@@ -43,8 +43,7 @@ set_target_properties(
 )
 
 # AMAZING STB
-add_library("stb-image" INTERFACE)
-target_sources("stb-image" PRIVATE deps/stb_image.h)
+add_library("stb-image" INTERFACE deps/stb_image.h)
 
 target_compile_definitions("gl-game" PRIVATE "GLEW_STATIC")
 target_compile_options("gl-game" PRIVATE "-Wall")
@@ -54,8 +53,7 @@ target_compile_options("gl-game" PRIVATE "-g")
 target_compile_options("gl-game" PRIVATE "-finput-charset=UTF-8")
 target_compile_options("gl-game" PRIVATE "-fexec-charset=850")
 
-target_link_options("gl-game" PRIVATE "-static")
-target_link_options("gl-game" PRIVATE "-m64")
+target_link_options("gl-game" PRIVATE "-static" "-m64")
 target_link_libraries("gl-game" "glew" "glfw")
 target_link_libraries("gl-game" "opengl32" "-lglu32" "-lgdi32")
 target_link_libraries("gl-game" "libsrt" "stb-image")
