@@ -5,12 +5,14 @@ project(gl-game)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
+set(CMAKE_CXX_FLAGS "-I${PROJECT_SOURCE_DIR} -I${PROJECT_SOURCE_DIR}/deps/glew-2.1.0/include -I${PROJECT_SOURCE_DIR}/deps/glfw-3.3.9.bin.WIN64/include")
+
 file(GLOB_RECURSE headers RELATIVE ${PROJECT_SOURCE_DIR} impl/**/*.h impl/*.h)
 file(GLOB_RECURSE sources RELATIVE ${PROJECT_SOURCE_DIR} impl/**/*.cpp impl/*.cpp)
 
 add_executable("gl-game" ${sources})
-target_include_directories("gl-game" PRIVATE ${PROJECT_SOURCE_DIR})
-target_sources("gl-game" PRIVATE FILE_SET headers BASE_DIRS . TYPE HEADERS)
+target_include_directories("gl-game" INTERFACE ${PROJECT_SOURCE_DIR})
+target_sources("gl-game" PRIVATE FILE_SET headers BASE_DIRS TYPE HEADERS)
 
 include(CMakePrintHelpers)
 # cmake_print_variables(headers)
