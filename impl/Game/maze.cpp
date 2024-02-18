@@ -1,5 +1,10 @@
 #include "impl/Game/maze.h"
 
+#include <cstdio>
+#include <math.h>
+
+#include "impl/Engine/text_sprite.h"
+
 #define TILE_WIDTH 0.999f
 #define TILE_HEIGHT 0.999f
 

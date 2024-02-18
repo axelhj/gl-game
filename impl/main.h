@@ -1,9 +1,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include "impl/Util/mat4.h"
-#include "impl/Util/unbuffered.h"
-#include "impl/Util/glfw_helper.h"
+int main(int argc, char** argv);
 
 #endif /* MAIN_H */
 

@@ -1,10 +1,8 @@
 #ifndef MAZE_H
 #define MAZE_H
 
-#include "impl/Util/mat4.h"
 #include "impl/Util/a_star.h"
 #include "impl/Engine/sprite.h"
-#include "impl/Engine/text_sprite.h"
 #include "impl/Engine/sprite_collider.h"
 
 #define TILES_X 12

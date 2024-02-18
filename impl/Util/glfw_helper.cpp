@@ -1,5 +1,8 @@
 #include "glfw_helper.h"
 
+#include <stdio.h>
+#include <string.h>
+
 void print_gl_error(GLenum error) {
     const char* error_string = NULL;
     if (error == GL_NO_ERROR) {

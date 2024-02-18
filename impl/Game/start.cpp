@@ -1,5 +1,10 @@
 #include "impl/Game/start.h"
 
+#include <math.h>
+#include "impl/Util/mat4.h"
+#include "impl/Util/glfw_helper.h"
+#include "impl/Engine/text_sprite.h"
+
 #define TILE_WIDTH 1.0f
 #define TILE_HEIGHT 1.0f
 #define Z_POS 11.0f

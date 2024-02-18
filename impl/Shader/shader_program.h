@@ -3,7 +3,6 @@
 
 #include <memory>
 #include <string>
-#include <map>
 #include <vector>
 #include "impl/Shader/field.h"
 #include "impl/Shader/shader.h"

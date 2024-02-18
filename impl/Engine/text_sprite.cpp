@@ -1,5 +1,8 @@
 #include "impl/Engine/text_sprite.h"
 
+#include <math.h>
+#include "impl/Util/mat4.h"
+
 static const char* text_sprite_file_name = "asset/asciiextse146-transp.png";
 
 static void update_texture_mat(float* texture_transform_mat, float* pos, float* size)

@@ -1,14 +1,6 @@
 #ifndef STATIC_SHADER_DRAW_H
 #define STATIC_SHADER_DRAW_H
-#include <stdio.h>
-#include <string.h>
-//#include <OpenGL/gl3.h>
-//#include <GL/gl.h>
 #include <GL/glew.h>
-#include "impl/Util/glfw_helper.h"
-#include "impl/Util/shaders.h"
-#include "impl/Util/vertex_gen.h"
-#include "impl/Util/mat4.h"
 
 class Draw {
 public:

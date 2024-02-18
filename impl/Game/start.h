@@ -2,13 +2,10 @@
 #define START_H
 
 #include <vector>
+// Fix error regarding "expected primary-expression before ')' token
 #undef __STRICT_ANSI__
-#include <cmath>
-
-#include "impl/Util/mat4.h"
 #include "impl/Engine/sprite_collider.h"
 #include "impl/Engine/sprite.h"
-#include "impl/Engine/text_sprite.h"
 
 class Start {
 public:

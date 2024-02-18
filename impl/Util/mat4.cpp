@@ -1,5 +1,8 @@
 #include "impl/Util/mat4.h"
 
+#include <cstdlib>
+#include <math.h>
+
 float* mat_create() {
     return mat_identity((float*)malloc(sizeof(float) * 16));
 }

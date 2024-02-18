@@ -1,15 +1,6 @@
 #ifndef SHADER_DRAW_H
 #define SHADER_DRAW_H
-#include <stdio.h>
-#include <string.h>
-//#include <OpenGL/gl3.h>
-//#include <GL/gl.h>
 #include <GL/glew.h>
-#include "impl/Util/glfw_helper.h"
-#include "impl/Util/shaders.h"
-#include "impl/Util/vertex_gen.h"
-#include "impl/Engine/shader_draw.h"
-#include "impl/Util/mat4.h"
 
 class ShaderDraw {
 public:

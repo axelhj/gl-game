@@ -3,6 +3,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "deps/stb_image.h"
 
+#include "impl/Util/vec3.h"
+
 unsigned char* get_image_data(const char* file_name, int* image_width, int* image_height) {
     int x, y, components_per_pixel;
     unsigned char* data = stbi_load(file_name, &x, &y, &components_per_pixel, 4);

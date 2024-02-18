@@ -1,5 +1,10 @@
 #include "impl/Engine/sprite_collider.h"
 
+#include <cstdio>
+#include <math.h>
+#include <float.h>
+#include "impl/Util/vec3.h"
+
 #define SPRITES_MAX 1000
 #define COLLISIONS_MAX 20
 

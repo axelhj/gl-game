@@ -1,6 +1,4 @@
 #include "impl/Util/noise.h"
-#include <stdio.h>
-#include <math.h>
 
 static int permutations[] = {
     151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140,

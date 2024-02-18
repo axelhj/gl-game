@@ -1,5 +1,7 @@
 #include "impl/Engine/sprite.h"
 
+#include "impl/Util/mat4.h"
+
 Sprite::Sprite(GLint texture_id) :
     pos { 0.0f, 0.0f, 0.0f },
     vel { 0.0f, 0.0f, 0.0f },

@@ -1,6 +1,5 @@
 #ifndef VEC3_H
 #define VEC3_H
-#include <math.h>
 
 extern float* vec_3_copy(float* to, float* from);
 

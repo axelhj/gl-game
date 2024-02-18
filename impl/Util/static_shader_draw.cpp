@@ -1,5 +1,13 @@
 #include "impl/Util/static_shader_draw.h"
 
+#include <string.h>
+//#include <OpenGL/gl3.h>
+//#include <GL/gl.h>
+#include "impl/Util/glfw_helper.h"
+#include "impl/Util/shaders.h"
+#include "impl/Util/vertex_gen.h"
+#include "impl/Util/mat4.h"
+
 static const char* v_program =
 "#version 150\n\
 \n\

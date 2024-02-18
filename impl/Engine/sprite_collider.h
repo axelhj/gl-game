@@ -2,8 +2,6 @@
 #define SPRITE_COLLIDER
 
 #include <vector>
-#include <math.h>
-#include <float.h>
 #include "impl/Engine/sprite.h"
 
 using std::vector;

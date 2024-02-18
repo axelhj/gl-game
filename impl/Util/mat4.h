@@ -1,9 +1,6 @@
 #ifndef MAT4_H
 #define MAT4_H
 
-#include <cstdlib>
-#include <math.h>
-
 extern float* mat_create();
 
 extern void mat_destroy(float* m);
