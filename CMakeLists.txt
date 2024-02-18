@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(gl-game)
+project(gl-game LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
+set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_CXX_FLAGS "-fexec-charset=850")
 
 set(CMAKE_CXX_FLAGS "-I${PROJECT_SOURCE_DIR} -I${PROJECT_SOURCE_DIR}/deps/glew-2.1.0/include -I${PROJECT_SOURCE_DIR}/deps/glfw-3.3.9.bin.WIN64/include")
 
@@ -53,7 +55,6 @@ target_compile_options("gl-game" PRIVATE "-O0")
 target_compile_options("gl-game" PRIVATE "-m64")
 target_compile_options("gl-game" PRIVATE "-g")
 target_compile_options("gl-game" PRIVATE "-finput-charset=UTF-8")
-target_compile_options("gl-game" PRIVATE "-fexec-charset=850")
 
 target_link_options("gl-game" PRIVATE "-static" "-m64")
 target_link_libraries("gl-game" "glew" "glfw")

@@ -1,3 +1,4 @@
 CompileFlags:
   Remove: -fexec-charset=850
   Compiler: C:/msys64/mingw64/bin/c++.exe
+  Add: [C:\msys64\mingw64\include, -IC:\msys64\mingw64\include\c++\13.2.0]

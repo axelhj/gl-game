@@ -4,7 +4,6 @@
 #include <memory>
 #include <GL/glew.h>
 #include "impl/Util/static_shader_draw.h"
-#include "impl/Util/mat4.h"
 
 class Sprite {
 public:
