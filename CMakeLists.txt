@@ -5,13 +5,15 @@ project(gl-game LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 set(CMAKE_CXX_COMPILER "g++")
-set(CMAKE_CXX_FLAGS "-fexec-charset=850")
 
-set(CMAKE_CXX_FLAGS "-I${PROJECT_SOURCE_DIR}")
-set(CMAKE_CXX_FLAGS "-I${PROJECT_SOURCE_DIR}/deps/glew-2.1.0/include")
-set(CMAKE_CXX_FLAGS "-I${PROJECT_SOURCE_DIR}/deps/glfw-3.3.9.bin.WIN64/include")
-set(CMAKE_CXX_FLAGS "-I${PROJECT_SOURCE_DIR}/deps/glfw-3.3.9.bin.WIN64/include")
-set(CMAKE_CXX_FLAGS "-I${PROJECT_SOURCE_DIR}/deps/libsrt-cebf7ca/src")
+set(CMAKE_CXX_FLAGS
+        "-fexec-charset=850"
+        "-I${PROJECT_SOURCE_DIR}"
+        "-I${PROJECT_SOURCE_DIR}/deps/glew-2.1.0/include"
+        "-I${PROJECT_SOURCE_DIR}/deps/glfw-3.3.9.bin.WIN64/include"
+        "-I${PROJECT_SOURCE_DIR}/deps/glfw-3.3.9.bin.WIN64/include"
+        "-I${PROJECT_SOURCE_DIR}/deps/libsrt-cebf7ca/src"
+)
 
 file(GLOB_RECURSE headers RELATIVE ${PROJECT_SOURCE_DIR} impl/**/*.h impl/*.h)
 file(GLOB_RECURSE sources RELATIVE ${PROJECT_SOURCE_DIR} impl/**/*.cpp impl/*.cpp)
