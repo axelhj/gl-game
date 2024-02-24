@@ -1,5 +1,6 @@
 #ifndef GLFW_HELPER_H
 #define GLFW_HELPER_H
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 

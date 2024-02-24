@@ -6,7 +6,6 @@
 #include "impl/Util/unbuffered.h"
 #include "impl/Util/glfw_helper.h"
 
-
 void millisleep(unsigned milliseconds) {
 //    struct timespec timespec;
 //    timespec.tv_sec = milliseconds / 1000;
