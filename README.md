@@ -17,6 +17,8 @@ Experimental OpenGl-engine with collision-resolution and a "typewriter style" te
 - Resolve collissions between multiple object (AABB-style shapes).
 - A mesh generator that uses a bitmap as the heightmap to produce a uniform "grid" or terrain (not optimized).
 - Captures the mouse and points the camera in relation to events.
+- Switched from CodeBlocks project to CMake with g++. Hard codes some compiler paths for Msys2 on Windows and specifies various compiler-flags and linker options explicitly which is not best practice for CMake or build tools in general. Committed-in build artefacts for dependencies which obviously would only work on windows.
+- Clangd (LSP server) support with G++ on Windows with compile_commands.json.
 
 # To run
 
