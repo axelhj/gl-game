@@ -1,10 +1,10 @@
 # Gl-game with C++ & GLFW
 
-Experimental OpenGl-engine with collision-resolution and a "typewriter style" text renderer and a weird protagonist. Supports 3D.
+Experimental OpenGl-engine with collision-resolution and a "typewriter style" text renderer and a "protagonist". Supports 3D.
 
 ## In progress
 
-- Dynamic shaders (basically allow templating and using a dynamic structure to set uniforms & maybe attributes.
+- Dynamic shaders (basically allow templating and using a dynamic structure to set uniforms & maybe attributes).
 - Improve collissions to allow non-axis-aligned resolutions and shapes besides boxes.
 - Do something with the MSPaint generated assets.
 - Title-screen, levels, monsters, credits, options-screen, gfx-settings
