@@ -1,4 +1,6 @@
-# Mostly experimental. Has a "typewriter style" text renderer
+# Gl-game with C++ & GLFW
+
+Experimental OpenGl-engine with collision-resolution and a "typewriter style" text renderer and a weird protagonist. Supports 3D.
 
 ## In progress
 
